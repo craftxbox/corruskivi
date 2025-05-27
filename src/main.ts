@@ -168,7 +168,16 @@ function advanceTestPath(testpath: number[][]) {
     document.querySelectorAll(".dialogue-message")?.forEach((el) => el.classList.add("sent"));
     document.querySelectorAll(".dialogue-menu .dialogue-actor")?.forEach((el) => el.classList.add("sent"));
     let [testPathIndex, testPathResponse] = testpoint || [null, null];
-    if (testPathIndex === null || testPathResponse === null) return;
+    if (testPathIndex === null || testPathResponse === null) {
+        document.body.removeAttribute("currentDialogue");
+
+        if (window.env.dialogueWaitTimeout) {
+            clearTimeout(window.env.dialogueWaitTimeout);
+            delete window.env.dialogueWaitTimeout;
+        }
+        dialogueBox.classList.remove("dialogue-click-proceed");
+        return;
+    };
 
     let dialoguemenu = document.querySelector("#dialogue-menu") as HTMLDivElement;
 
