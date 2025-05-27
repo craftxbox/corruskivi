@@ -118,7 +118,6 @@ export function startNewDialogue(dialogue: string, settings?: { originEntityId?:
     return true;
 }
 
-//TODO figure out how to define a specific path to follow
 export function previewEntireDialogue(dialogueID: string, settings?: { originEntityId?: string; specificChain?: string }) {
     let dialogue = window.env.dialogues[dialogueID];
     if (!dialogue) {
