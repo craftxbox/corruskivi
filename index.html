@@ -1,0 +1,302 @@
+<!-- most of this is copied and modified from the game -->
+<!-- therefore, no license is asserted over this file. -->
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>c.ob dialogue editor (working title)</title>
+
+        <script src="https://corru.observer/js/lib/swup.min.js"></script>
+        <script>
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", "https://corru.observer/js/lib/howler.min.js", false);
+            xhr.send(null);
+            if (xhr.status === 200) {
+                eval(xhr.responseText.replaceAll(/function _0x.*/g, ""));
+            }
+            else console.error("Failed to load howler.min.js");
+
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", "https://corru.observer/js/lib/lettering.js", false);
+            xhr.send(null);
+            if (xhr.status === 200) {
+                eval(xhr.responseText.replaceAll("window.location.href", "window.nothingimportant"));
+            }
+            else console.error("Failed to load lettering.js");
+        </script>
+        <script src="https://corru.observer/js/lib/lzstring.js"></script>
+        <script src="https://corru.observer/js/lib/gpu/detect-gpu.umd.js"></script>
+        <script>
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", "https://corru.observer/js/lib/draggable.bundle.js", false);
+            xhr.send(null);
+            if (xhr.status === 200) {
+                eval(xhr.responseText.replaceAll(/function _0x.*/g, ""));
+            }
+            else console.error("Failed to load draggable.bundle.js");
+
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", "https://corru.observer/js/corru.js", false);
+            xhr.send(null);
+            if (xhr.status === 200) {
+                eval(xhr.responseText.replaceAll("window.location.href", "window.nothingimportant"));
+            }
+            else console.error("Failed to load corru.js");
+        </script>
+        <script src="https://corru.observer/js/dialogue.js?"></script>
+        <script src="https://corru.observer/js/globalents.js"></script>
+        <script src="https://corru.observer/js/cystStage.js"></script>
+        <script src="https://corru.observer/js/buddy.js"></script>
+        <script src="https://corru.observer/js/vn2.js"></script>
+        <script defer src="https://corru.observer/js/saves.js"></script>
+        <link rel="stylesheet" type="text/css" href="/src/style.css" />
+        <link rel="stylesheet" type="text/css" href="https://corru.observer/css/corru.css" />
+        <link rel="stylesheet" type="text/css" href="https://corru.observer/css/cystStage.css" />
+    </head>
+    <body state="corru-entered" menu="none" class="">
+        <div id="meta-menu">
+            <i class="ci-moth moth-trigger" onclick="playStartupDialogue()" definition="NOTE::'return to startup dialogue'"
+                ><span class="mothnotice"><i class="ci-moth"></i></span
+            ></i>
+
+            <!--volume controls icon-->
+            <i id="meta-volume-toggle" class="ci-vol"></i>
+            <div id="meta-volume">
+                <span class="meta-volume-wrapper">
+                    <span>MASTER</span>
+                    <input type="range" min="0" max="1" value="0.5" step="0.1" class="slider vol-slider" for="volume" id="meta-volume-slider" />
+                </span>
+                <span class="meta-volume-wrapper">
+                    <span>MUSIC</span>
+                    <input type="range" min="0" max="1" value="1" step="0.1" class="slider vol-slider" for="volume-music" id="meta-volume-music-slider" />
+                </span>
+                <span class="meta-volume-wrapper">
+                    <span>SFX</span>
+                    <input type="range" min="0" max="1" value="1" step="0.1" class="slider vol-slider" for="volume-sfx" id="meta-volume-sfx-slider" />
+                </span>
+            </div>
+
+            <!--dropdown menu-->
+            <i class="ci-bars" style="display:none;"></i>
+            <div id="meta-links" style="display:none;">
+                <div id="mui-links">
+                    <a id="meta-hub" definition="NOTE::'return to hub';'eject'"><i class="ci-nav"></i></a>
+                    <a id="meta-obs" definition="NOTE::'review scanned and detected entities'"><i class="ci-ent"></i></a>
+                    <a id="meta-sys" definition="NOTE::'system management'"><i class="ci-sys"></i></a>
+                </div>
+            </div>
+        </div>
+
+        <div id="advance-notice" style="display: none">
+            <div class="target always-targeted" entity="advance log"></div>
+        </div>
+
+        <div id="mindspike-scanner" style="display: none">
+            <div id="mindspike-entities"></div>
+            <div id="mindspike-actions">
+                <form id="act">
+                    <input type="text" id="act-input" placeholder="CONCEPT" />
+                    <input type="submit" id="act-submit" value="ENACT" />
+                </form>
+                <div id="act-options">
+                    <div class="act-option">connect</div>
+                    <div class="act-option">back away</div>
+                </div>
+            </div>
+            <div id="mindspike-options">
+                <span id="mindspike-examine">EXM</span>
+                <span id="mindspike-act">ACT</span>
+                <span id="mindspike-back">&lt;--</span>
+            </div>
+        </div>
+
+        <div id="readout" class="readout-log menu"></div>
+        <div id="minireadout" class="readout-log menu"></div>
+        <div id="definition-box"></div>
+        <div id="dialogue-box" class="menu-box menu" menu="dialogue"></div>
+
+        <div id="system-menu" class="menu-box menu" menu="system" style="left: 0; right: unset; transform: unset; pointer-events: unset">
+            <details class="sysblock" open>
+                <summary>Editor</summary>
+                <div id="editor-text" class="bigtext"></div>
+                <span id="preview-dialogue" class="button primary">Preview</span>
+                <span id="start-dialogue" class="button primary">Start</span>
+                <span id="share-dialogue" class="button editor-pink">Share</span>
+                <span id="end-dialogue" class="button">END DIALOGUE</span>
+            </details>
+
+            <details class="sysblock" open>
+                <summary>Saves</summary>
+                <select id="save-editor-slot">
+                    <option value="___NEW_SLOT">CREATE NEW SLOT</option>
+                </select>
+                <input type="text" id="save-editor-name" hidden placeholder="NEW SLOT NAME" />
+                <br/>
+                <span id="load-editor-save" class="button primary">Load slot</span>
+                <span id="save-editor-save" class="button editor-pink">Save slot</span>
+                <span id="delete-editor-save" class="button editor-pink">Delete slot</span>
+            </details>
+
+            <details class="sysblock">
+                <summary>Advanced</summary>
+                <details class="minor">
+                    <summary>Definitions</summary>
+                    <p class="sysinfo">
+                        Definitions allow you to create underlined text in dialogues, giving extra information just like the "INHERITED CONTEXT" blocks in the
+                        base game.
+                        <br /><br />
+                    </p>
+                    <div id="defines" class="midtext"></div>
+                    <span id="save-defines" class="button primary">Save</span>
+                </details>
+                <details class="minor">
+                    <summary>Custom Actors</summary>
+                    <p class="sysinfo">
+                        Custom actors allow you to create new characters that can be used in dialogues. They can be used in the same way as the base game
+                        actors, but with custom names and images. You can also override existing actors. Input must be a JSON object.
+                        <br /><br />
+                    </p>
+                    <div id="customactors" class="midtext"></div>
+                    <span class="button primary" id="save-custom-actors">Save</span>
+                </details>
+            </details>
+
+            <details class="sysblock modstring">
+                <summary definition="NOTICE::'third-party resources loaded by system';'allows for log modifications'">Modification URL List</summary>
+                <div class="stringinput">
+                    <p class="sysinfo">
+                        Data URLs should be separated by new lines. Hitting save will manually load and initialize all third party modifications listed. They
+                        will be initialized automatically from then on, in order, until removed.
+                    </p>
+                    <textarea id="modtext" placeholder="https://..."></textarea>
+                    <span id="savemods" class="button">Save List</span>
+                </div>
+            </details>
+
+            <details class="sysblock" style="display: none">
+                <div class="buttons" style="display: none">
+                    <span id="export" class="button export primary">Export File</span>
+                    <span id="delete" class="button" definition="ATTENTION::'irreversible action';'not advised';'may cause mental distress'">Delete</span>
+                </div>
+                <details class="minor" style="display: none">
+                    <details class="minor loadstring">
+                        <summary definition="NOTICE::'legacy import';'recommend using file management above'">Load Neural String</summary>
+                        <div class="stringinput">
+                            <input id="savetext" type="textarea" placeholder="NOTE::'paste data';'exercise caution'" />
+                            <span id="import" class="button">Import String</span>
+                        </div>
+                    </details>
+                </details>
+            </details>
+        </div>
+
+        <div id="content" style="display: none">
+            <style>
+                @import url(https://corru.observer/css/local/homepage.css);
+            </style>
+
+            <script id="PageData">
+                content = document.querySelector("#content");
+                body = document.body;
+
+                if (typeof page == "object") {
+                    oldPage = page;
+                }
+
+                // This script is generated per-page based on jekyll front-matter and other inputs. If you're looking at how stuff was done, be prepared for truly terrible whitespace management. It's prettier when I'm working on it, trust me.
+                page = {
+                    title: "corru.observer",
+                    name: "corru-observer",
+                    dialoguePrefix: "fbx",
+                    path: location.pathname,
+                    flags: {},
+                    howls: [],
+
+                    image: "https://corru.observer/img/socials/intro.gif",
+
+                    order: "-1",
+
+                    bgm: new Howl({
+                        onload: function () {
+                            page.howls.push(this);
+                        },
+                        src: ["https://corru.observer/audio/outerhubv1.ogg"],
+                        preload: true,
+                        loop: true,
+
+                        sprite: {
+                            __default: [50, 236000, true],
+                        },
+                    }),
+
+                    onLoaded: function () {
+                        updatePreferenceAttributes();
+                        document.dispatchEvent(env.hooks.corru_loaded);
+                    },
+                    onEnter: function () {},
+                    onExit: function () {},
+                };
+
+                // global defs
+
+                env.definitions[`θjut`] = `'engineer';'caste'`;
+
+                env.definitions[`vel`] = `'caste';'partial meaning loss due to damaged context'`;
+
+                env.definitions[`tir`] = `'caste';'partial meaning loss due to damaged context'`;
+
+                env.definitions[`kiv`] = `'caste';'partial meaning loss due to damaged context'`;
+
+                env.definitions[`qou`] = `'caste';'partial meaning loss due to damaged context'`;
+
+                env.definitions[`velzie`] = `'god'`;
+
+                env.definitions[`veilk`] = `'surface fauna';'foundation of entire ecosystem';'enormous and endless'`;
+
+                env.definitions[`ukazni ozo`] = `'surface city';'mountainous fortress';'origin of dull pulse weaponry'`;
+
+                env.definitions[`secri`] = `'predator';'infection';'primal terror'`;
+
+                env.definitions[`zuzucri`] = `'violent parasitic surface fauna';'hijacks mind of victim for use as social camouflage';'ekivik profanity'`;
+
+                env.definitions[`golem`] = { type: `NOTE`, text: `'partial translation';'implied closest cultural equivalent'` };
+
+                env.definitions[`golems`] = { type: `NOTE`, text: `'partial translation';'implied closest cultural equivalent'` };
+
+                env.definitions[
+                    `velzie's stage`
+                ] = `'all that can be observed';'physical reality';'religious term now used scientifically';'partial translation';'inherited description-generated noun'`;
+
+                env.definitions[`θeye`] = `'time period';'patrols around the eye of velzie';'religious implication'`;
+
+                env.definitions[`θeyes`] = `'time period';'patrols around the eye of velzie';'religious implication'`;
+
+                env.definitions[`θgazes`] = `'time period';'numerous within eyes'`;
+
+                env.definitions[`θgaze`] = `'time period';'numerous within eyes'`;
+
+                env.definitions[`θwinks`] = `'time period';'numerous within gazes'`;
+
+                env.definitions[`θwink`] = `'time period';'numerous within gazes'`;
+
+                env.definitions[`θblinks`] = `'time period';'numerous within winks'`;
+
+                env.definitions[`θblink`] = `'time period';'numerous within winks'`;
+
+                env.definitions[`uncosm`] = { type: `NOTE`, text: `'reconstructive translation';'implies non-world'` };
+
+                env.definitions[`jokzi ozo`] = `'home';'fortress upon jokzi'`;
+
+                env.definitions[`θdeath`] = { type: `NOTE`, text: `'implies altered living state'` };
+
+                env.definitions[`θdeaths`] = { type: `NOTE`, text: `'implies altered living state'` };
+
+                env.definitions[`θdeathly`] = { type: `NOTE`, text: `'implies altered living state'` };
+
+                env.definitions[`fairy`] = { type: `NOTE`, text: `'partial translation';'implied closest cultural equivalent'` };
+            </script>
+            <script type="module" src="/src/main.ts"></script>
+        </div>
+    </body>
+</html>

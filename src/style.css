@@ -1,0 +1,22 @@
+.bigtext {
+  width:100%;
+  height:70vh;
+}
+
+.midtext {
+  width:100%;
+  height:40vh;
+}
+
+.moth-trigger{
+  opacity:0.4 !important;
+  pointer-events: unset !important;
+  position:fixed;
+  left:46vw;
+
+  top:-6px;
+}
+
+.button.editor-pink {
+  color: var(--obesk-color);
+}
