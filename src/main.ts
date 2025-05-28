@@ -225,8 +225,8 @@ export function generateEditorDialogue() {
             window.chatter({ actor: "funfriend", text: "Dialogue tried to use forbidden commands to execute code! Refusing to generate this.", readout: true });
             window.env.dialogues["editorpreview"] = window.generateDialogueObject(`start
     sys
-        The dialogue editor has detected forbidden commands that could execute code.
-        Please remove EXEC::, THEN::, UNREADCHECK::, END::, or SKIP:: commands from your dialogue.`);
+        ERROR::'the dialogue editor detected forbidden commands that could execute code'
+        ADVISE::'remove EXEC::, THEN::, UNREADCHECK::, END::, or SKIP:: commands from your dialogue'`);
             return;
         }
     }
