@@ -12,6 +12,7 @@ import "./types.d";
 import { getCustomActorsContent, setCustomActorsContent, updateActors } from "./customactors";
 import { getDefinesContent, setDefinesContent, updateDefines } from "./defines";
 import { loadSlot } from "./saves";
+import { decodeShareString, makeShareString, uploadShareString } from "./share";
 
 declare type LZString = typeof LZString;
 
@@ -236,13 +237,7 @@ export function generateEditorDialogue() {
         return;
     }
 
-    let shareObject = {
-        dialogue: dialogue,
-        actors: getCustomActorsContent(),
-        defines: getDefinesContent(),
-    };
-
-    window.location.hash = window.LZString.compressToBase64(JSON.stringify(shareObject));
+    window.location.hash = makeShareString(dialogue, getCustomActorsContent(), getDefinesContent());
 
     if (dialogue.startsWith("@testpath ")) {
         let path = dialogue.match(/(\d+,\d+)/gm);
@@ -325,23 +320,23 @@ document.querySelector("#share-editor-dialogue")?.addEventListener("click", () =
     generateEditorDialogue();
     previewEntireDialogue("editorpreview");
     window.play("talk", 2);
-    let url = window.location.href
-    navigator.clipboard
-        .writeText(url)
-        .then(() => {
-            window.chatter({ actor: "funfriend", text: "Dialogue URL copied to clipboard!", readout: true, sfx: false });
-        })
-        .catch((err) => {
-            console.error("Failed to copy URL: ", err);
-            window.chatter({ actor: "funfriend", text: "Failed to copy dialogue URL.", readout: true });
-        });
+
+    share();
 });
 
 document.querySelector("#share-dialogue")?.addEventListener("click", () => {
     generateEditorDialogue();
     previewEntireDialogue("editorpreview");
     window.play("talk", 2);
-    let url = window.location.href.replace("/#", "/preview#");
+    
+    share("preview");
+});
+
+function share(location: string = "") {
+    let shareString = makeShareString(getEditorContent(), getCustomActorsContent(), getDefinesContent());
+    let shareUrl = uploadShareString(shareString);
+
+    let url = window.location.href.replace(window.location.hash,"") + location + "#" + shareUrl;
     navigator.clipboard
         .writeText(url)
         .then(() => {
@@ -351,7 +346,7 @@ document.querySelector("#share-dialogue")?.addEventListener("click", () => {
             console.error("Failed to copy URL: ", err);
             window.chatter({ actor: "funfriend", text: "Failed to copy dialogue URL.", readout: true });
         });
-});
+}
 
 document.querySelector("#end-dialogue")?.addEventListener("click", () => {
     if (window.env.currentDialogue && window.env.currentDialogue.active) {
@@ -422,8 +417,8 @@ Object.defineProperty(window, "enterDirectPreview", {
 });
 
 try {
-    let shareObj = window.LZString.decompressFromBase64(window.location.hash.slice(1));
-    let data = JSON.parse(shareObj) as { dialogue: string; actors: string; defines: string };
+    let data = decodeShareString(window.location.hash.slice(1));
+
     if (data) {
         let direct = window.location.pathname.endsWith("preview");
         setEditorContent(data.dialogue);
@@ -442,5 +437,6 @@ try {
         playStartupDialogue();
     }
 } catch (e) {
+    loadSlot(localStorage.getItem("lastSave") || "save_0", true);
     playStartupDialogue();
 }
