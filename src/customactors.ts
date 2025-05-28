@@ -32,7 +32,7 @@ for (let key of Object.keys(window.env.dialogueActors)) {
 let originalActors = clone(window.env.dialogueActors);
 
 export function updateActors() {
-    let actorJSON = localStorage.getItem("actors");
+    let actorJSON = getCustomActorsContent().trim();
 
     let actors = actorJSON ? JSON.parse(actorJSON) : {};
 

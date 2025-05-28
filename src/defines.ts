@@ -6,9 +6,7 @@ monaco.languages.register({ id: "custom-defines" });
 monaco.languages.setMonarchTokensProvider("custom-defines", {
     defaultToken: "invalid",
     tokenizer: {
-        root: [
-            [/^([^:]*)(:)(.*)/, ["keyword", "operators", "string"]],
-        ],
+        root: [[/^([^:]*)(:)(.*)/, ["keyword", "operators", "string"]]],
     },
 });
 
@@ -16,7 +14,7 @@ const editorContainer = document.getElementById("defines") as HTMLElement;
 const definesEditor = monaco.editor.create(editorContainer, {
     language: "custom-defines",
     automaticLayout: true,
-    theme: "vs-dark"
+    theme: "vs-dark",
 });
 
 export function getDefinesContent(): string {
@@ -30,7 +28,7 @@ export function setDefinesContent(content: string): void {
 let originalDefines = clone(window.env.definitions);
 
 export function updateDefines() {
-    let defines = localStorage.getItem("defines") || "";
+    let defines = getDefinesContent().trim();
     window.env.definitions = clone(originalDefines);
     delete window.page.formedDefinitionStrings;
     for (let line of defines.split("\n")) {
