@@ -12,10 +12,10 @@ export default defineConfig({
                     if (/png|jpe?g|svg|gif|tiff|bmp|ico/i.test(extType)) {
                         extType = "img";
                     }
-                    return `corru-editor/assets/${extType}/[name]-[hash][extname]`;
+                    return `corruskivi/assets/${extType}/[name]-[hash][extname]`;
                 },
-                chunkFileNames: "corru-editor/assets/js/[name]-[hash].js",
-                entryFileNames: "corru-editor/assets/js/[name]-[hash].js",
+                chunkFileNames: "corruskivi/assets/js/[name]-[hash].js",
+                entryFileNames: "corruskivi/assets/js/[name]-[hash].js",
             },
         },
     },
