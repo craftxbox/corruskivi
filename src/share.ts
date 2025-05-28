@@ -10,7 +10,12 @@ export function makeShareString(dialogue: string, actors: string, defines: strin
 
 export function decodeShareString(shareString: string) {
     try {
-        let shareObj = window.LZString.decompressFromBase64(shareString);
+        let shareObj;
+        if (shareString.length === 10) {
+            shareObj = `https://crxb.cc/corruskivi-bin/raw/${shareString}`;
+        } else {
+            shareObj = window.LZString.decompressFromBase64(shareString);
+        }
 
         if (shareObj.startsWith("https://")) {
             let xhr = new XMLHttpRequest();
@@ -47,7 +52,7 @@ export function uploadShareString(shareString: string) {
 
     if (xhr.status >= 200 && xhr.status < 300) {
         const response = JSON.parse(xhr.responseText);
-        return window.LZString.compressToBase64(`${hasteserver.replace("documents","raw")}/${response.key}`);
+        return response.key;
     } else {
         console.error("Failed to upload share string:", xhr.statusText);
         return null;
