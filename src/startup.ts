@@ -3,22 +3,6 @@ import { updateActors } from "./customactors";
 
 let env = window.env;
 
-Object.defineProperty(window, "insertauthoractor", {
-    value: () => {
-        env.dialogueActors.funfriend = {
-            name: "craftxbox",
-            image: "https://crxb.cc/snep.png",
-            type: "external moth",
-        };
-    },
-});
-Object.defineProperty(window, "removeauthoractor", {
-    value: () => {
-        updateActors();
-        env.dialogueActors.moth.noProcess = false;
-    },
-});
-
 updateActors();
 let actors = Object.keys(env.dialogueActors);
 let lines = [];
@@ -49,6 +33,7 @@ export function playStartupDialogue() {
             delete env.definitions[`noProcess`];
             delete env.definitions[`branch`];
             delete env.definitions[`command`];
+            delete env.dialogueActors.craftxbox
             delete window.page.formedDefinitionStrings;
         },
         configurable: true,
@@ -60,12 +45,19 @@ export function playStartupDialogue() {
 
     env.dialogueActors.moth.noProcess = false;
 
+    env.dialogueActors.craftxbox = {
+        name: "craftxbox",
+        image: "https://crxb.cc/snep.png",
+        type: "external moth",
+    };
+
     env.definitions[`indentation`] = `a number of spaces before any text, always in multiples of 4.`;
-    env.definitions[`actor`] = `an entity that can speak in a dialogue, defined by its name`;env.definitions[
+    env.definitions[`actor`] = `an entity that can speak in a dialogue, defined by its name`;
+    env.definitions[
         `syntax`
     ] = `the rules that define how dialogues are written, including indentation, actors, and responses. invalid syntax will cause an error.`;
     env.definitions[`noProcess`] = `a flag that prevents definitions (these boxes) from showing up in the actor's dialogue.`;
-    env.definitions[`chain`] = `also referred to as a dialogue, a chain is a grouping of branches that are one coherent dialogue.`
+    env.definitions[`chain`] = `also referred to as a dialogue, a chain is a grouping of branches that are one coherent dialogue.`;
     env.definitions[`branch`] = `a line with no indentation, defines separate segments of dialogue.`;
     env.definitions[`command`] = `a line with three levels of indentation (twelve spaces). used to denote special actions in the dialogue.`;
 
@@ -296,10 +288,8 @@ customactors
         i can't explain the ins and outs of json here, but i can show you an example
         <code>{<br/>&nbsp;&nbsp;&nbsp;&nbsp;"craftxbox":{<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"name":"craftxbox",<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"image":"https://crxb.cc/snep.png",<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"type":"external moth"<br/>&nbsp;&nbsp;&nbsp;&nbsp;}<br/>}</code>
         if you put this in the custom actors box and save, you can then use "craftxbox" as an actor id
-            EXEC::insertauthoractor()
-    funfriend
+    craftxbox
         and you would get this
-            EXEC::removeauthoractor()
     moth
         the <span class="code">type</span> adds classes to the actor's dialogue box, so you can style it differently
         unfortunately i can't show you all the types available but you can see what types existing actors have by looking at the "all actors" section
@@ -361,23 +351,21 @@ credits
     moth
         oh, uh, obviously this isnt an official thing, corruworks didn't make this and probably hasn't even seen it.
         so don't bug them about it, or take anything here as official canon.
-            EXEC::insertauthoractor()
     
-    funfriend
+    craftxbox
         My name is craftxbox, I made this dialogue editor (and the tutorial dialogue you're reading right now).
         I hope you find it useful, and if you have any questions, feel free to ask me on the corru.observer discord server.
         You can find the full source code for it here:<br/><a class="code" target="_blank" href="https://github.com/craftxbox/corruskivi">https://github.com/craftxbox/corruskivi</a>
         I credit @ifritdiezel for their original dialogue editor, aswell as @noobogonis and @the_dem for the dialogue toolkit I used as a reference
         Obviously, @corruworks made the game itself, and all the visuals you see here. I'm only responsible for the editor itself.
         I would also like to credit @daisy_m766 for giving me the idea to make this editor in the first place.
-            EXEC::removeauthoractor()
 
     RESPONSES::self
         ok<+>options
             FAKEEND::(back)
 `);
 
-    previewEntireDialogue(`editorintropleasedontcollide`, {specificChain:"start"});
+    previewEntireDialogue(`editorintropleasedontcollide`, { specificChain: "start" });
     env.currentDialogue.actors = {};
 }
 
