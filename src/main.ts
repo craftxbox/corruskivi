@@ -71,7 +71,7 @@ declare global {
                 chain: Dialogue;
                 branch: DialogueBranch;
             };
-            dialogueWaitTimeout?: NodeJS.Timeout;
+            dialogueWaitTimeout?: number;
         };
     }
 }

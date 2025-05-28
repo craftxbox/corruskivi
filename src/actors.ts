@@ -578,7 +578,7 @@ export function insertExtraActors() {
     window.env.dialogueActors["telyu"] = {
         image: "/img/sprites/obesk/telyu/portrait.gif",
         type: "obesk qou portrait-contain",
-        voice: ()=>play("talkmind", 1.5), 
+        voice: ()=> window.play("talkmind", 1.5), 
         expressions: {
             default: {
                 image: "/img/sprites/obesk/telyu/portrait.gif"
