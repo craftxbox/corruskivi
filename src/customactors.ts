@@ -31,10 +31,18 @@ for (let key of Object.keys(window.env.dialogueActors)) {
 
 let originalActors = clone(window.env.dialogueActors);
 
+function parseActors(actors: string) {
+    let actorJSON = actors.replaceAll(/\( *\) *=> *play *\( *'(.*)' *, *(\d+\.?\d*) *\)/g, (_, sound, volume) => {
+            return `["${sound}", ${volume}]`;
+    });
+
+    return JSON.parse(actorJSON);
+}
+
 export function updateActors() {
     let actorJSON = getCustomActorsContent().trim();
 
-    let actors = actorJSON ? JSON.parse(actorJSON) : {};
+    let actors = actorJSON ? parseActors(actorJSON) : {};
 
     window.env.dialogueActors = clone(originalActors);
     insertExtraActors();
@@ -43,6 +51,14 @@ export function updateActors() {
         if (actors.hasOwnProperty(actorName)) {
             let actor = actors[actorName];
             window.env.dialogueActors[actorName] = actor;
+            if (window.env.dialogueActors[actorName].voice) {
+                let voice = window.env.dialogueActors[actorName].voice as any;
+                if (voice?.length == 2) {
+                    window.env.dialogueActors[actorName].voice = () => {
+                        window.play(voice[0], voice[1]);
+                    };
+                }
+            }
         }
     }
 }
@@ -50,7 +66,7 @@ export function updateActors() {
 document.querySelector("#save-custom-actors")?.addEventListener("click", () => {
     let actors = getCustomActorsContent().trim();
     try {
-        JSON.parse(actors);
+        parseActors(actors)
     } catch (e) {
         window.chatter({ actor: "funfriend", text: "Invalid JSON format for actors. Please check your input.", readout: true });
         return;
