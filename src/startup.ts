@@ -167,11 +167,11 @@ actors
         i'm <span class="code">moth</span>, for example.
 
     RESPONSES::self
-        who can i use<+>actorsareyousure
+        who can i use<+>actorsareyousuresyn
         ok<+>syntax
             FAKEEND::(back)
 
-actorsareyousure
+actorsareyousuresyn
     moth
         hooo boy, there are uh, a LOT.
         if you wanna see a list of them
@@ -182,6 +182,19 @@ actorsareyousure
     RESPONSES::self
         i have time<+>allactors
         no thanks<+>syntax
+            FAKEEND::(back)
+
+actorsareyousureadv
+    moth
+        hooo boy, there are uh, a LOT.
+        if you wanna see a list of them
+        you can <a class="code" target="_blank" href="https://github.com/craftxbox/corruskivi/tree/master/src/actors.ts">click on this thing</a>
+        or i can list them all for you right now
+        but we'll be here for a while
+
+    RESPONSES::self
+        i have time<+>allactors
+        no thanks<+>advanced
             FAKEEND::(back)
 
 allactors
@@ -295,7 +308,7 @@ customactors
         unfortunately i can't show you all the types available but you can see what types existing actors have by looking at the "all actors" section
 
     RESPONSES::self
-        all actors<+>actorsareyousure
+        all actors<+>actorsareyousureadv
         ok<+>advanced
             FAKEEND::(back)
 
