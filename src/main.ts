@@ -1,4 +1,5 @@
 import type LZString from "lz-string";
+import DOMPurify from "dompurify";
 import { previewDialogue } from "./previewDialogue";
 
 import "./saves";
@@ -250,13 +251,33 @@ export function generateEditorDialogue() {
         }
     }
 
+    // if (dialogue.startsWith("@bgm ")) {
+    //     let bgm = dialogue.match(/^@bgm (.+)$/m);
+    //     dialogue = dialogue.replace(/^@bgm .+$/m, "");
+    //     window.page.bgm: new window.Howl({
+	// 				onload: function () {window.page.howls.push(this)},
+	// 				src: ['/audio/outerhubv1.ogg'],
+	// 				preload: true,
+	// 				loop: true,
+					
+					
+	// 				sprite: {
+	// 					__default: [50, 236000, true]
+	// 				}
+	// 			}),
+    // }
+
     if (/^@(?:name|respobj) /gm.test(dialogue)) {
         let segments = dialogue.split(/^@/gm);
         if (segments.length < 2) {
             window.chatter({ actor: "funfriend", text: "Invalid dialogue format! Please ensure you have at least one dialogue segment.", readout: true });
             return;
         }
-        window.env.dialogues["editorpreview"] = window.generateDialogueObject(segments.shift() || "");
+
+        let firstSegment = segments.shift();
+        firstSegment = DOMPurify.sanitize(firstSegment || "");
+
+        window.env.dialogues["editorpreview"] = window.generateDialogueObject(firstSegment);
         let chains: { [key: string]: string } = {};
         let respobjs: { [key: string]: string } = {};
         for (let segment of segments) {
@@ -271,9 +292,9 @@ export function generateEditorDialogue() {
                 window.chatter({ actor: "funfriend", text: "invalid dialogue segment was found! ignoring it.", readout: true });
             }
             segment = segment.replace(/^.+\n/, "");
+            segment = DOMPurify.sanitize(segment || "");
             switch (type) {
                 case "name":
-                    // window.env.dialogues[name] = window.generateDialogueObject(segment);
                     chains[name] = segment;
                     break;
                 case "respobj":
@@ -293,7 +314,8 @@ export function generateEditorDialogue() {
             window.env.dialogues[key] = window.generateDialogueObject(value);
         }
     } else {
-        window.env.dialogues["editorpreview"] = window.generateDialogueObject(getEditorContent());
+        dialogue = DOMPurify.sanitize(dialogue)
+        window.env.dialogues["editorpreview"] = window.generateDialogueObject(dialogue);
     }
 }
 
