@@ -183,7 +183,7 @@ actorsareyousure
     moth
         hooo boy, there are uh, a LOT.
         if you wanna see a list of them
-        you can <a class="code" target="_blank" href="https://file.garden/ZdYqv9vlqFbDy9iO/the%20dialogue%20toolkit.js">click on this thing</a>
+        you can <a class="code" target="_blank" href="https://github.com/craftxbox/corruskivi/tree/master/src/actors.ts">click on this thing</a>
         or i can list them all for you right now
         but we'll be here for a while
 
@@ -366,7 +366,7 @@ credits
     funfriend
         My name is craftxbox, I made this dialogue editor (and the tutorial dialogue you're reading right now).
         I hope you find it useful, and if you have any questions, feel free to ask me on the corru.observer discord server.
-        You can find the full source code for it here:<br/><a class="code" target="_blank" href="https://github.com/craftxbox/corrueditor">https://github.com/craftxbox/corrueditor</a>
+        You can find the full source code for it here:<br/><a class="code" target="_blank" href="https://github.com/craftxbox/corruskivi">https://github.com/craftxbox/corruskivi</a>
         I credit @ifritdiezel for their original dialogue editor, aswell as @noobogonis and @the_dem for the dialogue toolkit I used as a reference
         Obviously, @corruworks made the game itself, and all the visuals you see here. I'm only responsible for the editor itself.
         I would also like to credit @daisy_m766 for giving me the idea to make this editor in the first place.
