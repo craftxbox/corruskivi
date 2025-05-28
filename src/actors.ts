@@ -596,20 +596,6 @@ export function insertExtraActors() {
         voice: () => window.play("talkmind", 0.8),
     };
 
-    window.env.dialogueActors["telyu"] = {
-        image: "/img/sprites/obesk/telyu/portrait.gif",
-        type: "obesk qou portrait-contain",
-        voice: ()=>play("talkmind", 1.5), 
-        expressions: {
-            default: {
-                image: "/img/sprites/obesk/telyu/portrait.gif"
-            },
-            dark: {
-                image: "/img/sprites/obesk/telyu/portrait_dark.gif"
-            },
-        }
-    };
-
     //emulates the abyss so drowning kazki doesn't error out
     function drowningFear() {}
     if (!window.env.abyss) window.env.abyss = { drowningFear };
