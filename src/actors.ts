@@ -534,6 +534,7 @@ export function insertExtraActors() {
                 image: "/img/sprites/obesk/geli/bsteli/portrait_blueeyes.gif",
             },
         },
+        voice: ()=> window.play('talkgel', 0.9),
         expression: "default",
         image: "/img/sprites/obesk/geli/bsteli/portrait.gif",
     };
