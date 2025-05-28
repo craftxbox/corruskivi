@@ -23,6 +23,9 @@ jobs:
       with:
         node-version: '20.x'
 
+    - name: Inspect Environment
+      run: ls -la
+
     - name: Install Dependencies
       run: npm install
 
