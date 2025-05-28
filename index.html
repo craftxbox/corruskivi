@@ -12,16 +12,30 @@
             var xhr = new XMLHttpRequest();
             xhr.open("GET", "https://corru.observer/js/lib/howler.min.js", false);
             xhr.send(null);
-            if (xhr.status === 200) {
+            if (xhr.status > 200 || xhr.status <= 300) {
                 eval(xhr.responseText.replaceAll(/function _0x.*/g, ""));
-            } else console.error("Failed to load howler.min.js");
+                console.log("howler.min.js loaded successfully");
+            } else {
+                console.log(xhr);
+                console.log(xhr.status);
+                console.log(xhr.statusText);
+                console.log(xhr.responseText);
+                console.error("Failed to load howler.min.js");
+            }
 
             var xhr = new XMLHttpRequest();
             xhr.open("GET", "https://corru.observer/js/lib/lettering.js", false);
             xhr.send(null);
-            if (xhr.status === 200) {
+            if (xhr.status > 200 || xhr.status <= 300) {
                 eval(xhr.responseText.replaceAll("window.location.href", "window.nothingimportant"));
-            } else console.error("Failed to load lettering.js");
+                console.log("lettering.js loaded successfully");
+            } else {
+                console.log(xhr);
+                console.log(xhr.status);
+                console.log(xhr.statusText);
+                console.log(xhr.responseText);
+                console.error("Failed to load lettering.js");
+            }
         </script>
         <script src="https://corru.observer/js/lib/lzstring.js"></script>
         <script src="https://corru.observer/js/lib/gpu/detect-gpu.umd.js"></script>
@@ -29,16 +43,30 @@
             var xhr = new XMLHttpRequest();
             xhr.open("GET", "https://corru.observer/js/lib/draggable.bundle.js", false);
             xhr.send(null);
-            if (xhr.status === 200) {
+            if (xhr.status > 200 || xhr.status <= 300) {
                 eval(xhr.responseText.replaceAll(/function _0x.*/g, ""));
-            } else console.error("Failed to load draggable.bundle.js");
+                console.log("draggable.bundle.js loaded successfully");
+            } else {
+                console.log(xhr);
+                console.log(xhr.status);
+                console.log(xhr.statusText);
+                console.log(xhr.responseText);
+                console.error("Failed to load draggable.bundle.js");
+            }
 
             var xhr = new XMLHttpRequest();
             xhr.open("GET", "https://corru.observer/js/corru.js", false);
             xhr.send(null);
-            if (xhr.status === 200) {
+            if (xhr.status > 200 || xhr.status <= 300) {
                 eval(xhr.responseText.replaceAll("window.location.href", "window.nothingimportant"));
-            } else console.error("Failed to load corru.js");
+                console.log("corru.js loaded successfully");
+            } else {
+                console.log(xhr);
+                console.log(xhr.status);
+                console.log(xhr.statusText);
+                console.log(xhr.responseText);
+                console.error("Failed to load corru.js");
+            }
         </script>
         <script src="https://corru.observer/js/dialogue.js?"></script>
         <script src="https://corru.observer/js/globalents.js"></script>
