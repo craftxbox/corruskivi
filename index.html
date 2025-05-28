@@ -14,16 +14,14 @@
             xhr.send(null);
             if (xhr.status === 200) {
                 eval(xhr.responseText.replaceAll(/function _0x.*/g, ""));
-            }
-            else console.error("Failed to load howler.min.js");
+            } else console.error("Failed to load howler.min.js");
 
             var xhr = new XMLHttpRequest();
             xhr.open("GET", "https://corru.observer/js/lib/lettering.js", false);
             xhr.send(null);
             if (xhr.status === 200) {
                 eval(xhr.responseText.replaceAll("window.location.href", "window.nothingimportant"));
-            }
-            else console.error("Failed to load lettering.js");
+            } else console.error("Failed to load lettering.js");
         </script>
         <script src="https://corru.observer/js/lib/lzstring.js"></script>
         <script src="https://corru.observer/js/lib/gpu/detect-gpu.umd.js"></script>
@@ -33,16 +31,14 @@
             xhr.send(null);
             if (xhr.status === 200) {
                 eval(xhr.responseText.replaceAll(/function _0x.*/g, ""));
-            }
-            else console.error("Failed to load draggable.bundle.js");
+            } else console.error("Failed to load draggable.bundle.js");
 
             var xhr = new XMLHttpRequest();
             xhr.open("GET", "https://corru.observer/js/corru.js", false);
             xhr.send(null);
             if (xhr.status === 200) {
                 eval(xhr.responseText.replaceAll("window.location.href", "window.nothingimportant"));
-            }
-            else console.error("Failed to load corru.js");
+            } else console.error("Failed to load corru.js");
         </script>
         <script src="https://corru.observer/js/dialogue.js?"></script>
         <script src="https://corru.observer/js/globalents.js"></script>
@@ -78,8 +74,8 @@
             </div>
 
             <!--dropdown menu-->
-            <i class="ci-bars" style="display:none;"></i>
-            <div id="meta-links" style="display:none;">
+            <i class="ci-bars" style="display: none"></i>
+            <div id="meta-links" style="display: none">
                 <div id="mui-links">
                     <a id="meta-hub" definition="NOTE::'return to hub';'eject'"><i class="ci-nav"></i></a>
                     <a id="meta-obs" definition="NOTE::'review scanned and detected entities'"><i class="ci-ent"></i></a>
@@ -120,10 +116,17 @@
             <details class="sysblock" open>
                 <summary>Editor</summary>
                 <div id="editor-text" class="bigtext"></div>
-                <span id="preview-dialogue" class="button primary">Preview</span>
-                <span id="start-dialogue" class="button primary">Start</span>
-                <span id="share-dialogue" class="button editor-pink">Share</span>
-                <span id="end-dialogue" class="button">END DIALOGUE</span>
+                <div>
+                    <span id="test-dialogue" class="button primary">Test</span>
+                    <span id="preview-dialogue" class="button primary">Preview</span>
+                    <span id="start-dialogue" class="button primary">Start</span>
+                    <span id="end-dialogue" class="button">END DIALOGUE</span>
+                </div>
+                <div>
+                    <span id="share-editor-dialogue" class="button editor-pink">Share Editor</span>
+                    <span class="button invisible">spacing</span>
+                    <span id="share-dialogue" class="button editor-pink">Share Memory</span>
+                </div>
             </details>
 
             <details class="sysblock" open>
@@ -132,7 +135,7 @@
                     <option value="___NEW_SLOT">CREATE NEW SLOT</option>
                 </select>
                 <input type="text" id="save-editor-name" hidden placeholder="NEW SLOT NAME" />
-                <br/>
+                <br />
                 <span id="load-editor-save" class="button primary">Load slot</span>
                 <span id="save-editor-save" class="button editor-pink">Save slot</span>
                 <span id="delete-editor-save" class="button editor-pink">Delete slot</span>
@@ -160,11 +163,35 @@
                     <div id="customactors" class="midtext"></div>
                     <span class="button primary" id="save-custom-actors">Save</span>
                 </details>
+                <details class="minor editor-pink incoherent">
+                    <summary>DANGER</summary>
+                    <div class="container">
+                        <div class="warning sysbox">
+                            <h3>!!__Attention__!!</h3>
+                            <span
+                                >Enabling these settings may put you at risk of
+                                <span definition="DANGER::Cross-site scripting is the execution of foreign and potentially malicious code on your web browser."
+                                    >XSS</span
+                                >
+                                attacks, which can lead to data loss, corruption, or even permanent damage to your computer. Use at your own risk.
+                            </span>
+                        </div>
+                        <input type="checkbox" id="enable-exec" />Enable EXEC:: based dialogue commands
+                    </div>
+                </details>
             </details>
 
             <details class="sysblock modstring">
                 <summary definition="NOTICE::'third-party resources loaded by system';'allows for log modifications'">Modification URL List</summary>
                 <div class="stringinput">
+                    <div class="warning sysbox">
+                        <h3>!!__Attention__!!</h3>
+                        <span
+                            >Only import mindspike data and modifications from trusted sources. Illicit data is known to carry dangerous and often lethal
+                            thoughtforms. Failure to exercise caution could lead to stroke, chronos misalignment, or worse. By importing any data into your
+                            mindspike, you waive all right to medical claims against MINDSCI. For more information, please refer to your license agreement.
+                        </span>
+                    </div>
                     <p class="sysinfo">
                         Data URLs should be separated by new lines. Hitting save will manually load and initialize all third party modifications listed. They
                         will be initialized automatically from then on, in order, until removed.

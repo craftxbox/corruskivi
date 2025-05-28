@@ -1,4 +1,4 @@
-import { previewEntireDialogue } from "./main";
+import { clearTestPath, previewEntireDialogue } from "./main";
 import { updateActors } from "./customactors";
 
 let env = window.env;
@@ -56,6 +56,8 @@ export function playStartupDialogue() {
         enumerable: true,
     });
 
+    clearTestPath();
+
     env.dialogueActors.moth.noProcess = false;
 
     env.definitions[`indentation`] = `a number of spaces before any text, always in multiples of 4.`;
@@ -76,13 +78,23 @@ start
             AUTOADVANCE::
 
     RESPONSES::self
+        get me out of here<+>EXEC::window.unpreview()
+            SHOWIF::[["ENV!!directFromUrl", true]]
         help<+>helpin
         credits<+>credits
+        back<+>EXEC::window.enterDirectPreview()
+            SHOWIF::[["ENV!!directFromUrl", true]]
+            FAKEEND::(back)
 
 options
     RESPONSES::self
-        help<+>help
+        get me out of here<+>EXEC::window.unpreview()
+            SHOWIF::[["ENV!!directFromUrl", true]]
+        help<+>helpin
         credits<+>credits
+        back<+>EXEC::window.enterDirectPreview()
+            SHOWIF::[["ENV!!directFromUrl", true]]
+            FAKEEND::(back)
 
 helpin
     self
@@ -114,9 +126,10 @@ basics
         it allows you to create, edit, and preview dialogues.
         make memes, write mods, or just have fun with it
         the big box is where you write your dialogue in corru syntax
-        press <span class="code">PREVIEW</span> to show the entire dialogue immediately
-        or you can press <span class="code">START</span to start the dialogue from the beginning
+        press <span class="code">TEST</span> to show the entire dialogue immediately
+        or you can press <span class="code">PREVIEW</span to start the dialogue from the beginning
         just like it would look in the game
+        you can also press <span class="code">START</span> to show your dialogue as a memory stream
 
     RESPONSES::self
         ok<+>help

@@ -2,6 +2,10 @@ import * as monaco from "monaco-editor";
 
 const editorContainer = document.getElementById("editor-text") as HTMLElement;
 
+monaco.languages.json.jsonDefaults.setDiagnosticsOptions({
+    validate: true,
+});
+
 monaco.languages.register({ id: "corru-dialogue" });
 monaco.languages.setMonarchTokensProvider("corru-dialogue", {
     defaultToken: "invalid",

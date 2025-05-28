@@ -1,22 +1,67 @@
 .bigtext {
-  width:100%;
-  height:70vh;
+  width: 100%;
+  height: 70vh;
 }
 
 .midtext {
-  width:100%;
-  height:40vh;
+  width: 100%;
+  height: 40vh;
 }
 
-.moth-trigger{
-  opacity:0.4 !important;
+.moth-trigger {
+  opacity: 0.4 !important;
   pointer-events: unset !important;
-  position:fixed;
-  left:46vw;
+  position: fixed;
+  left: 46vw;
 
-  top:-6px;
+  top: -6px;
+}
+
+body.codezone .moth-trigger {
+  left: 70vw;
 }
 
 .button.editor-pink {
   color: var(--obesk-color);
+}
+
+.editor-pink {
+  color: var(--obesk-color) !important;
+}
+
+.sysblock .minor.incoherent {
+  text-shadow: 1px 1px var(--dark-color), 2px 2px var(--dark-color), 2px 2px var(--dark-color), 2px 2px var(--dark-color);
+  background: url(https://corru.observer/img/textures/fadein.gif), url(https://corru.observer/img/textures/corruripple.gif);
+  background-size: 30%;
+}
+
+.sysblock .minor.incoherent summary {
+  margin: 0px;
+}
+
+.sysblock .minor.incoherent .container {
+  padding: 16px;
+}
+
+.sysblock [definition] {
+  border-bottom: 2px dashed;
+  margin-bottom: 2px;
+}
+
+.sysbox.warning h3::before,
+.sysbox.warning h3::after {
+  animation-play-state: running;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.button.invisible {
+  opacity:0;
+  pointer-events: none;
+}
+
+.sysblock div .button:first-of-type {
+  margin-left: 0px !important;
 }

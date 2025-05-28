@@ -38,7 +38,7 @@ declare global {
             formedDefinitionStrings?: { [key: string]: Object | string };
         };
         check(key: string, state: string): boolean;
-        play: (sfx: string, volume?: number) => void;
+        play: (sfx: string, pitch?: number) => void;
         LZString: LZString;
         originalActors: { [key: string]: Actor };
         sfxmap: {
@@ -80,6 +80,11 @@ window.sfxmap._src = "https://corru.observer" + window.sfxmap._src;
 window.sfxmap.load();
 
 let testpath: number[][] = [];
+
+export function clearTestPath() {
+    testpath = [];
+}
+
 const dialogueBox = document.querySelector("#dialogue-box") as HTMLDivElement;
 
 export function startNewDialogue(dialogue: string, settings?: { originEntityId?: string; specificChain?: string }): boolean {
@@ -117,6 +122,10 @@ export function startNewDialogue(dialogue: string, settings?: { originEntityId?:
     } else window.startDialogue(dialogue, settings);
     return true;
 }
+
+Object.defineProperty(window, "_startNewDialogue", {
+    value: startNewDialogue,
+});
 
 export function previewEntireDialogue(dialogueID: string, settings?: { originEntityId?: string; specificChain?: string }) {
     let dialogue = window.env.dialogues[dialogueID];
@@ -176,7 +185,7 @@ function advanceTestPath(testpath: number[][]) {
         }
         dialogueBox.classList.remove("dialogue-click-proceed");
         return;
-    };
+    }
 
     let dialoguemenu = document.querySelector("#dialogue-menu") as HTMLDivElement;
 
@@ -209,9 +218,21 @@ export function generateEditorDialogue() {
 
     let dialogue = getEditorContent();
 
+    let execCheck = document.querySelector("#enable-exec") as HTMLInputElement;
+
+    if (!execCheck.checked) {
+        if (/EXEC::|THEN::|UNREADCHECK::|END::|SKIP::/.test(dialogue)) {
+            window.chatter({ actor: "funfriend", text: "Dialogue tried to use forbidden commands to execute code! Refusing to generate this.", readout: true });
+            window.env.dialogues["editorpreview"] = window.generateDialogueObject(`start
+    sys
+        The dialogue editor has detected forbidden commands that could execute code.
+        Please remove EXEC::, THEN::, UNREADCHECK::, END::, or SKIP:: commands from your dialogue.`);
+            return;
+        }
+    }
+
     if (dialogue.trim() === "") {
         window.chatter({ actor: "funfriend", text: "The editor is empty. Please write some dialogue before previewing.", readout: true });
-        window.play("talk", 2);
         return;
     }
 
@@ -230,7 +251,6 @@ export function generateEditorDialogue() {
             testpath = path.map((p) => p.split(",").map(Number));
         } else {
             window.chatter({ actor: "funfriend", text: "Invalid @testpath format! Please use @testpath <number> [<number> ...].", readout: true });
-            window.play("talk", 2);
             return;
         }
     }
@@ -239,7 +259,6 @@ export function generateEditorDialogue() {
         let segments = dialogue.split(/^@/gm);
         if (segments.length < 2) {
             window.chatter({ actor: "funfriend", text: "Invalid dialogue format! Please ensure you have at least one dialogue segment.", readout: true });
-            window.play("talk", 2);
             return;
         }
         window.env.dialogues["editorpreview"] = window.generateDialogueObject(segments.shift() || "");
@@ -249,14 +268,12 @@ export function generateEditorDialogue() {
             let match = segment.match(/^(\w+) (.+)\n/);
             if (!match || match.length < 3) {
                 window.chatter({ actor: "funfriend", text: "invalid dialogue segment was found! ignoring it.", readout: true });
-                window.play("talk", 2);
                 continue;
             }
             let type = match[1].trim();
             let name = match[2].trim();
             if (name.length === 0) {
                 window.chatter({ actor: "funfriend", text: "invalid dialogue segment was found! ignoring it.", readout: true });
-                window.play("talk", 2);
             }
             segment = segment.replace(/^.+\n/, "");
             switch (type) {
@@ -269,7 +286,6 @@ export function generateEditorDialogue() {
                     break;
                 default:
                     window.chatter({ actor: "funfriend", text: `Unknown annotation type: ${type}. ignoring it!`, readout: true });
-                    window.play("talk", 2);
                     console.error(`Unknown annotation type: ${type}.`);
                     break;
             }
@@ -286,25 +302,46 @@ export function generateEditorDialogue() {
     }
 }
 
-document.querySelector("#preview-dialogue")?.addEventListener("click", () => {
+document.querySelector("#test-dialogue")?.addEventListener("click", () => {
     generateEditorDialogue();
 
     previewEntireDialogue("editorpreview");
     window.play("muiScanner", 2);
 });
 
-document.querySelector("#start-dialogue")?.addEventListener("click", () => {
+document.querySelector("#preview-dialogue")?.addEventListener("click", () => {
     generateEditorDialogue();
 
     startNewDialogue("editorpreview");
     window.play("muiScanner", 2);
 });
 
+document.querySelector("#start-dialogue")?.addEventListener("click", () => {
+    enterDirectPreview();
+    window.play("muiScanner", 2);
+});
+
+document.querySelector("#share-editor-dialogue")?.addEventListener("click", () => {
+    generateEditorDialogue();
+    previewEntireDialogue("editorpreview");
+    window.play("talk", 2);
+    let url = window.location.href
+    navigator.clipboard
+        .writeText(url)
+        .then(() => {
+            window.chatter({ actor: "funfriend", text: "Dialogue URL copied to clipboard!", readout: true, sfx: false });
+        })
+        .catch((err) => {
+            console.error("Failed to copy URL: ", err);
+            window.chatter({ actor: "funfriend", text: "Failed to copy dialogue URL.", readout: true });
+        });
+});
+
 document.querySelector("#share-dialogue")?.addEventListener("click", () => {
     generateEditorDialogue();
     previewEntireDialogue("editorpreview");
     window.play("talk", 2);
-    let url = window.location.href;
+    let url = window.location.href.replace("/#", "/preview#");
     navigator.clipboard
         .writeText(url)
         .then(() => {
@@ -326,10 +363,69 @@ document.querySelector("#end-dialogue")?.addEventListener("click", () => {
 // consider wether the export should be modder focused or 'easymode' for slapping straight into game
 // or consider making two options
 
+Object.defineProperty(window, "unpreview", {
+    value: () => {
+        Object.defineProperty(window.env, "directFromUrl", {
+            value: false,
+            configurable: true,
+            writable: true,
+        });
+        document.body.classList.remove("codezone");
+        document.querySelector("#system-menu")?.classList.remove("hidden");
+        window.history.pushState({}, "", window.location.href.replace("/preview", "/"));
+        setTimeout(playStartupDialogue, 50);
+    },
+});
+
+window.env.dialogues["realpreview"] = window.generateDialogueObject(`start
+    sys
+        NOTICE::'memory stream located'
+            WAIT::10000`);
+
+export function enterDirectPreview() {
+    Object.defineProperty(window.env, "directFromUrl", {
+        value: true,
+        configurable: true,
+        writable: true,
+    });
+    document.body.classList.add("codezone");
+    document.querySelector("#system-menu")?.classList.add("hidden");
+    startNewDialogue("realpreview");
+    setTimeout(() => {
+        if (window.env.dialogueWaitTimeout) {
+            clearTimeout(window.env.dialogueWaitTimeout);
+            delete window.env.dialogueWaitTimeout;
+        }
+        dialogueBox.classList.add("dialogue-click-proceed");
+        dialogueBox.addEventListener(
+            "click",
+            () => {
+                window.changeDialogue("editorpreview");
+            },
+            { once: true }
+        );
+        document.addEventListener(
+            "keydown",
+            (e) => {
+                let key = e.key || false;
+                if (key && key.toLowerCase() === "enter") {
+                    window.changeDialogue("editorpreview");
+                }
+            },
+            { once: true }
+        );
+    }, 50);
+}
+
+Object.defineProperty(window, "enterDirectPreview", {
+    value: enterDirectPreview,
+});
+
 try {
     let shareObj = window.LZString.decompressFromBase64(window.location.hash.slice(1));
     let data = JSON.parse(shareObj) as { dialogue: string; actors: string; defines: string };
     if (data) {
+        let direct = window.location.pathname.endsWith("preview");
         setEditorContent(data.dialogue);
         setCustomActorsContent(data.actors);
         setDefinesContent(data.defines);
@@ -338,7 +434,9 @@ try {
         updateDefines();
 
         generateEditorDialogue();
-        previewEntireDialogue("editorpreview");
+        if (direct) {
+            enterDirectPreview();
+        } else previewEntireDialogue("editorpreview");
     } else {
         loadSlot(localStorage.getItem("lastSave") || "save_0", true);
         playStartupDialogue();
