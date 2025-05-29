@@ -32,7 +32,7 @@ for (let key of Object.keys(window.env.dialogueActors)) {
 let originalActors = clone(window.env.dialogueActors);
 
 function parseActors(actors: string) {
-    let actorJSON = actors.replaceAll(/\( *\) *=> *play *\( *'(.*)' *, *(\d+\.?\d*) *\)/g, (_, sound, volume) => {
+    let actorJSON = actors.replaceAll(/\( *\) *=> *play *\( *['"`](.*)['"`] *, *(\d+\.?\d*) *\)/g, (_, sound, volume) => {
             return `["${sound}", ${volume}]`;
     });
 
