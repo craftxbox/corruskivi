@@ -3,6 +3,10 @@
   height: 70vh;
 }
 
+#gpu-warning, #wide-warning {
+  display: none;
+}
+
 .midtext {
   width: 100%;
   height: 40vh;
