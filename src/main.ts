@@ -17,6 +17,10 @@ import { decodeShareString, makeShareString, uploadShareString } from "./share";
 
 declare type LZString = typeof LZString;
 
+const purifyopts = {
+    ADD_TAGS: ["+"]
+}
+
 declare global {
     interface Window {
         startDialogue: (dialogue: string, settings?: { originEntityId?: string; specificChain?: string }) => void;
@@ -212,6 +216,13 @@ function advanceTestPath(testpath: number[][]) {
     }, 25);
 }
 
+function processSegment(segment: string) {
+    let newSegment = segment.replaceAll(/<\+>/g, "__RESP_SEPARATOR__");
+    newSegment = DOMPurify.sanitize(newSegment, purifyopts);
+    newSegment = newSegment.replaceAll("__RESP_SEPARATOR__", "<+>");
+    return newSegment;
+}
+
 export function generateEditorDialogue() {
     if (window.undoallchanges) {
         window.undoallchanges();
@@ -274,8 +285,7 @@ export function generateEditorDialogue() {
             return;
         }
 
-        let firstSegment = segments.shift();
-        firstSegment = DOMPurify.sanitize(firstSegment || "");
+        let firstSegment = processSegment(segments.shift() || "");
 
         window.env.dialogues["editorpreview"] = window.generateDialogueObject(firstSegment);
         let chains: { [key: string]: string } = {};
@@ -292,7 +302,7 @@ export function generateEditorDialogue() {
                 window.chatter({ actor: "funfriend", text: "invalid dialogue segment was found! ignoring it.", readout: true });
             }
             segment = segment.replace(/^.+\n/, "");
-            segment = DOMPurify.sanitize(segment || "");
+            segment = processSegment(segment);
             switch (type) {
                 case "name":
                     chains[name] = segment;
@@ -314,7 +324,7 @@ export function generateEditorDialogue() {
             window.env.dialogues[key] = window.generateDialogueObject(value);
         }
     } else {
-        dialogue = DOMPurify.sanitize(dialogue)
+        dialogue = processSegment(dialogue);
         window.env.dialogues["editorpreview"] = window.generateDialogueObject(dialogue);
     }
 }
