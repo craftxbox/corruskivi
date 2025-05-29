@@ -32,12 +32,6 @@ jobs:
     - name: Vite Build
       run: npm run build
 
-    - name: Manual move the index
-      run: mv dist/index.html dist/corruskivi/index.html
-
-    - name: Manual copy the index
-      run: cp dist/corruskivi/index.html dist/corruskivi/preview.html
-
     - name: Upload Artifact
       uses: actions/upload-pages-artifact@v3
       with:
