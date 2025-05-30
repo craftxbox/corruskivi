@@ -18,8 +18,8 @@ import { decodeShareString, makeShareString, uploadShareString } from "./share";
 declare type LZString = typeof LZString;
 
 const purifyopts = {
-    ADD_TAGS: ["+"]
-}
+    ADD_TAGS: ["+"],
+};
 
 declare global {
     interface Window {
@@ -224,105 +224,122 @@ function processSegment(segment: string) {
 }
 
 export function generateEditorDialogue() {
-    if (window.undoallchanges) {
-        window.undoallchanges();
-        delete window.undoallchanges;
-    }
+    try {
+        if (window.undoallchanges) {
+            window.undoallchanges();
+            delete window.undoallchanges;
+        }
 
-    let dialogue = getEditorContent();
+        let dialogue = getEditorContent();
 
-    let execCheck = document.querySelector("#enable-exec") as HTMLInputElement;
+        let execCheck = document.querySelector("#enable-exec") as HTMLInputElement;
 
+        if (!execCheck.checked) {
             if (/EXEC::|THEN::|UNREADCHECK::|[ _]END::|SKIP::/.test(dialogue)) {
+                window.chatter({
+                    actor: "funfriend",
+                    text: "Dialogue tried to use forbidden commands to execute code! Refusing to generate this.",
+                    readout: true,
+                });
+                window.env.dialogues["editorpreview"] = window.generateDialogueObject(`start
     sys
         ERROR::'the dialogue editor detected forbidden commands that could execute code'
         ADVISE::'remove EXEC::, THEN::, UNREADCHECK::, END::, or SKIP:: commands from your dialogue'`);
+                return;
+            }
+        }
+
+        if (dialogue.trim() === "") {
+            window.chatter({ actor: "funfriend", text: "The editor is empty. Please write some dialogue before previewing.", readout: true });
             return;
         }
-    }
 
-    if (dialogue.trim() === "") {
-        window.chatter({ actor: "funfriend", text: "The editor is empty. Please write some dialogue before previewing.", readout: true });
-        return;
-    }
+        window.location.hash = makeShareString(dialogue, getCustomActorsContent(), getDefinesContent());
 
-    window.location.hash = makeShareString(dialogue, getCustomActorsContent(), getDefinesContent());
+        if (dialogue.startsWith("@testpath ")) {
+            let path = dialogue.match(/(\d+,\d+)/gm);
+            dialogue = dialogue.replace(/^@testpath .*$/m, "");
+            if (path && path.length > 0) {
+                testpath = path.map((p) => p.split(",").map(Number));
+            } else {
+                window.chatter({ actor: "funfriend", text: "Invalid @testpath format! Please use @testpath <number> [<number> ...].", readout: true });
+                return;
+            }
+        }
 
-    if (dialogue.startsWith("@testpath ")) {
-        let path = dialogue.match(/(\d+,\d+)/gm);
-        dialogue = dialogue.replace(/^@testpath .*$/m, "");
-        if (path && path.length > 0) {
-            testpath = path.map((p) => p.split(",").map(Number));
+        // if (dialogue.startsWith("@bgm ")) {
+        //     let bgm = dialogue.match(/^@bgm (.+)$/m);
+        //     dialogue = dialogue.replace(/^@bgm .+$/m, "");
+        //     window.page.bgm: new window.Howl({
+        // 				onload: function () {window.page.howls.push(this)},
+        // 				src: ['/audio/outerhubv1.ogg'],
+        // 				preload: true,
+        // 				loop: true,
+
+        // 				sprite: {
+        // 					__default: [50, 236000, true]
+        // 				}
+        // 			}),
+        // }
+
+        if (/^@(?:name|respobj) /gm.test(dialogue)) {
+            let segments = dialogue.split(/^@/gm);
+            if (segments.length < 2) {
+                window.chatter({ actor: "funfriend", text: "Invalid dialogue format! Please ensure you have at least one dialogue segment.", readout: true });
+                return;
+            }
+
+            let firstSegment = processSegment(segments.shift() || "");
+
+            let chains: { [key: string]: string } = {};
+            let respobjs: { [key: string]: string } = {};
+            for (let segment of segments) {
+                let match = segment.match(/^(\w+) (.+)\n/);
+                if (!match || match.length < 3) {
+                    window.chatter({ actor: "funfriend", text: "invalid dialogue segment was found! ignoring it.", readout: true });
+                    continue;
+                }
+                let type = match[1].trim();
+                let name = match[2].trim();
+                if (name.length === 0) {
+                    window.chatter({ actor: "funfriend", text: "invalid dialogue segment was found! ignoring it.", readout: true });
+                }
+                segment = segment.replace(/^.+\n/, "");
+                segment = processSegment(segment);
+                switch (type) {
+                    case "name":
+                        chains[name] = segment;
+                        break;
+                    case "respobj":
+                        respobjs[name] = segment;
+                        break;
+                    default:
+                        window.chatter({ actor: "funfriend", text: `Unknown annotation type: ${type}. ignoring it!`, readout: true });
+                        console.error(`Unknown annotation type: ${type}.`);
+                        break;
+                }
+            }
+            for (const [key, value] of Object.entries(respobjs)) {
+                window.env.dialogues[key] = window.generateDialogueObject(value);
+            }
+
+            window.env.dialogues["editorpreview"] = window.generateDialogueObject(firstSegment);
+
+            for (const [key, value] of Object.entries(chains)) {
+                window.env.dialogues[key] = window.generateDialogueObject(value);
+            }
         } else {
-            window.chatter({ actor: "funfriend", text: "Invalid @testpath format! Please use @testpath <number> [<number> ...].", readout: true });
-            return;
+            dialogue = processSegment(dialogue);
+            window.env.dialogues["editorpreview"] = window.generateDialogueObject(dialogue);
         }
-    }
-
-    // if (dialogue.startsWith("@bgm ")) {
-    //     let bgm = dialogue.match(/^@bgm (.+)$/m);
-    //     dialogue = dialogue.replace(/^@bgm .+$/m, "");
-    //     window.page.bgm: new window.Howl({
-	// 				onload: function () {window.page.howls.push(this)},
-	// 				src: ['/audio/outerhubv1.ogg'],
-	// 				preload: true,
-	// 				loop: true,
-					
-					
-	// 				sprite: {
-	// 					__default: [50, 236000, true]
-	// 				}
-	// 			}),
-    // }
-
-    if (/^@(?:name|respobj) /gm.test(dialogue)) {
-        let segments = dialogue.split(/^@/gm);
-        if (segments.length < 2) {
-            window.chatter({ actor: "funfriend", text: "Invalid dialogue format! Please ensure you have at least one dialogue segment.", readout: true });
-            return;
-        }
-
-        let firstSegment = processSegment(segments.shift() || "");
-
-        window.env.dialogues["editorpreview"] = window.generateDialogueObject(firstSegment);
-        let chains: { [key: string]: string } = {};
-        let respobjs: { [key: string]: string } = {};
-        for (let segment of segments) {
-            let match = segment.match(/^(\w+) (.+)\n/);
-            if (!match || match.length < 3) {
-                window.chatter({ actor: "funfriend", text: "invalid dialogue segment was found! ignoring it.", readout: true });
-                continue;
-            }
-            let type = match[1].trim();
-            let name = match[2].trim();
-            if (name.length === 0) {
-                window.chatter({ actor: "funfriend", text: "invalid dialogue segment was found! ignoring it.", readout: true });
-            }
-            segment = segment.replace(/^.+\n/, "");
-            segment = processSegment(segment);
-            switch (type) {
-                case "name":
-                    chains[name] = segment;
-                    break;
-                case "respobj":
-                    respobjs[name] = segment;
-                    break;
-                default:
-                    window.chatter({ actor: "funfriend", text: `Unknown annotation type: ${type}. ignoring it!`, readout: true });
-                    console.error(`Unknown annotation type: ${type}.`);
-                    break;
-            }
-        }
-        for (const [key, value] of Object.entries(respobjs)) {
-            window.env.dialogues[key] = window.generateDialogueObject(value);
-        }
-
-        for (const [key, value] of Object.entries(chains)) {
-            window.env.dialogues[key] = window.generateDialogueObject(value);
-        }
-    } else {
-        dialogue = processSegment(dialogue);
-        window.env.dialogues["editorpreview"] = window.generateDialogueObject(dialogue);
+    } catch (e) {
+        window.chatter({
+            actor: "actual_site_error",
+            text: "An error occurred while generating the dialogue. Most likely a syntax issue, but could be a real bug. Please reach out in the discord for assistance.",
+            readout: true,
+        });
+        window.chatter({ actor: "actual_site_error", text: "Error details: " + e, readout: true });
+        console.error("Error generating dialogue:", e);
     }
 }
 
@@ -357,7 +374,7 @@ document.querySelector("#share-dialogue")?.addEventListener("click", () => {
     generateEditorDialogue();
     previewEntireDialogue("editorpreview");
     window.play("talk", 2);
-    
+
     share("preview");
 });
 
@@ -365,7 +382,7 @@ function share(location: string = "") {
     let shareString = makeShareString(getEditorContent(), getCustomActorsContent(), getDefinesContent());
     let shareUrl = uploadShareString(shareString);
 
-    let url = window.location.href.replace(window.location.hash,"") + location + "#" + shareUrl;
+    let url = window.location.href.replace(window.location.hash, "") + location + "#" + shareUrl;
     navigator.clipboard
         .writeText(url)
         .then(() => {
