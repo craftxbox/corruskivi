@@ -233,10 +233,7 @@ export function generateEditorDialogue() {
 
     let execCheck = document.querySelector("#enable-exec") as HTMLInputElement;
 
-    if (!execCheck.checked) {
-        if (/EXEC::|THEN::|UNREADCHECK::|END::|SKIP::/.test(dialogue)) {
-            window.chatter({ actor: "funfriend", text: "Dialogue tried to use forbidden commands to execute code! Refusing to generate this.", readout: true });
-            window.env.dialogues["editorpreview"] = window.generateDialogueObject(`start
+            if (/EXEC::|THEN::|UNREADCHECK::|[ _]END::|SKIP::/.test(dialogue)) {
     sys
         ERROR::'the dialogue editor detected forbidden commands that could execute code'
         ADVISE::'remove EXEC::, THEN::, UNREADCHECK::, END::, or SKIP:: commands from your dialogue'`);
