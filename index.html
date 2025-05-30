@@ -18,22 +18,9 @@
 
         <!--REPLACEME__META_DESCRIPTION-->
 
-        <script src="https://corru.observer/js/lib/swup.min.js"></script>
+        <script src="https://unpkg.com/swup@2.0.14/dist/swup.min.js"></script>
+        <script src="https://unpkg.com/howler@2.2.3/dist/howler.min.js"></script>
         <script>
-            var xhr = new XMLHttpRequest();
-            xhr.open("GET", "https://corru.observer/js/lib/howler.min.js", false);
-            xhr.send(null);
-            if (xhr.status > 200 || xhr.status <= 300) {
-                eval(xhr.responseText.replaceAll(/function _0x.*/g, ""));
-                console.log("howler.min.js loaded successfully");
-            } else {
-                console.log(xhr);
-                console.log(xhr.status);
-                console.log(xhr.statusText);
-                console.log(xhr.responseText);
-                console.error("Failed to load howler.min.js");
-            }
-
             var xhr = new XMLHttpRequest();
             xhr.open("GET", "https://corru.observer/js/lib/lettering.js", false);
             xhr.send(null);
@@ -48,23 +35,10 @@
                 console.error("Failed to load lettering.js");
             }
         </script>
-        <script src="https://corru.observer/js/lib/lzstring.js"></script>
-        <script src="https://corru.observer/js/lib/gpu/detect-gpu.umd.js"></script>
+        <script src="https://unpkg.com/lz-string@1.5.0/libs/lz-string.min.js"></script>
+        <script src="https://unpkg.com/detect-gpu@5.0.70/dist/detect-gpu.umd.js"></script>
+        <script src="https://unpkg.com/@shopify/draggable@1.0.0-beta.11/lib/draggable.bundle.js"></script>
         <script>
-            var xhr = new XMLHttpRequest();
-            xhr.open("GET", "https://corru.observer/js/lib/draggable.bundle.js", false);
-            xhr.send(null);
-            if (xhr.status > 200 || xhr.status <= 300) {
-                eval(xhr.responseText.replaceAll(/function _0x.*/g, ""));
-                console.log("draggable.bundle.js loaded successfully");
-            } else {
-                console.log(xhr);
-                console.log(xhr.status);
-                console.log(xhr.statusText);
-                console.log(xhr.responseText);
-                console.error("Failed to load draggable.bundle.js");
-            }
-
             var xhr = new XMLHttpRequest();
             xhr.open("GET", "https://corru.observer/js/corru.js", false);
             xhr.send(null);
