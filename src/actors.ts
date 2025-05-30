@@ -569,12 +569,6 @@ export function insertExtraActors() {
         voice: () => window.play("scarydoia", 0.7),
         image: "/img/sprites/combat/foes/archivistportrait.gif",
     };
-
-    window.env.dialogueActors["isabel"] = {
-        image: "/img/local/uncosm/ozo/flowerfriend_portrait.gif",
-        type: "thoughtform flowerfriend recollection portrait-cover portrait-bright",
-        voice: () => window.play("talkflower"),
-    };
     
     window.env.dialogueActors["telyu"] = {
         image: "/img/sprites/obesk/telyu/portrait.gif",
