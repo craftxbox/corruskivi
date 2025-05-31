@@ -247,18 +247,18 @@ export function generateEditorDialogue() {
         if (!execCheck.checked) {
             dialogue = preprocessHowls(dialogue);
 
-    //         if (/EXEC::|THEN::|UNREADCHECK::|[ _]END::|SKIP::/.test(dialogue)) {
-    //             window.chatter({
-    //                 actor: "funfriend",
-    //                 text: "Dialogue tried to use forbidden commands to execute code! Refusing to generate this.",
-    //                 readout: true,
-    //             });
-    //             window.env.dialogues["editorpreview"] = window.generateDialogueObject(`start
-    // sys
-    //     ERROR::'the dialogue editor detected forbidden commands that could execute code'
-    //     ADVISE::'remove EXEC::, THEN::, UNREADCHECK::, END::, or SKIP:: commands from your dialogue'`);
-    //             return;
-    //         }
+                    if (/EXEC::|THEN::|UNREADCHECK::|[ _]END::|SKIP::/.test(dialogue)) {
+                        window.chatter({
+                            actor: "funfriend",
+                            text: "Dialogue tried to use forbidden commands to execute code! Refusing to generate this.",
+                            readout: true,
+                        });
+                        window.env.dialogues["editorpreview"] = window.generateDialogueObject(`start
+            sys
+                ERROR::'the dialogue editor detected forbidden commands that could execute code'
+                ADVISE::'remove EXEC::, THEN::, UNREADCHECK::, END::, or SKIP:: commands from your dialogue'`);
+                        return;
+                    }
             dialogue = postprocessHowls(dialogue);
         }
 
