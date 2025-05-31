@@ -10,24 +10,18 @@ const howlsEditor = monaco.editor.create(editorContainer, {
 
 let howls: { [key: string]: Howl } = {};
 
-howls.howl = new window.Howl({
-    src: ["https://corru.observer/audio/ozoloop.ogg"],
-    preload: true,
-    volume: 1.0,
-});
-
 export function preprocessHowls(dialogue: string) {
     let execs = dialogue.match(/EXEC::(.+)$/gm);
 
     if (!execs) return dialogue; // no exec matches so we have nothing to do
 
     for (let exec of execs) {
-        if (!/rate|play|volume/.test(exec)) continue; // this exec has no code we're interested in.
+        if (!/play|pause|stop|mute|volume|fade|rate|seek|loop|load|unload/.test(exec)) continue; // this exec has no code we're interested in.
 
         let howlObjects: { name: string; command: string; args: string }[] = [];
         let newExec = exec;
 
-        let howlCommands = exec.matchAll(/([\w-]+)\.(rate|play|volume)\(.*?\)/g);
+        let howlCommands = exec.matchAll(/([\w-]+)\.(play|pause|stop|mute|volume|fade|rate|seek|loop|load|unload)\((.*?)\)/g);
 
         for (let howlCommand of howlCommands) {
             let [_, howlName, command, args] = howlCommand;
@@ -99,7 +93,7 @@ export function postprocessHowls(dialogue: string) {
                 continue;
             }
 
-            if (!howlObject.command.match(/^(rate|play|volume)$/)) {
+            if (!howlObject.command.match(/^(play|pause|stop|mute|volume|fade|rate|seek|loop|load|unload)$/)) {
                 window.chatter({ actor: "funfriend", text: `Dialogue referenced an invalid howl command! This will be ignored.`, readout: true });
                 continue;
             }
@@ -110,12 +104,22 @@ export function postprocessHowls(dialogue: string) {
                     newHowlCode += `play("${args[0]}", ${args[1] || 1}, ${args[2] || 1});`;
                 } catch (e) {
                     console.error("Failed to parse play command arguments:", e);
-                    window.chatter({ actor: "actual_site_error", text: `Dialogue conatins an invalid play command! It will be ignored.`, readout: true });
+                    window.chatter({ actor: "actual_site_error", text: `Dialogue contains an invalid play command! It will be ignored.`, readout: true });
                     continue;
                 }
                 continue;
             }
-            newHowlCode += `fetchHowl("${howlObject.name}").${howlObject.command}(${howlObject.args});`;
+            try {
+                let args = JSON.parse(`[${howlObject.args}]` || "[]");
+                args = JSON.stringify(args).slice(1, -1); // remove the surrounding brackets
+
+                newHowlCode += `fetchHowl("${howlObject.name}").${howlObject.command}(${args});`;
+            } catch (e) {
+                console.error("Failed to parse howl command arguments:", e);
+                window.chatter({ actor: "actual_site_error", text: `Howl command contains invalid arguments! It will be invoked without them.`, readout: true });
+                newHowlCode += `fetchHowl("${howlObject.name}").${howlObject.command}();`;
+                continue;
+            }
         }
 
         let regex = new RegExp(`EXEC::(.+)\n +${howlCode.replaceAll("[", "\\x5b").replaceAll("]", "\\x5d").replaceAll(".", "\\x2e")}`, "m");
