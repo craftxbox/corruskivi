@@ -35,6 +35,9 @@ fetch("https://api.github.com/repos/craftxbox/corruskivi/contributors").then((re
     } else {
         contributors = ["... I couldn't seem to find them at the moment, sorry!"]
     }
+    Object.defineProperty(window, "contributors", {
+        value: contributors
+    });
 })
 
 
@@ -495,7 +498,7 @@ credits
         Obviously, @corruworks made the game itself, and all the visuals you see here. I'm only responsible for the editor itself.
         I would also like to credit @daisy_m766 for giving me the idea to make this editor in the first place.
         As well, I would like to credit all of the people who have contributed to the git repository:
-        ${contributors.join(", ")}
+        TEXEC::contributors.join(", ")
 
     RESPONSES::self
         ok<+>options
