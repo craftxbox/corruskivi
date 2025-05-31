@@ -294,6 +294,7 @@ advanced
         custom actors<+>customactors
         chains<+>chains
         RESPOBJ<+>respobj
+        annotations<+>annotations
         howls<+>howls
         back<+>help
             FAKEEND::(back)
@@ -360,6 +361,29 @@ respobj
         ok<+>advanced
             FAKEEND::(back)
 
+annotations
+    moth
+        annotations are a special comment that you can put in your dialogue
+        these diverge from syntax a bit but they're easy to remove if needed
+        they start with <span class="code">@</span> and have no indentation
+        you can use them to add notes to your dialogue, but they have a more important use
+        certain annotations will change how the dialogue is processed
+        like <span class="code">@testpath</span> which tells the editor which responses to click on when testing
+        or <span class="code">@background</span> changes what background is used
+
+    RESPONSES::self
+        testpath<+>testpath
+        background<+>background
+        ok<+>advanced
+            FAKEEND::(back)
+
+annotationslist
+    RESPONSES::self
+        testpath<+>testpath
+        background<+>background
+        ok<+>advanced
+            FAKEEND::(back)
+
 testpath
     moth
         normally when you preview a chain only the first branch is shown
@@ -372,7 +396,24 @@ testpath
         but note you can only have one testpath, and it must be at the very top of your editor
         otherwise it will break everything
     RESPONSES::self
-        ok<+>advanced
+        ok<+>annotationslist
+            FAKEEND::(back)
+
+background
+    moth
+        so normally the editor uses no background
+        all you get is a black void
+        but if you want to spice it up a little, you can use the <span class="code">@background</span> annotation
+        it takes a single argument, which is a link to an image
+        like this: <span class="code">@background https://corru.observer/img/textures/ccontours.gif</span>
+        and then the editor will use that image as the background
+        there's also <span class="code">@foreground</span> which works the same way but it will display on top of the background
+        useful for adding a 'mask' to the background
+        typically this would be <span class="code">@foreground https://corru.observer/img/textures/fadeinlonghalf.gif</span>
+        but you can pick whatever you want
+        go wild
+    RESPONSES::self
+        ok<+>annotationslist
             FAKEEND::(back)
 
 howls

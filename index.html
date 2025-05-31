@@ -179,9 +179,10 @@
                 <details class="minor">
                     <summary>Custom Howls</summary>
                     <p class="sysinfo">
-                        Custom howls allow you to create SFX and music that can be used in dialogues. Input is accepted as a JS script, however strict formatting is enforced.<br/>
-                        I highly recommend asking me for help in the <a class="code" href="https://discord.gg/corru">Discord</a> if you want to use this feature.
-                        <br /><br />
+                        Custom howls allow you to create SFX and music that can be used in dialogues. Input is accepted as a JS script, however strict
+                        formatting is enforced.<br />
+                        I highly recommend asking me for help in the <a class="code" href="https://discord.gg/corru">Discord</a> if you want to use this
+                        feature. <br /><br />
                     </p>
                     <div id="howls" class="midtext"></div>
                     <span class="button primary" id="save-howls">Save</span>
@@ -241,9 +242,23 @@
             </details>
         </div>
 
-        <div id="content" style="display: none">
+        <div id="content">
             <style>
                 @import url(https://corru.observer/css/local/homepage.css);
+                #content::after,
+                #content::before {
+                    content: "";
+                    position: absolute;
+                    width: 100%;
+                    height: 100%;
+                }
+
+                body.in-menu #content {
+                    transform: unset !important;
+                }
+            </style>
+            <style id="bg">
+                
             </style>
 
             <script id="PageData">

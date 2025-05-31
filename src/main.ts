@@ -262,8 +262,11 @@ export function generateEditorDialogue() {
             dialogue = postprocessHowls(dialogue);
         }
 
-        if (dialogue.startsWith("@testpath ")) {
-            let path = dialogue.match(/(\d+,\d+)/gm);
+        if (dialogue.match(/^@testpath (.+)$/m)) {
+            let match = dialogue.match(/^@testpath (.+)$/m);
+            if (!match) return; //what?
+
+            let path = match[1].match(/(\d+,\d+)/gm);
             dialogue = dialogue.replace(/^@testpath .*$/m, "");
             if (path && path.length > 0) {
                 testpath = path.map((p) => p.split(",").map(Number));
@@ -271,6 +274,30 @@ export function generateEditorDialogue() {
                 window.chatter({ actor: "funfriend", text: "Invalid @testpath format! Please use @testpath <number> [<number> ...].", readout: true });
                 return;
             }
+        }
+
+        if (dialogue.match(/^@background (https:\/\/.+|none)$/m)) {
+            let match = dialogue.match(/^@background (.+)$/m);
+            if (!match) return; //what?
+
+            dialogue = dialogue.replace(/^@background .*$/m, "");
+            let bg = document.querySelector("#bg");
+            if (bg) bg.innerHTML += `#content::before {background: url(${match[1]});}\n`;
+        } else {
+            // let bg = document.querySelector("#bg");
+            // if (bg) bg.innerHTML += "#content::before {background: url(https://corru.observer/img/textures/ccontours.gif);}\n";
+        }
+
+        if (dialogue.match(/^@foreground (https:\/\/.+|none)$/m)) {
+            let match = dialogue.match(/^@foreground (.+)$/m);
+            if (!match) return; //what?
+
+            dialogue = dialogue.replace(/^@foreground .*$/m, "");
+            let bg = document.querySelector("#bg");
+            if (bg) bg.innerHTML += `#content::after {background: url(${match[1]});background-size: auto 100%;}\n`;
+        } else {
+            // let bg = document.querySelector("#bg");
+            // if (bg) bg.innerHTML += "#content::after {background: url(https://corru.observer/img/textures/fadeinlonghalf.gif);background-size: auto 100%;}\n";
         }
 
         if (/^@(?:name|respobj) /gm.test(dialogue)) {
@@ -310,6 +337,9 @@ export function generateEditorDialogue() {
                         break;
                 }
             }
+
+            dialogue = dialogue.replaceAll(/^@.+$/gm, "");
+
             for (const [key, value] of Object.entries(respobjs)) {
                 window.env.dialogues[key] = window.generateDialogueObject(value);
             }
