@@ -42,6 +42,9 @@ function parseActors(actors: string) {
 export function updateActors() {
     let actorJSON = getCustomActorsContent().trim();
 
+    // best effort attempt to turn js objects into json parseable strings
+    actorJSON = actorJSON.replaceAll(/[ ,]+(\w+):/g, '"$1":'); 
+
     let actors = actorJSON ? parseActors(actorJSON) : {};
 
     window.env.dialogueActors = clone(originalActors);
