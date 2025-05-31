@@ -1,4 +1,5 @@
 import type LZString from "lz-string";
+import type { Howl } from "howler";
 import DOMPurify from "dompurify";
 import { previewDialogue } from "./previewDialogue";
 
@@ -6,6 +7,7 @@ import "./saves";
 import "./actors";
 import "./customactors";
 import "./defines";
+import "./silly/vapor";
 import { playStartupDialogue } from "./startup";
 import { getEditorContent, setEditorContent } from "./monaco";
 
@@ -14,8 +16,7 @@ import { getCustomActorsContent, setCustomActorsContent, updateActors } from "./
 import { getDefinesContent, setDefinesContent, updateDefines } from "./defines";
 import { loadSlot } from "./saves";
 import { decodeShareString, makeShareString, uploadShareString } from "./share";
-
-declare type LZString = typeof LZString;
+import { getHowlsContent, postprocessHowls, preprocessHowls, setHowlsContent, stopHowls, updateHowls } from "./howl";
 
 const purifyopts = {
     ADD_TAGS: ["+"],
@@ -30,6 +31,7 @@ declare global {
         changeBranch: (branch: string) => void;
         changeDialogue: (dialogue: string) => void;
         undoallchanges?: () => void;
+        changeBgm: (howl: Howl) => void;
         chatter: (obj: {
             actor: string;
             text: string;
@@ -45,7 +47,8 @@ declare global {
         };
         check(key: string, state: string): boolean;
         play: (sfx: string, pitch?: number) => void;
-        LZString: LZString;
+        LZString: typeof LZString;
+        Howl: typeof Howl;
         originalActors: { [key: string]: Actor };
         sfxmap: {
             _src: string;
@@ -232,29 +235,32 @@ export function generateEditorDialogue() {
 
         let dialogue = getEditorContent();
 
-        let execCheck = document.querySelector("#enable-exec") as HTMLInputElement;
-
-        if (!execCheck.checked) {
-            if (/EXEC::|THEN::|UNREADCHECK::|[ _]END::|SKIP::/.test(dialogue)) {
-                window.chatter({
-                    actor: "funfriend",
-                    text: "Dialogue tried to use forbidden commands to execute code! Refusing to generate this.",
-                    readout: true,
-                });
-                window.env.dialogues["editorpreview"] = window.generateDialogueObject(`start
-    sys
-        ERROR::'the dialogue editor detected forbidden commands that could execute code'
-        ADVISE::'remove EXEC::, THEN::, UNREADCHECK::, END::, or SKIP:: commands from your dialogue'`);
-                return;
-            }
-        }
-
         if (dialogue.trim() === "") {
             window.chatter({ actor: "funfriend", text: "The editor is empty. Please write some dialogue before previewing.", readout: true });
             return;
         }
 
-        window.location.hash = makeShareString(dialogue, getCustomActorsContent(), getDefinesContent());
+        window.location.hash = makeShareString(dialogue, getCustomActorsContent(), getDefinesContent(), getHowlsContent());
+
+        let execCheck = document.querySelector("#enable-exec") as HTMLInputElement;
+
+        if (!execCheck.checked) {
+            dialogue = preprocessHowls(dialogue);
+
+    //         if (/EXEC::|THEN::|UNREADCHECK::|[ _]END::|SKIP::/.test(dialogue)) {
+    //             window.chatter({
+    //                 actor: "funfriend",
+    //                 text: "Dialogue tried to use forbidden commands to execute code! Refusing to generate this.",
+    //                 readout: true,
+    //             });
+    //             window.env.dialogues["editorpreview"] = window.generateDialogueObject(`start
+    // sys
+    //     ERROR::'the dialogue editor detected forbidden commands that could execute code'
+    //     ADVISE::'remove EXEC::, THEN::, UNREADCHECK::, END::, or SKIP:: commands from your dialogue'`);
+    //             return;
+    //         }
+            dialogue = postprocessHowls(dialogue);
+        }
 
         if (dialogue.startsWith("@testpath ")) {
             let path = dialogue.match(/(\d+,\d+)/gm);
@@ -266,21 +272,6 @@ export function generateEditorDialogue() {
                 return;
             }
         }
-
-        // if (dialogue.startsWith("@bgm ")) {
-        //     let bgm = dialogue.match(/^@bgm (.+)$/m);
-        //     dialogue = dialogue.replace(/^@bgm .+$/m, "");
-        //     window.page.bgm: new window.Howl({
-        // 				onload: function () {window.page.howls.push(this)},
-        // 				src: ['/audio/outerhubv1.ogg'],
-        // 				preload: true,
-        // 				loop: true,
-
-        // 				sprite: {
-        // 					__default: [50, 236000, true]
-        // 				}
-        // 			}),
-        // }
 
         if (/^@(?:name|respobj) /gm.test(dialogue)) {
             let segments = dialogue.split(/^@/gm);
@@ -344,6 +335,7 @@ export function generateEditorDialogue() {
 }
 
 document.querySelector("#test-dialogue")?.addEventListener("click", () => {
+    stopHowls();
     generateEditorDialogue();
 
     previewEntireDialogue("editorpreview");
@@ -351,6 +343,7 @@ document.querySelector("#test-dialogue")?.addEventListener("click", () => {
 });
 
 document.querySelector("#preview-dialogue")?.addEventListener("click", () => {
+    stopHowls();
     generateEditorDialogue();
 
     startNewDialogue("editorpreview");
@@ -358,6 +351,7 @@ document.querySelector("#preview-dialogue")?.addEventListener("click", () => {
 });
 
 document.querySelector("#start-dialogue")?.addEventListener("click", () => {
+    stopHowls();
     enterDirectPreview();
     window.play("muiScanner", 2);
 });
@@ -379,7 +373,7 @@ document.querySelector("#share-dialogue")?.addEventListener("click", () => {
 });
 
 function share(location: string = "") {
-    let shareString = makeShareString(getEditorContent(), getCustomActorsContent(), getDefinesContent());
+    let shareString = makeShareString(getEditorContent(), getCustomActorsContent(), getDefinesContent(), getHowlsContent());
     let shareUrl = uploadShareString(shareString);
 
     let url = window.location.href.replace(window.location.hash, "") + location + "#" + shareUrl;
@@ -467,17 +461,26 @@ try {
 
     if (data) {
         let direct = window.location.pathname.endsWith("preview");
-        setEditorContent(data.dialogue);
-        setCustomActorsContent(data.actors);
-        setDefinesContent(data.defines);
+        setEditorContent(data.dialogue); // if THIS one is missing you've made a big mistake.
+        setCustomActorsContent(data?.actors || "");
+        setDefinesContent(data?.defines || "");
+        setHowlsContent(data?.howls || "");
 
         updateActors();
         updateDefines();
+        updateHowls();
 
         generateEditorDialogue();
         if (direct) {
             enterDirectPreview();
-        } else previewEntireDialogue("editorpreview");
+        } else {
+            Object.defineProperty(window.env, "directFromUrl", {
+                value: false,
+                configurable: true,
+                writable: true,
+            });
+            previewEntireDialogue("editorpreview");
+        }
     } else {
         loadSlot(localStorage.getItem("lastSave") || "save_0", true);
         playStartupDialogue();

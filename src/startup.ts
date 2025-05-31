@@ -73,6 +73,14 @@ start
         get me out of here<+>EXEC::window.unpreview()
             SHOWIF::[["ENV!!directFromUrl", true]]
         help<+>helpin
+        music<+>vaporintro
+            SHOWIF::[["ENV!!directFromUrl", false], ["ENV!!vaporwave", false], ["fbx__editorintropleasedontcollide-vaporwave", false]]
+        vaporwave<+>vaporwave
+            SHOWIF::[["ENV!!directFromUrl", false], ["ENV!!vaporwave", false], ["fbx__editorintropleasedontcollide-vaporwave", true]]
+            HIDEREAD::
+        no more music<+>novaporwave
+            SHOWIF::[["ENV!!directFromUrl", false], ["ENV!!vaporwave", true]]
+            HIDEREAD::
         credits<+>credits
         back<+>EXEC::window.enterDirectPreview()
             SHOWIF::[["ENV!!directFromUrl", true]]
@@ -83,6 +91,14 @@ options
         get me out of here<+>EXEC::window.unpreview()
             SHOWIF::[["ENV!!directFromUrl", true]]
         help<+>helpin
+        music<+>vaporintro
+            SHOWIF::[["ENV!!directFromUrl", false], ["ENV!!vaporwave", false], ["fbx__editorintropleasedontcollide-vaporwave", false]]
+        vaporwave<+>vaporwave
+            SHOWIF::[["ENV!!directFromUrl", false], ["ENV!!vaporwave", false], ["fbx__editorintropleasedontcollide-vaporwave", true]]
+            HIDEREAD::
+        no more music<+>novaporwave
+            SHOWIF::[["ENV!!directFromUrl", false], ["ENV!!vaporwave", true]]
+            HIDEREAD::
         credits<+>credits
         back<+>EXEC::window.enterDirectPreview()
             SHOWIF::[["ENV!!directFromUrl", true]]
@@ -278,6 +294,7 @@ advanced
         custom actors<+>customactors
         chains<+>chains
         RESPOBJ<+>respobj
+        howls<+>howls
         back<+>help
             FAKEEND::(back)
 
@@ -358,6 +375,54 @@ testpath
         ok<+>advanced
             FAKEEND::(back)
 
+howls
+    moth
+        what are you a wolf or something?
+        kidding
+        howls are a way to play sounds in the dialogue
+        they're the only kind of <span class="code">EXEC::</span> command that you can use without disabling your mindspike's safeties
+        you can use them like this:<br/><br/><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;EXEC::play("muiScanner", 0.5, 1)</code>
+        the first argument is the sound name, the second is the rate, and the third is the volume.
+        that one sounds like this
+            EXEC::play("muiScanner", 0.5, 1)
+        'rate' is a relative number of how fast and high pitched a sound plays
+        so like, 0.5 will be half speed and half pitch
+        and 2 will be double speed and double pitch
+        obviously 1 would be normal
+        
+    RESPONSES::self
+        what can i use<+>howlslist
+        custom howls<+>customhowls
+        ok<+>advanced
+            FAKEEND::(back)
+
+howlslist
+    moth
+        you'll have to try them out yourself to see what they sound like
+        but here's a list of every howl i know of
+        ${Object.keys((window.sfxmap as any)._sprite).map((sfx) => `<span class="code">${sfx}</span>`).join(", ")}
+        all the ones with numbers are 'variants'
+        so if you give <span class="code">play("talksignal")</span> for example
+        it will play a random variant of the talksignal sound
+        or you could put the number in there too if you only wanted the one.
+    RESPONSES::self
+        custom howls<+>customhowls
+        ok<+>advanced
+            FAKEEND::(back)
+
+customhowls
+    moth
+        custom howls are pretty complicated
+        so complicated i cant really explain them here
+        youre better off asking <span class="code">@craftxbox</span> on the <a class="code" target="_blank" href="https://discord.gg/corru">discord</a> about them
+        i can show you an example though
+        <code>example = new Howl({<br/>&nbsp;&nbsp;src: ["https://corru.observer/audio/ozoloop.ogg"],<br/>&nbsp;&nbsp;rate: 2,<br/>&nbsp;&nbsp;volume: 0.5,<br/>&nbsp;&nbsp;loop: true<br/>});</code>
+        and then you'd use that in a dialogue like this:<br/><br/><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;EXEC::example.play()</code>
+    
+    RESPONSES::self
+        ok<+>advanced
+            FAKEEND::(back)
+
 credits
     self
         who made this?
@@ -375,6 +440,56 @@ credits
 
     RESPONSES::self
         ok<+>options
+            FAKEEND::(back)
+
+vaporintro
+    self
+        its too quiet
+        do you have any music?
+    moth
+        oh uh, sure
+        you ever heard of vaporwave?
+    RESPONSES::self
+        yes<+>vaporwave
+        no<+>vaporno
+
+vaporno
+    self
+        no
+    moth
+        you wanna give it a try anyway?
+    RESPONSES::self
+        sure<+>vaporwave
+        no thanks<+>options
+            FAKEEND::(back)
+
+vaporwave
+    moth
+        alright
+        just gimme a sec
+    sourceless
+        BEYOND THE MINDSPIKE, YOU HEAR THE SHUFFLING OF FOOTSTEPS AGAINST THE CONCRETE
+            EXEC::window.silly.vapor.init()
+            WAIT::5000
+        A CLICK IS HEARD, NOT UNLIKE THAT OF AN OLD 2010's CASSETTE PLAYER
+    moth
+        here we go
+            EXEC::window.silly.vapor.play()
+    RESPONSES::self
+        nevermind<+>novaporwave
+        thanks<+>options
+            FAKEEND::(back)
+
+novaporwave
+    self
+        ACTUALLY, NEVERMIND ON THE MUSIC.
+    moth
+        oh, ok
+    sourceless
+        THE CLICK OF THE CASSETTE PLAYER IS HEARD AGAIN, FOLLOWED BY SILENCE.
+            EXEC::window.silly.vapor.stop()
+    RESPONSES::self
+        thanks<+>options
             FAKEEND::(back)
 `);
 

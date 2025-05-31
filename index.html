@@ -176,6 +176,16 @@
                     <div id="customactors" class="midtext"></div>
                     <span class="button primary" id="save-custom-actors">Save</span>
                 </details>
+                <details class="minor">
+                    <summary>Custom Howls</summary>
+                    <p class="sysinfo">
+                        Custom howls allow you to create SFX and music that can be used in dialogues. Input is accepted as a JS script, however strict formatting is enforced.<br/>
+                        I highly recommend asking me for help in the <a class="code" href="https://discord.gg/corru">Discord</a> if you want to use this feature.
+                        <br /><br />
+                    </p>
+                    <div id="howls" class="midtext"></div>
+                    <span class="button primary" id="save-howls">Save</span>
+                </details>
                 <details class="minor editor-pink incoherent">
                     <summary>DANGER</summary>
                     <div class="container">
@@ -256,19 +266,6 @@
                     image: "https://corru.observer/img/socials/intro.gif",
 
                     order: "-1",
-
-                    bgm: new Howl({
-                        onload: function () {
-                            page.howls.push(this);
-                        },
-                        src: ["https://corru.observer/audio/outerhubv1.ogg"],
-                        preload: true,
-                        loop: true,
-
-                        sprite: {
-                            __default: [50, 236000, true],
-                        },
-                    }),
 
                     onLoaded: function () {
                         updatePreferenceAttributes();

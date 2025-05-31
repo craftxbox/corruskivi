@@ -1,0 +1,215 @@
+import type { Howl } from "howler";
+import * as monaco from "monaco-editor";
+
+const editorContainer = document.getElementById("howls") as HTMLElement;
+const howlsEditor = monaco.editor.create(editorContainer, {
+    language: "javascript",
+    automaticLayout: true,
+    theme: "vs-dark",
+});
+
+let howls: { [key: string]: Howl } = {};
+
+howls.howl = new window.Howl({
+    src: ["https://corru.observer/audio/ozoloop.ogg"],
+    preload: true,
+    volume: 1.0,
+});
+
+export function preprocessHowls(dialogue: string) {
+    let execs = dialogue.match(/EXEC::(.+)$/gm);
+
+    if (!execs) return dialogue; // no exec matches so we have nothing to do
+
+    for (let exec of execs) {
+        if (!/rate|play|volume/.test(exec)) continue; // this exec has no code we're interested in.
+
+        let howlObjects: { name: string; command: string; args: string }[] = [];
+        let newExec = exec;
+
+        let howlCommands = exec.matchAll(/([\w-]+)\.(rate|play|volume)\(.*?\)/g);
+
+        for (let howlCommand of howlCommands) {
+            let [_, howlName, command, args] = howlCommand;
+            if (!howlName || !command) continue; // malformed command
+
+            let howlObject = {
+                name: howlName,
+                command: command,
+                args: args,
+            };
+
+            newExec = newExec.replace(howlCommand[0], "");
+
+            let howl = howls[howlName];
+            if (!howl) {
+                window.chatter({ actor: "funfriend", text: `Dialogue referenced a howl that does not exist! This will be ignored.`, readout: true });
+                continue;
+            } else {
+                howlObjects.push(howlObject);
+            }
+        }
+
+        let sfxmapCommands = exec.matchAll(/[^.]play\((.*)\)/g);
+
+        if (sfxmapCommands) {
+            for (let sfxmapCommand of sfxmapCommands) {
+                let [_, strArgs] = sfxmapCommand;
+
+                let args = [
+                    strArgs.split(",")[0].replaceAll("'", "").replaceAll('"', "").replaceAll("`", ""),
+                    parseFloat(strArgs.split(",")[1]) || 1,
+                    parseFloat(strArgs.split(",")[2]) || 1,
+                ];
+
+                let howlObject = {
+                    name: "__SFXMAP",
+                    command: "play",
+                    args: JSON.stringify(args),
+                };
+                newExec = newExec.replace(sfxmapCommand[0].slice(1), "");
+                howlObjects.push(howlObject);
+            }
+        }
+        if (howlObjects.length === 0) continue; // no howl commands found in this exec
+
+        let howlCode = "            _HOWL::" + JSON.stringify(howlObjects) + "\n";
+        dialogue = dialogue.replace(exec, newExec + "\n" + howlCode);
+    }
+
+    dialogue = dialogue.replace(/^ +EXEC::[ ;]*$\n/gm, ""); // clean up any empty exec lines
+
+    return dialogue;
+}
+
+export function postprocessHowls(dialogue: string) {
+    let howlCodes = dialogue.match(/_HOWL::(.+)$/gm);
+
+    if (!howlCodes) return dialogue; // no howl codes found
+
+    for (let howlCode of howlCodes) {
+        let howlObjects: { name: string; command: string; args: string }[] = JSON.parse(howlCode.replace("_HOWL::", ""));
+
+        let newHowlCode = "";
+
+        for (let howlObject of howlObjects) {
+            let howl = howls[howlObject.name];
+            if (howlObject.name !== "__SFXMAP" && !howl) {
+                window.chatter({ actor: "funfriend", text: `Dialogue referenced a howl that does not exist! This will be ignored.`, readout: true });
+                continue;
+            }
+
+            if (!howlObject.command.match(/^(rate|play|volume)$/)) {
+                window.chatter({ actor: "funfriend", text: `Dialogue referenced an invalid howl command! This will be ignored.`, readout: true });
+                continue;
+            }
+
+            if (howlObject.name === "__SFXMAP") {
+                try {
+                    let args = JSON.parse(howlObject.args);
+                    newHowlCode += `play("${args[0]}", ${args[1] || 1}, ${args[2] || 1});`;
+                } catch (e) {
+                    console.error("Failed to parse play command arguments:", e);
+                    window.chatter({ actor: "actual_site_error", text: `Dialogue conatins an invalid play command! It will be ignored.`, readout: true });
+                    continue;
+                }
+                continue;
+            }
+            newHowlCode += `fetchHowl("${howlObject.name}").${howlObject.command}(${howlObject.args});`;
+        }
+
+        let regex = new RegExp(`EXEC::(.+)\n +${howlCode.replaceAll("[", "\\x5b").replaceAll("]", "\\x5d").replaceAll(".", "\\x2e")}`, "m");
+
+        if (dialogue.match(regex)) {
+            let match = dialogue.match(regex);
+            if (!match) throw new Error("Failed to match howl code in dialogue. This condition should be impossible.");
+            dialogue = dialogue.replace(match[0], `EXEC::${match[1]};${newHowlCode}`);
+        } else {
+            dialogue = dialogue.replace(howlCode, `EXEC::${newHowlCode}`);
+        }
+    }
+
+    return dialogue;
+}
+
+export function stopHowls() {
+    for (let howlName in howls) {
+        if (howls.hasOwnProperty(howlName)) {
+            howls[howlName].stop();
+        }
+    }
+}
+
+export function fetchHowl(name: string): Howl {
+    if (!howls[name]) {
+        throw new Error(`Howl "${name}" does not exist.`);
+    }
+    return howls[name];
+}
+
+Object.defineProperty(window, "fetchHowl", {
+    value: fetchHowl,
+});
+
+export function getHowlsContent(): string {
+    return howlsEditor.getValue();
+}
+
+export function setHowlsContent(content: string): void {
+    howlsEditor.setValue(content);
+}
+
+export function updateHowls() {
+    let howlsContent = getHowlsContent().trim();
+
+    let howlMatches = howlsContent.matchAll(/(\w+) = new Howl\(({[^]*})\);/g);
+
+    for (let howl of howlMatches) {
+        let [_, name, options] = howl;
+        if (!name || !options) continue; // malformed howl definition
+
+        // best-effort attempt to turn a js object into a JSON object
+        options = options.replaceAll("'", '"');
+        options = options.replaceAll(/[ ,]+(\w+)\s*:/g, '"$1":');
+
+        try {
+            let howlOptions = JSON.parse(options);
+            let newOptions = {
+                src: howlOptions.src,
+                volume: howlOptions.volume,
+                rate: howlOptions.rate,
+                loop: howlOptions.loop,
+                html5: howlOptions.html5,
+                preload: howlOptions.preload,
+                mute: howlOptions.mute,
+                sprite: howlOptions.sprite,
+                pool: howlOptions.pool,
+                format: howlOptions.format,
+                // no callbacks sorry :(
+            };
+
+            howls[name] = new window.Howl(newOptions);
+        } catch (e) {
+            console.error(`Failed to parse howl "${name}":`, e);
+            window.chatter({
+                actor: "actual_site_error",
+                text: "An error occurred while parsing howls. Most likely a syntax issue, but could be a real bug. Please reach out in the discord for assistance.",
+                readout: true,
+            });
+            window.chatter({ actor: "actual_site_error", text: "Error details: " + e, readout: true });
+        }
+    }
+    return;
+}
+
+setHowlsContent(localStorage.getItem("howls") || "");
+
+updateHowls();
+
+document.querySelector("#save-howls")?.addEventListener("click", () => {
+    let howls = getHowlsContent().trim();
+    localStorage.setItem("howls", howls);
+    updateHowls();
+    window.chatter({ actor: "funfriend", text: "Custom howls saved successfully.", readout: true });
+    window.play("talk", 2);
+});

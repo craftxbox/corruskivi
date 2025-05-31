@@ -1,8 +1,11 @@
-export function makeShareString(dialogue: string, actors: string, defines: string) {
-    let shareObj = {
+type ShareObject = { dialogue: string; actors: string; defines: string, howls: string }
+
+export function makeShareString(dialogue: string, actors: string, defines: string, howls: string) {
+    let shareObj: ShareObject = {
         dialogue: dialogue,
         actors: actors,
         defines: defines,
+        howls: howls
     };
 
     return window.LZString.compressToBase64(JSON.stringify(shareObj));
@@ -30,10 +33,10 @@ export function decodeShareString(shareString: string) {
             }
         }
         try {
-            let data = JSON.parse(shareObj) as { dialogue: string; actors: string; defines: string };
+            let data = JSON.parse(shareObj) as ShareObject;
             return data;
         } catch (e) {
-            let data = JSON.parse(window.LZString.decompressFromBase64(shareObj)) as { dialogue: string; actors: string; defines: string };
+            let data = JSON.parse(window.LZString.decompressFromBase64(shareObj)) as ShareObject;
             return data;
         }
     } catch (e) {
