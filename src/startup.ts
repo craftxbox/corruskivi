@@ -22,6 +22,22 @@ for (let actor of actors) {
 }
 const allactors = lines.join("\n");
 
+let contributors: string[] = [];
+
+fetch("https://api.github.com/repos/craftxbox/corruskivi/contributors").then((response) => {
+    if (response.ok) {
+        response.json().then((data) => {
+            for (let contributor of data) {
+                if (contributor.login === "craftxbox") continue; // Skip self
+                contributors.push(`<a class="code" target="_blank" href="${contributor.html_url}">${contributor.login}</a>`);
+            }
+        })
+    } else {
+        contributors = ["... I couldn't seem to find them at the moment, sorry!"]
+    }
+})
+
+
 export function playStartupDialogue() {
     Object.defineProperty(window, "undoallchanges", {
         value: () => {
@@ -478,6 +494,8 @@ credits
         I credit @ifritdiezel for their original dialogue editor, aswell as @noobogonis and @the_dem for the dialogue toolkit I used as a reference
         Obviously, @corruworks made the game itself, and all the visuals you see here. I'm only responsible for the editor itself.
         I would also like to credit @daisy_m766 for giving me the idea to make this editor in the first place.
+        As well, I would like to credit all of the people who have contributed to the git repository:
+        ${contributors.join(", ")}
 
     RESPONSES::self
         ok<+>options
