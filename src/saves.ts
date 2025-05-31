@@ -1,5 +1,6 @@
 import { getCustomActorsContent, setCustomActorsContent, updateActors } from "./customactors";
 import { getDefinesContent, setDefinesContent, updateDefines } from "./defines";
+import { getHowlsContent, setHowlsContent, updateHowls } from "./howl";
 import { generateEditorDialogue, previewEntireDialogue } from "./main";
 import { getEditorContent, setEditorContent } from "./monaco";
 
@@ -35,6 +36,7 @@ who
             dialogue: defaultSave,
             actors: "",
             defines: "",
+            howls: ""
         })
     );
     existingSaves.push("save_0");
@@ -121,6 +123,7 @@ export function saveSlot(slot: string, name: string) {
         dialogue: getEditorContent(),
         actors: getCustomActorsContent(),
         defines: getDefinesContent(),
+        howls: getHowlsContent()
     };
 
     let saveKey = slot;
@@ -161,9 +164,11 @@ export function loadSlot(slot: string, suppressPreview?: boolean) {
     setEditorContent(parsedData.dialogue || "");
     setCustomActorsContent(parsedData.actors || "");
     setDefinesContent(parsedData.defines || "");
+    setHowlsContent(parsedData.howls || "");
 
     updateActors();
     updateDefines();
+    updateHowls();
 
     document.querySelector("#save-editor-name")!.setAttribute("hidden", "true");
     saveEditorSlot.value = slot;
