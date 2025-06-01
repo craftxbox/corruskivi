@@ -237,7 +237,7 @@ export function generateEditorDialogue() {
             return;
         }
 
-//        window.location.hash = makeShareString(dialogue, getCustomActorsContent(), getDefinesContent(), getHowlsContent());
+        //        window.location.hash = makeShareString(dialogue, getCustomActorsContent(), getDefinesContent(), getHowlsContent());
 
         let execCheck = document.querySelector("#enable-exec") as HTMLInputElement;
 
@@ -281,8 +281,8 @@ export function generateEditorDialogue() {
             let bg = document.querySelector("#bg");
             if (bg) bg.innerHTML += `#content::before {background: url(${match[1]});}\n`;
         } else {
-            // let bg = document.querySelector("#bg");
-            // if (bg) bg.innerHTML += "#content::before {background: url(https://corru.observer/img/textures/ccontours.gif);}\n";
+            let bg = document.querySelector("#bg");
+            if (bg) bg.innerHTML += "#content::before {background: url(https://corru.observer/img/textures/ccontours.gif);}\n";
         }
 
         if (dialogue.match(/^@foreground (https:\/\/.+|none)$/m)) {
@@ -293,8 +293,8 @@ export function generateEditorDialogue() {
             let bg = document.querySelector("#bg");
             if (bg) bg.innerHTML += `#content::after {background: url(${match[1]});background-size: auto 100%;}\n`;
         } else {
-            // let bg = document.querySelector("#bg");
-            // if (bg) bg.innerHTML += "#content::after {background: url(https://corru.observer/img/textures/fadeinlonghalf.gif);background-size: auto 100%;}\n";
+            let bg = document.querySelector("#bg");
+            if (bg) bg.innerHTML += "#content::after {background: url(https://corru.observer/img/textures/fadeinlonghalf.gif);background-size: auto 100%;}\n";
         }
 
         if (/^@(?:name|respobj) /gm.test(dialogue)) {
@@ -364,6 +364,8 @@ export function generateEditorDialogue() {
 document.querySelector("#test-dialogue")?.addEventListener("click", () => {
     stopHowls();
     generateEditorDialogue();
+    let bg = document.getElementById("bg") as HTMLStyleElement;
+    bg.innerHTML = "";
 
     previewEntireDialogue("editorpreview");
     window.play("muiScanner", 2);
@@ -379,6 +381,8 @@ document.querySelector("#preview-dialogue")?.addEventListener("click", () => {
 
 document.querySelector("#start-dialogue")?.addEventListener("click", () => {
     stopHowls();
+    generateEditorDialogue();
+
     enterDirectPreview();
     window.play("muiScanner", 2);
 });
@@ -416,6 +420,8 @@ function share(location: string = "") {
 }
 
 document.querySelector("#end-dialogue")?.addEventListener("click", () => {
+    let bg = document.getElementById("bg") as HTMLStyleElement;
+    bg.innerHTML = "";
     if (window.env.currentDialogue && window.env.currentDialogue.active) {
         window.endDialogue();
     }
@@ -432,6 +438,8 @@ Object.defineProperty(window, "unpreview", {
             configurable: true,
             writable: true,
         });
+        let bg = document.getElementById("bg") as HTMLStyleElement;
+        bg.innerHTML = "";
         document.body.classList.remove("codezone");
         document.querySelector("#system-menu")?.classList.remove("hidden");
         window.history.pushState({}, "", window.location.href.replace("/preview", "/"));
