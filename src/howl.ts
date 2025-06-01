@@ -166,7 +166,7 @@ export function setHowlsContent(content: string): void {
 export function updateHowls() {
     let howlsContent = getHowlsContent().trim();
 
-    let howlMatches = howlsContent.matchAll(/(\w+) = new Howl\(({[^]*})\);/g);
+    let howlMatches = howlsContent.matchAll(/(\w+) = new Howl\(({[^]*?})\);/g);
 
     for (let howl of howlMatches) {
         let [_, name, options] = howl;
