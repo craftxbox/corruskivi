@@ -3,20 +3,17 @@ import type { Howl } from "howler";
 import DOMPurify from "dompurify";
 import { previewDialogue } from "./previewDialogue";
 
-import "./saves";
 import "./actors";
-import "./customactors";
-import "./defines";
 import "./silly/vapor";
 import { playStartupDialogue } from "./startup";
 import { getEditorContent, setEditorContent } from "./monaco";
 
 import "./types.d";
+import { loadSlot } from "./saves";
 import { getCustomActorsContent, setCustomActorsContent, updateActors } from "./customactors";
 import { getDefinesContent, setDefinesContent, updateDefines } from "./defines";
-import { loadSlot } from "./saves";
-import { decodeShareString, makeShareString, uploadShareString } from "./share";
 import { getHowlsContent, postprocessHowls, preprocessHowls, setHowlsContent, stopHowls, updateHowls } from "./howl";
+import { decodeShareString, makeShareString, uploadShareString } from "./share";
 
 const purifyopts = {
     ADD_TAGS: ["+"],
@@ -240,7 +237,7 @@ export function generateEditorDialogue() {
             return;
         }
 
-        window.location.hash = makeShareString(dialogue, getCustomActorsContent(), getDefinesContent(), getHowlsContent());
+//        window.location.hash = makeShareString(dialogue, getCustomActorsContent(), getDefinesContent(), getHowlsContent());
 
         let execCheck = document.querySelector("#enable-exec") as HTMLInputElement;
 
