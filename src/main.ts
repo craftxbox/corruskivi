@@ -175,6 +175,9 @@ export function previewEntireDialogue(dialogueID: string, settings?: { originEnt
         delete window.env.dialogueWaitTimeout;
     }
     dialogueBox.classList.remove("dialogue-click-proceed");
+
+    let bg = document.getElementById("bg") as HTMLStyleElement;
+    bg.innerHTML = "";
 }
 
 function advanceTestPath(testpath: number[][]) {
@@ -364,8 +367,6 @@ export function generateEditorDialogue() {
 document.querySelector("#test-dialogue")?.addEventListener("click", () => {
     stopHowls();
     generateEditorDialogue();
-    let bg = document.getElementById("bg") as HTMLStyleElement;
-    bg.innerHTML = "";
 
     previewEntireDialogue("editorpreview");
     window.play("muiScanner", 2);
