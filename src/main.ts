@@ -62,7 +62,7 @@ declare global {
                 [key: string]: Actor;
             };
             definitions: {
-                [key: string]: string;
+                [key: string]: string | {type:string, text:string};
             };
             currentDialogue: {
                 active: boolean;
@@ -301,7 +301,8 @@ export function generateEditorDialogue() {
         }
 
         if (/^@(?:name|respobj) /gm.test(dialogue)) {
-            let segments = dialogue.split(/^@/gm);
+            dialogue = dialogue.replaceAll(/^@(name|respobj)/gm, "__@$1");
+            let segments = dialogue.split(/^__@/gm);
             if (segments.length < 2) {
                 window.chatter({ actor: "funfriend", text: "Invalid dialogue format! Please ensure you have at least one dialogue segment.", readout: true });
                 return;
