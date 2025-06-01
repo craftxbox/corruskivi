@@ -62,7 +62,7 @@ declare global {
                 [key: string]: Actor;
             };
             definitions: {
-                [key: string]: string | {type:string, text:string};
+                [key: string]: string | { type: string; text: string };
             };
             currentDialogue: {
                 active: boolean;
@@ -226,6 +226,16 @@ function processSegment(segment: string) {
     return newSegment;
 }
 
+let changeDialogue = window.changeDialogue;
+
+window.changeDialogue = (dialogue: string) => {
+    if (window.env.dialogues[dialogue].hasOwnProperty("__exec_start")) {
+        let execStart = window.env.dialogues[dialogue].__exec_start;
+        if (typeof execStart === "function") execStart();
+    }
+    changeDialogue(dialogue);
+};
+
 export function generateEditorDialogue() {
     try {
         if (window.undoallchanges) {
@@ -276,30 +286,6 @@ export function generateEditorDialogue() {
             }
         }
 
-        if (dialogue.match(/^@background (https:\/\/.+|none)$/m)) {
-            let match = dialogue.match(/^@background (.+)$/m);
-            if (!match) return; //what?
-
-            dialogue = dialogue.replace(/^@background .*$/m, "");
-            let bg = document.querySelector("#bg");
-            if (bg) bg.innerHTML += `#content::before {background: url(${match[1]});}\n`;
-        } else {
-            let bg = document.querySelector("#bg");
-            if (bg) bg.innerHTML += "#content::before {background: url(https://corru.observer/img/textures/ccontours.gif);}\n";
-        }
-
-        if (dialogue.match(/^@foreground (https:\/\/.+|none)$/m)) {
-            let match = dialogue.match(/^@foreground (.+)$/m);
-            if (!match) return; //what?
-
-            dialogue = dialogue.replace(/^@foreground .*$/m, "");
-            let bg = document.querySelector("#bg");
-            if (bg) bg.innerHTML += `#content::after {background: url(${match[1]});background-size: auto 100%;}\n`;
-        } else {
-            let bg = document.querySelector("#bg");
-            if (bg) bg.innerHTML += "#content::after {background: url(https://corru.observer/img/textures/fadeinlonghalf.gif);background-size: auto 100%;}\n";
-        }
-
         if (/^@(?:name|respobj) /gm.test(dialogue)) {
             dialogue = dialogue.replaceAll(/^@(name|respobj)/gm, "__@$1");
             let segments = dialogue.split(/^__@/gm);
@@ -345,10 +331,64 @@ export function generateEditorDialogue() {
                 window.env.dialogues[key] = window.generateDialogueObject(value);
             }
 
+            if (firstSegment.match(/^@background (https:\/\/.+|none)$/m)) {
+                let match = firstSegment.match(/^@background (.+)$/m);
+                if (!match) return; //what?
+
+                firstSegment = firstSegment.replace(/^@background .*$/m, "");
+                let bg = document.querySelector("#bg");
+                if (bg) bg.innerHTML += `#content::before {background: url(${match[1]});}\n`;
+            } else {
+                let bg = document.querySelector("#bg");
+                if (bg) bg.innerHTML += "#content::before {background: url(https://corru.observer/img/textures/ccontours.gif);}\n";
+            }
+
+            if (firstSegment.match(/^@foreground (https:\/\/.+|none)$/m)) {
+                let match = firstSegment.match(/^@foreground (.+)$/m);
+                if (!match) return; //what?
+
+                firstSegment = firstSegment.replace(/^@foreground .*$/m, "");
+                let bg = document.querySelector("#bg");
+                if (bg) bg.innerHTML += `#content::after {background: url(${match[1]});background-size: auto 100%;}\n`;
+            } else {
+                let bg = document.querySelector("#bg");
+                if (bg)
+                    bg.innerHTML += "#content::after {background: url(https://corru.observer/img/textures/fadeinlonghalf.gif);background-size: auto 100%;}\n";
+            }
+
             window.env.dialogues["editorpreview"] = window.generateDialogueObject(firstSegment);
 
             for (const [key, value] of Object.entries(chains)) {
+                let dialogue = value;
+                let applyChanges = [];
+
+                if (dialogue.match(/^@background (https:\/\/.+|none)$/m)) {
+                    let match = dialogue.match(/^@background (.+)$/m);
+                    if (!match) return; //what?
+
+                    dialogue = dialogue.replace(/^@background .*$/m, "");
+                    applyChanges.push(`#content::before {background: url(${match[1]});}\n`);
+                } else {
+                    applyChanges.push("#content::before {background: url(https://corru.observer/img/textures/ccontours.gif);}\n");
+                }
+
+                if (dialogue.match(/^@foreground (https:\/\/.+|none)$/m)) {
+                    let match = dialogue.match(/^@foreground (.+)$/m);
+                    if (!match) return; //what?
+
+                    dialogue = dialogue.replace(/^@foreground .*$/m, "");
+                    applyChanges.push(`#content::after {background: url(${match[1]});background-size: auto 100%;}\n`)
+                } else {
+                    applyChanges.push("#content::after {background: url(https://corru.observer/img/textures/fadeinlonghalf.gif);background-size: auto 100%;}\n");
+                }
+
                 window.env.dialogues[key] = window.generateDialogueObject(value);
+                window.env.dialogues[key].__exec_start = () => {
+                    if (applyChanges.length > 0) {
+                        let bg = document.querySelector("#bg") as HTMLStyleElement;
+                        bg.innerHTML = applyChanges.join("");
+                    }
+                };
             }
         } else {
             dialogue = processSegment(dialogue);
