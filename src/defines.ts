@@ -37,7 +37,11 @@ export function updateDefines() {
         let key = line.slice(0, split).trim();
         let value = line.slice(split + 1).trim();
         if (key && value) {
-            window.env.definitions[key] = value;
+            if (value.split("::").length > 1) {
+                let type = value.split("::")[0].trim();
+                value = value.split(type + "::")[1].trim();
+                window.env.definitions[key] = { type: type, text: value };
+            } else window.env.definitions[key] = value;
         }
     }
 }
