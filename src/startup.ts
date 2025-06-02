@@ -431,6 +431,7 @@ background
         typically this would be <span class="code">@foreground https://corru.observer/img/textures/fadeinlonghalf.gif</span>
         but you can pick whatever you want
         go wild
+        they apply to each chain individiually so you can have different backgrounds for different parts of your dialogue
     RESPONSES::self
         ok<+>annotationslist
             FAKEEND::(back)

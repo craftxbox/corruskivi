@@ -9,7 +9,7 @@ import { playStartupDialogue } from "./startup";
 import { getEditorContent, setEditorContent } from "./monaco";
 
 import "./types.d";
-import { loadSlot } from "./saves";
+import "./saves";
 import { getCustomActorsContent, setCustomActorsContent, updateActors } from "./customactors";
 import { getDefinesContent, setDefinesContent, updateDefines } from "./defines";
 import { getHowlsContent, postprocessHowls, preprocessHowls, setHowlsContent, stopHowls, updateHowls } from "./howl";
@@ -406,6 +406,7 @@ export function generateEditorDialogue() {
 }
 
 document.querySelector("#test-dialogue")?.addEventListener("click", () => {
+    localStorage.setItem("dialogue", getEditorContent());
     stopHowls();
     generateEditorDialogue();
 
@@ -414,6 +415,7 @@ document.querySelector("#test-dialogue")?.addEventListener("click", () => {
 });
 
 document.querySelector("#preview-dialogue")?.addEventListener("click", () => {
+    localStorage.setItem("dialogue", getEditorContent());
     stopHowls();
     generateEditorDialogue();
 
@@ -422,6 +424,7 @@ document.querySelector("#preview-dialogue")?.addEventListener("click", () => {
 });
 
 document.querySelector("#start-dialogue")?.addEventListener("click", () => {
+    localStorage.setItem("dialogue", getEditorContent());
     stopHowls();
     generateEditorDialogue();
 
@@ -430,6 +433,7 @@ document.querySelector("#start-dialogue")?.addEventListener("click", () => {
 });
 
 document.querySelector("#share-editor-dialogue")?.addEventListener("click", () => {
+    localStorage.setItem("dialogue", getEditorContent());
     generateEditorDialogue();
     previewEntireDialogue("editorpreview");
     window.play("talk", 2);
@@ -438,6 +442,7 @@ document.querySelector("#share-editor-dialogue")?.addEventListener("click", () =
 });
 
 document.querySelector("#share-dialogue")?.addEventListener("click", () => {
+    localStorage.setItem("dialogue", getEditorContent());
     generateEditorDialogue();
     previewEntireDialogue("editorpreview");
     window.play("talk", 2);
@@ -559,10 +564,8 @@ try {
             previewEntireDialogue("editorpreview");
         }
     } else {
-        loadSlot(localStorage.getItem("lastSave") || "save_0", true);
         playStartupDialogue();
     }
 } catch (e) {
-    loadSlot(localStorage.getItem("lastSave") || "save_0", true);
     playStartupDialogue();
 }

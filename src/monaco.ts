@@ -51,3 +51,7 @@ export function getEditorContent(): string {
 export function setEditorContent(content: string): void {
     corruEditor.setValue(content);
 }
+
+let dialogue = window.localStorage.getItem("dialogue")
+
+if (dialogue) setEditorContent(dialogue);
