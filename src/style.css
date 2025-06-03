@@ -3,7 +3,8 @@
   height: 70vh;
 }
 
-#gpu-warning, #wide-warning {
+#gpu-warning,
+#wide-warning {
   display: none;
 }
 
@@ -62,10 +63,21 @@ body.codezone .moth-trigger {
 }
 
 .button.invisible {
-  opacity:0;
+  opacity: 0;
   pointer-events: none;
 }
 
 .sysblock div .button:first-of-type {
   margin-left: 0px !important;
+}
+
+@media screen and (max-width: 799px),
+(max-height: 599px) {
+  html:not(.mobile):after, html:not(.mobile):before {
+    display: none !important;
+  }
+
+  .codezone.in-dialogue #dialogue-box {
+    width:80vw !important;
+  }
 }
