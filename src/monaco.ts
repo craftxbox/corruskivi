@@ -13,6 +13,7 @@ monaco.languages.setMonarchTokensProvider("corru-dialogue", {
         root: [
             [/^(    [A-Z]+)(::)(.*)/, ["keyword", "operators", "string"]],
             [/^(____[A-Z]+)(::)(.*)/, ["keyword", "operators", "string"]],
+            [/^(____END)/, "keyword"],
             [/^(        [A-Z]+)(::)(.*)/, ["keyword", "operators", "string"]],
             [/^(            [A-Z]+)(::)(.*)/, ["keyword", "operators", "string"]],
             [/^(        .+)(<\+>)(.+)/, ["string", "keyword", "identifier"]],
