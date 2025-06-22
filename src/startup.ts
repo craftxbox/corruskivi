@@ -50,6 +50,7 @@ export function playStartupDialogue() {
             delete env.definitions[`actor`];
             delete env.definitions[`syntax`];
             delete env.definitions[`noProcess`];
+            delete env.definitions[`chain`];
             delete env.definitions[`branch`];
             delete env.definitions[`command`];
             delete env.dialogueActors.craftxbox
@@ -301,7 +302,7 @@ commandslist
         <span class="code">END::</span> is like EXEC:: but it runs when the dialogue ends.
         <span class="code">SKIP::</span> shows a button to allow skipping some or all of the dialogue, and runs like EXEC:: when pressed.<br><span class="code">SKIPNOTICE::</span> changes the text of the skip button, so you can make it say something else.<br/> <span class="code">SKIPTIME::</span> changes how long the 'skipping dialogue' screen gets shown for, in milliseconds.
         <span class="code">UNREADCHECK::</span> runs javascript to see if a response shows as unread or not
-
+        you can find more information about <span class="code">SHOWIF::</span>, <span class="code">NESTIF::</span>, and <span class="code">RESPOBJ::</span> commands in the advanced section of the help menu
 
     RESPONSES::self
         ok<+>syntax
@@ -323,7 +324,7 @@ advanced
         RESPOBJ<+>respobj
         annotations<+>annotations
         howls<+>howls
-        structured dialogue<+>rootshowif
+        SHOWIF/NESTIF<+>showifnestif
         back<+>help
             FAKEEND::(back)
 
@@ -489,6 +490,31 @@ customhowls
         <code>example = new Howl({<br/>&nbsp;&nbsp;src: ["https://corru.observer/audio/ozoloop.ogg"],<br/>&nbsp;&nbsp;rate: 2,<br/>&nbsp;&nbsp;volume: 0.5,<br/>&nbsp;&nbsp;loop: true<br/>});</code>
         and then you'd use that in a dialogue like this:<br/><br/><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;EXEC::example.play()</code>
     
+    RESPONSES::self
+        ok<+>advanced
+            FAKEEND::(back)
+
+showifnestif
+    moth
+        <span class="code">SHOWIF::</span> is a standard command that lets you show a dialogue line or response only if a certain condition is met
+        usually this would be if the player has seen an entity or dialogue or whatever before.
+        as an example:<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="code">SHOWIF::[["whatever"], ["example", "testing"]]</span>
+        this will only show if the 'whatever' flag  is anything but false, and the 'example' flag is specifically only "testing"
+        typically you would use these for seeing if a branch has been seen before
+        the way you do that is by using <span class="code">fbx__chainname_branchname</span> as the key.
+        the default chain is <span class="code">editorpreview</span>, so if you wanted to see if the player has seen the 'start' branch of that chain, you would use <span class="code">fbx__editorpreview_start</span>
+        but since its shared you might want to use a custom chain to avoid conflicts
+        internally, showif calls the check() function, so there are a lot of flags you can check for
+        unfortunately i don't have the time to explain them all here
+        anyway, SHOWIF:: can also be used as a special 'root command' instead of on a single dialogue line
+        instead of giving it three levels of indentation, you give it zero levels and instead add four underscores before it
+        like this:<br/><br/><code>____SHOWIF::[["whatever"], ["example", "testing"]]</code>
+        then, it will apply to everything past it, until you add a <span class="code">____END</span> or another <span class="code">____SHOWIF::</span>
+        this can be helpful to avoid repeating the same SHOWIF:: command over and over again
+        <span class="code">NESTIF::</span> is a similar command, but you can put multiple of them inside each other
+        each of them will go up until the next ____END 
+        heres an example of everything, i wasn't sure how best to demonstrate it: <br/><br/>start<br/>&nbsp;&nbsp;&nbsp;&nbsp;moth<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;always seen<br/>____SHOWIF::[["test1"]]<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;only if test1<br/>____END<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;always seen<br/>____NESTIF::[["test2"]]<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;only if test2<br/>____NESTIF::[["test3"]]<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;only if test3 and test2<br/>____END<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;only if test2<br/>____END<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;always seen
+
     RESPONSES::self
         ok<+>advanced
             FAKEEND::(back)
