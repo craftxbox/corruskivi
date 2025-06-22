@@ -39,7 +39,7 @@ monaco.languages.setMonarchTokensProvider("corru-dialogue", {
     },
 });
 monaco.languages.registerFoldingRangeProvider("corru-dialogue", {
-    provideFoldingRanges: (model, context, token) => {
+    provideFoldingRanges: (model, _context, _token) => {
         const ranges = [];
         let startLine = -1;
         let endLine = -1;
