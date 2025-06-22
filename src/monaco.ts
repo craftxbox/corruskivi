@@ -13,7 +13,7 @@ monaco.languages.setMonarchTokensProvider("corru-dialogue", {
         root: [
             [/^(    [A-Z]+)(::)(.*)/, ["keyword", "operators", "string"]],
             [/^(____[A-Z]+)(::)(.*)/, ["keyword", "operators", "string"]],
-            [/^(____END)/, "keyword"],
+            [/^(____END$)/, "keyword"],
             [/^(        [A-Z]+)(::)(.*)/, ["keyword", "operators", "string"]],
             [/^(            [A-Z]+)(::)(.*)/, ["keyword", "operators", "string"]],
             [/^(        .+)(<\+>)(.+)/, ["string", "keyword", "identifier"]],
@@ -38,6 +38,43 @@ monaco.languages.setMonarchTokensProvider("corru-dialogue", {
         ],
     },
 });
+monaco.languages.registerFoldingRangeProvider("corru-dialogue", {
+    provideFoldingRanges: (model, context, token) => {
+        const ranges = [];
+        let startLine = -1;
+        let endLine = -1;
+
+        for (let i = 0; i < model.getLineCount(); i++) {
+            if (i === (model.getLineCount() - 1) && startLine !== -1) {
+                endLine = i + 1; // Last line of the file
+                ranges.push({
+                    start: startLine,
+                    end: endLine,
+                    kind: monaco.languages.FoldingRangeKind.Region,
+                });
+            }
+
+            const lineText = model.getLineContent(i + 1);
+
+            if (lineText.startsWith("____") || lineText.startsWith("@") || lineText.startsWith("    ")) continue;
+            if (lineText.match(/[a-zA-Z0-9_]+$/)) {
+                if (startLine === -1) {
+                    startLine = i + 1; // Start of a new block
+                } else {
+                    endLine = i; // End of the current block
+                    ranges.push({
+                        start: startLine,
+                        end: endLine,
+                        kind: monaco.languages.FoldingRangeKind.Region,
+                    });
+                    startLine = i + 1; // Reset for the next block
+                }
+            }
+        }
+
+        return ranges;
+    },
+});
 
 const corruEditor = monaco.editor.create(editorContainer, {
     language: "corru-dialogue",
@@ -53,6 +90,6 @@ export function setEditorContent(content: string): void {
     corruEditor.setValue(content);
 }
 
-let dialogue = window.localStorage.getItem("dialogue")
+let dialogue = window.localStorage.getItem("dialogue");
 
 if (dialogue) setEditorContent(dialogue);
