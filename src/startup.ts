@@ -286,14 +286,22 @@ commands
 
 commandslist
     moth
-        i havent finished this list but i will show you the most important ones
-        <span class="code">EXEC::</span> is a command that runs whatever javascript code you put after it
+        <span class="code">WAIT::</span> waits for an amount of milliseconds before letting the dialogue continue
         <span class="code">AUTOADVANCE::</span> will make the dialogue automatically advance to the next line without waiting for the player to click
         <span class="code">CLASS::</span> will add an HTML class to the dialogue line, which can be used for styling if you're making a mod.
+        <span class="code">SHOWONCE::</span> will make the dialogue line or response only show once. once the player has seen it, it won't show up again
+        <span class="code">CHANGE::</span> will change the chain to the one you specify after it. will cause an error if the chain doesn't exist
 
-        <span class="code">SHOWONCE::</span> will make the dialogue line only show once. once the player has seen it, it won't show up again
-        <span class="code">FAKEEND::</span> can only be used in responses, and it makes the button look like an end button. it takes a string of text after it, which is what shows underneath the primary text
-        <span class="code">HIDEREAD::</span> can only be used in responses, and won't show if the response has already been read. It'll show up with a yellow underline like 'dynamic' responses
+        <span class="code">FAKEEND::</span> only works on responses, it makes the response button look like an end button. it takes a string of text after it, which is what shows underneath the primary text
+        <span class="code">HIDEREAD::</span> also only works in responses, it will hide if the response has been used before. It'll show up with a yellow underline like 'dynamic' responses
+
+        the rest of these commands are normally blocked by your mindspike's safeties, but you can use them if you disable them in the advanced menu
+        <span class="code">EXEC::</span> runs whatever javascript code you put after it
+        <span class="code">THEN::</span> is like EXEC:: but it runs after a WAIT:: instead of immediately
+        <span class="code">END::</span> is like EXEC:: but it runs when the dialogue ends.
+        <span class="code">SKIP::</span> shows a button to allow skipping some or all of the dialogue, and runs like EXEC:: when pressed.<br><span class="code">SKIPNOTICE::</span> changes the text of the skip button, so you can make it say something else.<br/> <span class="code">SKIPTIME::</span> changes how long the 'skipping dialogue' screen gets shown for, in milliseconds.
+        <span class="code">UNREADCHECK::</span> runs javascript to see if a response shows as unread or not
+
 
     RESPONSES::self
         ok<+>syntax
@@ -315,6 +323,7 @@ advanced
         RESPOBJ<+>respobj
         annotations<+>annotations
         howls<+>howls
+        structured dialogue<+>rootshowif
         back<+>help
             FAKEEND::(back)
 
