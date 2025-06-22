@@ -534,6 +534,7 @@ vaporwave
         BEYOND THE MINDSPIKE, YOU HEAR THE SHUFFLING OF FOOTSTEPS AGAINST THE CONCRETE
             EXEC::window.silly.vapor.init()
             WAIT::5000
+            AUTOADVANCE::
         A CLICK IS HEARD, NOT UNLIKE THAT OF AN OLD 2010's CASSETTE PLAYER
     moth
         here we go
