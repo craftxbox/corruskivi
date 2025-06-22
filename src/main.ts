@@ -442,6 +442,15 @@ document.querySelector("#share-editor-dialogue")?.addEventListener("click", () =
 });
 
 document.querySelector("#share-dialogue")?.addEventListener("click", () => {
+    if (/EXEC::|THEN::|UNREADCHECK::|[ _]END::|SKIP::/.test(getEditorContent())) {
+        window.chatter({
+            actor: "funfriend",
+            text: "You cannot share a memory that uses EXEC commands!",
+            readout: true,
+        });
+        return;
+    }
+
     localStorage.setItem("dialogue", getEditorContent());
     generateEditorDialogue();
     previewEntireDialogue("editorpreview");
