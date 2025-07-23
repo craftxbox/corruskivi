@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "dompurify": "^3.2.6",
+    "jose": "^6.0.12",
     "lz-string": "^1.5.0",
     "monaco-editor": "^0.52.2"
   }

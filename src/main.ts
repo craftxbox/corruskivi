@@ -548,7 +548,7 @@ Object.defineProperty(window, "enterDirectPreview", {
 });
 
 try {
-    let data = decodeShareString(window.location.hash.slice(1));
+    let data = await decodeShareString(window.location.hash.slice(1));
 
     if (data) {
         let direct = window.location.pathname.endsWith("preview");
