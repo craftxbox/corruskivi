@@ -236,7 +236,6 @@ export function generateEditorDialogue() {
 
         let execCheck = document.querySelector("#enable-exec") as HTMLInputElement;
 
-
         if (execCheck.checked) {
             dialogue = preProcessDialogue(dialogue, false);
             dialogue = postProcessDialogue(dialogue, false);
@@ -422,33 +421,33 @@ Object.defineProperty(window, "enterDirectPreview", {
 });
 
 try {
-    let data = await decodeShareString(window.location.hash.slice(1));
+    decodeShareString(window.location.hash.slice(1)).then((data) => {
+        if (data) {
+            let direct = window.location.pathname.endsWith("preview");
+            setEditorContent(data.dialogue); // if THIS one is missing you've made a big mistake.
+            setCustomActorsContent(data?.actors || "");
+            setDefinesContent(data?.defines || "");
+            setHowlsContent(data?.howls || "");
 
-    if (data) {
-        let direct = window.location.pathname.endsWith("preview");
-        setEditorContent(data.dialogue); // if THIS one is missing you've made a big mistake.
-        setCustomActorsContent(data?.actors || "");
-        setDefinesContent(data?.defines || "");
-        setHowlsContent(data?.howls || "");
+            updateActors();
+            updateDefines();
+            updateHowls();
 
-        updateActors();
-        updateDefines();
-        updateHowls();
-
-        generateEditorDialogue();
-        if (direct) {
-            enterDirectPreview();
+            generateEditorDialogue();
+            if (direct) {
+                enterDirectPreview();
+            } else {
+                Object.defineProperty(window.env, "directFromUrl", {
+                    value: false,
+                    configurable: true,
+                    writable: true,
+                });
+                previewEntireDialogue("editorpreview");
+            }
         } else {
-            Object.defineProperty(window.env, "directFromUrl", {
-                value: false,
-                configurable: true,
-                writable: true,
-            });
-            previewEntireDialogue("editorpreview");
+            playStartupDialogue();
         }
-    } else {
-        playStartupDialogue();
-    }
+    }).catch(playStartupDialogue);
 } catch (e) {
     playStartupDialogue();
 }
