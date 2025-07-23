@@ -307,9 +307,17 @@ export function insertExtraActors() {
 
     /* local/ozo/ */
     window.env.dialogueActors["council"] = {
-        image: window.check("recosm_state", "killed") ? "/img/sprites/council/godportrait.gif" : "/img/sprites/council/portrait.gif",
+        image: "/img/sprites/council/portrait.gif",
         type: "thoughtform awakened portrait-haze portrait-auto portrait-center",
         voice: () => window.play("talkchoir"),
+        expressions: {
+            default: {
+                image: "/img/sprites/council/portrait.gif",
+            },
+            god: {
+                image: "/img/sprites/council/godportrait.gif",
+            }
+        },
     };
 
     window.env.dialogueActors["isabel"] = {
