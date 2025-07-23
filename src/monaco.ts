@@ -1,3 +1,4 @@
+import "./userWorker"
 import * as monaco from "monaco-editor";
 import { type IRange } from "monaco-editor";
 
