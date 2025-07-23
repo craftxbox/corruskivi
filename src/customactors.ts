@@ -24,7 +24,6 @@ setCustomActorsContent(localStorage.getItem("actors") || "");
 for (let key of Object.keys(window.env.dialogueActors)) {
     let image = window.env.dialogueActors[key].image;
     if (!image) {
-        console.warn(`Actor ${key} has no image defined.`);
         continue;
     }
     window.env.dialogueActors[key].image = image.startsWith("https://") ? image : `https://corru.observer${image}`;
