@@ -1,5 +1,6 @@
-import { clearTestPath, previewEntireDialogue } from "./main";
+import { previewEntireDialogue } from "./main";
 import { updateActors } from "./customactors";
+import { clearTestPath } from "./annotations/testpath";
 
 let env = window.env;
 

@@ -1,6 +1,5 @@
 import type LZString from "lz-string";
 import type { Howl } from "howler";
-import DOMPurify from "dompurify";
 import { previewDialogue } from "./previewDialogue";
 
 import "./actors";
@@ -12,12 +11,10 @@ import "./types.d";
 import "./saves";
 import { getCustomActorsContent, setCustomActorsContent, updateActors } from "./customactors";
 import { getDefinesContent, setDefinesContent, updateDefines } from "./defines";
-import { getHowlsContent, postprocessHowls, preprocessHowls, setHowlsContent, stopHowls, updateHowls } from "./howl";
+import { getHowlsContent, setHowlsContent, stopHowls, updateHowls } from "./howl";
 import { decodeShareString, makeShareString, uploadShareString } from "./share";
-
-const purifyopts = {
-    ADD_TAGS: ["+"],
-};
+import { postProcessDialogue, processChains, preProcessDialogue, preProcessChain, postProcessChain } from "./processors";
+import { clearTestPath, getTestPath } from "./annotations/testpath";
 
 declare global {
     interface Window {
@@ -85,12 +82,6 @@ declare global {
 window.sfxmap._src = "https://corru.observer" + window.sfxmap._src;
 window.sfxmap.load();
 
-let testpath: number[][] = [];
-
-export function clearTestPath() {
-    testpath = [];
-}
-
 const dialogueBox = document.querySelector("#dialogue-box") as HTMLDivElement;
 
 export function startNewDialogue(dialogue: string, settings?: { originEntityId?: string; specificChain?: string }): boolean {
@@ -157,8 +148,8 @@ export function previewEntireDialogue(dialogueID: string, settings?: { originEnt
     if (!startNewDialogue(dialogueID, settings)) return;
     document.querySelector(".dialogue-message:last-of-type")?.classList.add("sent");
 
-    let localTestPath = testpath.map((p) => [...p]);
-    testpath = [];
+    let localTestPath = getTestPath().map((p) => [...p]);
+    clearTestPath();
 
     if (branch.body && branch.body.length > 0) {
         for (let i = 1; i <= branch.body.length; i++) {
@@ -219,13 +210,6 @@ function advanceTestPath(testpath: number[][]) {
     }, 25);
 }
 
-function processSegment(segment: string) {
-    let newSegment = segment.replaceAll(/<\+>/g, "__RESP_SEPARATOR__");
-    newSegment = DOMPurify.sanitize(newSegment, purifyopts);
-    newSegment = newSegment.replaceAll("__RESP_SEPARATOR__", "<+>");
-    return newSegment;
-}
-
 let changeDialogue = window.changeDialogue;
 
 window.changeDialogue = (dialogue: string) => {
@@ -250,12 +234,14 @@ export function generateEditorDialogue() {
             return;
         }
 
-        //        window.location.hash = makeShareString(dialogue, getCustomActorsContent(), getDefinesContent(), getHowlsContent());
-
         let execCheck = document.querySelector("#enable-exec") as HTMLInputElement;
 
-        if (!execCheck.checked) {
-            dialogue = preprocessHowls(dialogue);
+
+        if (execCheck.checked) {
+            dialogue = preProcessDialogue(dialogue, false);
+            dialogue = postProcessDialogue(dialogue, false);
+        } else {
+            dialogue = preProcessDialogue(dialogue);
 
             if (/EXEC::|THEN::|UNREADCHECK::|[ _]END::|SKIP::/.test(dialogue)) {
                 window.chatter({
@@ -269,130 +255,15 @@ export function generateEditorDialogue() {
         ADVISE::'remove EXEC::, THEN::, UNREADCHECK::, END::, or SKIP:: commands from your dialogue'`);
                 return;
             }
-            dialogue = postprocessHowls(dialogue);
+            dialogue = postProcessDialogue(dialogue);
         }
 
-        if (dialogue.match(/^@testpath (.+)$/m)) {
-            let match = dialogue.match(/^@testpath (.+)$/m);
-            if (!match) return; //what?
+        let chains = processChains(dialogue, execCheck.checked === false);
 
-            let path = match[1].match(/(\d+,\d+)/gm);
-            dialogue = dialogue.replace(/^@testpath .*$/m, "");
-            if (path && path.length > 0) {
-                testpath = path.map((p) => p.split(",").map(Number));
-            } else {
-                window.chatter({ actor: "funfriend", text: "Invalid @testpath format! Please use @testpath <number> [<number> ...].", readout: true });
-                return;
-            }
-        }
-
-        if (/^@(?:name|respobj) /gm.test(dialogue)) {
-            dialogue = dialogue.replaceAll(/^@(name|respobj)/gm, "__@$1");
-            let segments = dialogue.split(/^__@/gm);
-            if (segments.length < 2) {
-                window.chatter({ actor: "funfriend", text: "Invalid dialogue format! Please ensure you have at least one dialogue segment.", readout: true });
-                return;
-            }
-
-            let firstSegment = processSegment(segments.shift() || "");
-
-            let chains: { [key: string]: string } = {};
-            let respobjs: { [key: string]: string } = {};
-            for (let segment of segments) {
-                let match = segment.match(/^(\w+) (.+)\n/);
-                if (!match || match.length < 3) {
-                    window.chatter({ actor: "funfriend", text: "invalid dialogue segment was found! ignoring it.", readout: true });
-                    continue;
-                }
-                let type = match[1].trim();
-                let name = match[2].trim();
-                if (name.length === 0) {
-                    window.chatter({ actor: "funfriend", text: "invalid dialogue segment was found! ignoring it.", readout: true });
-                }
-                segment = segment.replace(/^.+\n/, "");
-                segment = processSegment(segment);
-                switch (type) {
-                    case "name":
-                        chains[name] = segment;
-                        break;
-                    case "respobj":
-                        respobjs[name] = segment;
-                        break;
-                    default:
-                        window.chatter({ actor: "funfriend", text: `Unknown annotation type: ${type}. ignoring it!`, readout: true });
-                        console.error(`Unknown annotation type: ${type}.`);
-                        break;
-                }
-            }
-
-            dialogue = dialogue.replaceAll(/^@.+$/gm, "");
-
-            for (const [key, value] of Object.entries(respobjs)) {
-                window.env.dialogues[key] = window.generateDialogueObject(value);
-            }
-
-            if (firstSegment.match(/^@background (https:\/\/.+|none)$/m)) {
-                let match = firstSegment.match(/^@background (.+)$/m);
-                if (!match) return; //what?
-
-                firstSegment = firstSegment.replace(/^@background .*$/m, "");
-                let bg = document.querySelector("#bg");
-                if (bg) bg.innerHTML += `#content::before {background: url(${match[1]});}\n`;
-            } else {
-                let bg = document.querySelector("#bg");
-                if (bg) bg.innerHTML += "#content::before {background: url(https://corru.observer/img/textures/ccontours.gif);}\n";
-            }
-
-            if (firstSegment.match(/^@foreground (https:\/\/.+|none)$/m)) {
-                let match = firstSegment.match(/^@foreground (.+)$/m);
-                if (!match) return; //what?
-
-                firstSegment = firstSegment.replace(/^@foreground .*$/m, "");
-                let bg = document.querySelector("#bg");
-                if (bg) bg.innerHTML += `#content::after {background: url(${match[1]});background-size: auto 100%;}\n`;
-            } else {
-                let bg = document.querySelector("#bg");
-                if (bg)
-                    bg.innerHTML += "#content::after {background: url(https://corru.observer/img/textures/fadeinlonghalf.gif);background-size: auto 100%;}\n";
-            }
-
-            window.env.dialogues["editorpreview"] = window.generateDialogueObject(firstSegment);
-
-            for (const [key, value] of Object.entries(chains)) {
-                let dialogue = value;
-                let applyChanges = [];
-
-                if (dialogue.match(/^@background (https:\/\/.+|none)$/m)) {
-                    let match = dialogue.match(/^@background (.+)$/m);
-                    if (!match) return; //what?
-
-                    dialogue = dialogue.replace(/^@background .*$/m, "");
-                    applyChanges.push(`#content::before {background: url(${match[1]});}\n`);
-                } else {
-                    applyChanges.push("#content::before {background: url(https://corru.observer/img/textures/ccontours.gif);}\n");
-                }
-
-                if (dialogue.match(/^@foreground (https:\/\/.+|none)$/m)) {
-                    let match = dialogue.match(/^@foreground (.+)$/m);
-                    if (!match) return; //what?
-
-                    dialogue = dialogue.replace(/^@foreground .*$/m, "");
-                    applyChanges.push(`#content::after {background: url(${match[1]});background-size: auto 100%;}\n`)
-                } else {
-                    applyChanges.push("#content::after {background: url(https://corru.observer/img/textures/fadeinlonghalf.gif);background-size: auto 100%;}\n");
-                }
-
-                window.env.dialogues[key] = window.generateDialogueObject(value);
-                window.env.dialogues[key].__exec_start = () => {
-                    if (applyChanges.length > 0) {
-                        let bg = document.querySelector("#bg") as HTMLStyleElement;
-                        bg.innerHTML = applyChanges.join("");
-                    }
-                };
-            }
-        } else {
-            dialogue = processSegment(dialogue);
-            window.env.dialogues["editorpreview"] = window.generateDialogueObject(dialogue);
+        for (const key of chains.chainOrder) {
+            let { dialogue, changes } = preProcessChain(chains.chains[key]);
+            window.env.dialogues[key] = window.generateDialogueObject(dialogue);
+            postProcessChain(key, changes);
         }
     } catch (e) {
         window.chatter({
@@ -442,7 +313,10 @@ document.querySelector("#share-editor-dialogue")?.addEventListener("click", () =
 });
 
 document.querySelector("#share-dialogue")?.addEventListener("click", () => {
-    if (/EXEC::|THEN::|UNREADCHECK::|[ _]END::|SKIP::/.test(getEditorContent())) {
+    let dialogue = getEditorContent();
+    dialogue = preProcessDialogue(dialogue);
+
+    if (/EXEC::|THEN::|UNREADCHECK::|[ _]END::|SKIP::/.test(dialogue)) {
         window.chatter({
             actor: "funfriend",
             text: "You cannot share a memory that uses EXEC commands!",
@@ -451,7 +325,7 @@ document.querySelector("#share-dialogue")?.addEventListener("click", () => {
         return;
     }
 
-    localStorage.setItem("dialogue", getEditorContent());
+    localStorage.setItem("dialogue", dialogue);
     generateEditorDialogue();
     previewEntireDialogue("editorpreview");
     window.play("talk", 2);
