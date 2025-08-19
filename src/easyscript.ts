@@ -1,7 +1,7 @@
 const easyscriptRegex = /^(?!    ):?(\w+(?:::\w+)?)(?!\\):(.*)/gm
 
 export function preProcessEasyScript(dialogue: string): string {
-    if (easyscriptRegex.test(dialogue) == false) return dialogue;
+    if (new RegExp(easyscriptRegex).test(dialogue) == false) return dialogue;
 
     console.log("Preprocessing easyscript dialogue...");
 
@@ -12,7 +12,7 @@ export function preProcessEasyScript(dialogue: string): string {
         dialogue = dialogue.replace(/^defaultSpeaker: ?(.+)/mi, "");
     }
 
-    for (let match of [...dialogue.matchAll(easyscriptRegex)]) {
+    for (let match of dialogue.matchAll(new RegExp(easyscriptRegex))) {
         let [_, actor, text] = match;
         if(actor === "endbutton") {
             dialogue = dialogue.replace(match[0], `    RESPONSES::self\n        ${text}<+>END`);
