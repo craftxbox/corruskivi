@@ -133,6 +133,12 @@ export function previewEntireDialogue(dialogueID: string, settings?: { originEnt
         return;
     }
 
+    Object.defineProperty(window, "creatingPreview", {
+        value: true,
+        configurable: true,
+        writable: true,
+    });
+
     let branch = dialogue[settings?.specificChain || "start"];
     if (!branch) {
         window.chatter({
@@ -169,6 +175,11 @@ export function previewEntireDialogue(dialogueID: string, settings?: { originEnt
 
     let bg = document.getElementById("bg") as HTMLStyleElement;
     bg.innerHTML = "";
+    Object.defineProperty(window, "creatingPreview", {
+        value: false,
+        configurable: true,
+        writable: true,
+    });
 }
 
 function advanceTestPath(testpath: number[][]) {
@@ -278,6 +289,7 @@ export function generateEditorDialogue() {
 document.querySelector("#test-dialogue")?.addEventListener("click", () => {
     localStorage.setItem("dialogue", getEditorContent());
     stopHowls();
+
     generateEditorDialogue();
 
     previewEntireDialogue("editorpreview");

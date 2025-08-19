@@ -99,6 +99,8 @@ export function postprocessNavigation(dialogue: string) {
 }
 
 function navigate(url: string, trusted: boolean = false) {
+    if ((window as any).creatingPreview) return; // so we dont navigate when trying to share or test
+
     let urlObj = new URL(url);
     
     let execCheck = document.querySelector("#enable-exec") as HTMLInputElement;
