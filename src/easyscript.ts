@@ -12,7 +12,7 @@ export function preProcessEasyScript(dialogue: string): string {
         dialogue = dialogue.replace(/^defaultSpeaker: ?(.+)/mi, "");
     }
 
-    for (let match of dialogue.matchAll(easyscriptRegex)) {
+    for (let match of [...dialogue.matchAll(easyscriptRegex)]) {
         let [_, actor, text] = match;
         if(actor === "endbutton") {
             dialogue = dialogue.replace(match[0], `    RESPONSES::self\n        ${text}<+>END`);
