@@ -115,7 +115,7 @@ function navigate(url: string, trusted: boolean = false) {
                 urlObj.hostname.endsWith("corru.store") ||
                 urlObj.hostname.endsWith("corru.wiki") ||
                 urlObj.hostname.endsWith("craftxbox.com") ||
-                urlObj.hostname.endsWith("crxb.cc") ||
+                urlObj.hostname.endsWith("crxb.cc")
             ) == false
         ) {
             document.body.insertAdjacentHTML(
