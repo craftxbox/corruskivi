@@ -1,5 +1,6 @@
 import { processAnnotations, type AnnotationResult } from "./annotations";
 import { postProcessBackground, preProcessBackground } from "./annotations/background";
+import { preProcessEasyScript } from "./easyscript";
 import { postprocessHowls, preprocessHowls } from "./howl";
 import { postprocessNavigation, preprocessNavigation } from "./navigation";
 
@@ -9,6 +10,7 @@ export type Changes = {
 };
 
 export function preProcessDialogue(dialogue: string, noExec = true): string {
+    dialogue = preProcessEasyScript(dialogue);
     if (noExec) {
         dialogue = preprocessHowls(dialogue);
         dialogue = preprocessNavigation(dialogue);
