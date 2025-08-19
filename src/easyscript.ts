@@ -3,6 +3,8 @@ const easyscriptRegex = /^(?!    ):?(\w+(?:::\w+)?)(?!\\):(.*)/gm
 export function preProcessEasyScript(dialogue: string): string {
     if (easyscriptRegex.test(dialogue) == false) return dialogue;
 
+    console.log("Preprocessing easyscript dialogue...");
+
     let defaultSpeaker = "sourceless";
     let defaultMatch = dialogue.match(/^defaultSpeaker: ?(.+)/mi);
     if (defaultMatch) {
