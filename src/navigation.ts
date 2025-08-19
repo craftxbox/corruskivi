@@ -137,8 +137,8 @@ function navigate(url: string, trusted: boolean = false) {
                     </div>
                 `
             );
+            return;
         }
-        return;
     }
 
     window.location.assign(url);
