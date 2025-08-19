@@ -502,8 +502,8 @@ showifnestif
         as an example:<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="code">SHOWIF::[["whatever"], ["example", "testing"]]</span>
         this will only show if the 'whatever' flag  is anything but false, and the 'example' flag is specifically only "testing"
         typically you would use these for seeing if a branch has been seen before
-        the way you do that is by using <span class="code">fbx__chainname_branchname</span> as the key.
-        the default chain is <span class="code">editorpreview</span>, so if you wanted to see if the player has seen the 'start' branch of that chain, you would use <span class="code">fbx__editorpreview_start</span>
+        the way you do that is by using <span class="code">fbx__chainname-branchname</span> as the key.
+        the default chain is <span class="code">editorpreview</span>, so if you wanted to see if the player has seen the 'start' branch of that chain, you would use <span class="code">fbx__editorpreview-start</span>
         but since its shared you might want to use a custom chain to avoid conflicts
         internally, showif calls the check() function, so there are a lot of flags you can check for
         unfortunately i don't have the time to explain them all here
@@ -514,6 +514,9 @@ showifnestif
         this can be helpful to avoid repeating the same SHOWIF:: command over and over again
         <span class="code">NESTIF::</span> is a similar command, but you can put multiple of them inside each other
         each of them will go up until the next ____END 
+        important note! if you name your branches with caps in them, you need to pass them as lowercase to the SHOWIF:: command
+        so if you have a branch called "Test1", you need to use <span class="code">["test1"]</span> in the SHOWIF:: command
+        similarly, if you use spaces in branch names (i am judging you), you need to replace them with underscores
         heres an example of everything, i wasn't sure how best to demonstrate it: <br/><br/>start<br/>&nbsp;&nbsp;&nbsp;&nbsp;moth<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;always seen<br/>____SHOWIF::[["test1"]]<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;only if test1<br/>____END<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;always seen<br/>____NESTIF::[["test2"]]<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;only if test2<br/>____NESTIF::[["test3"]]<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;only if test3 and test2<br/>____END<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;only if test2<br/>____END<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;always seen
 
     RESPONSES::self
