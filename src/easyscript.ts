@@ -1,4 +1,4 @@
-const easyscriptRegex = /^(?!    ):?(\w+(?:::\w+)?)(?!\\):(.*)/gm
+const easyscriptRegex = /^(?!    )(?!RESPOBJ):?(\w+(?:::\w+)?)(?!\\):(.*)/gm
 
 export function preProcessEasyScript(dialogue: string): string {
     if (new RegExp(easyscriptRegex).test(dialogue) == false) return dialogue;
