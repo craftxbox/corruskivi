@@ -12,7 +12,7 @@ import "./saves";
 import { getCustomActorsContent, setCustomActorsContent, updateActors } from "./customactors";
 import { getDefinesContent, setDefinesContent, updateDefines } from "./defines";
 import { getHowlsContent, setHowlsContent, stopHowls, updateHowls } from "./howl";
-import { decodeShareString, makeShareString, uploadShareString } from "./share";
+import { decodeShareString, makeShareString, uploadShareString, type ShareObject } from "./share";
 import { postProcessDialogue, processChains, preProcessDialogue, preProcessChain, postProcessChain } from "./processors";
 import { clearTestPath, getTestPath } from "./annotations/testpath";
 
@@ -368,6 +368,72 @@ document.querySelector("#end-dialogue")?.addEventListener("click", () => {
     }
 });
 
+function loadShareObject(data: ShareObject) {
+    setEditorContent(data.dialogue); // if THIS one is missing you've made a big mistake
+    setCustomActorsContent(data?.actors || "");
+    setDefinesContent(data?.defines || "");
+    setHowlsContent(data?.howls || "");
+
+    updateActors();
+    updateDefines();
+    updateHowls();
+
+    generateEditorDialogue();
+}
+
+function exportDialogue() {
+    let shareString = makeShareString(getEditorContent(), getCustomActorsContent(), getDefinesContent(), getHowlsContent());
+    let decoded = window.LZString.decompressFromBase64(shareString);
+
+    navigator.clipboard
+        .writeText(decoded || "")
+        .then(() => {
+            window.chatter({ actor: "funfriend", text: "Dialogue JSON copied to clipboard!", readout: true, sfx: false });
+        })
+        .catch((err) => {
+            console.error("Failed to copy JSON: ", err);
+            window.chatter({ actor: "funfriend", text: "Failed to copy dialogue JSON.", readout: true });
+        });
+}
+
+document.getElementById("export-dialogue")?.addEventListener("click", exportDialogue);
+
+async function importDialogue() {
+    navigator.clipboard
+        .readText()
+        .then(async (text) => {
+            try {
+                let data = await decodeShareString(text);
+                if (data) {
+                    loadShareObject(data);
+                } else {
+                    window.chatter({ actor: "funfriend", text: "No valid dialogue JSON found in clipboard.", readout: true });
+                }
+            } catch (e) {
+                window.chatter({ actor: "funfriend", text: "Failed to import dialogue from clipboard.", readout: true });
+                console.error("Failed to import dialogue from clipboard: ", e);
+            }
+        })
+        .catch(async (err) => {
+            console.error("Failed to read clipboard: ", err);
+            let input = prompt("Paste your dialogue JSON here:");
+            if (!input) return;
+            try {
+                let data = await decodeShareString(input);
+                if (data) {
+                    loadShareObject(data);
+                } else {
+                    window.chatter({ actor: "funfriend", text: "No valid dialogue JSON found in input.", readout: true });
+                }
+            } catch (e) {
+                window.chatter({ actor: "funfriend", text: "Failed to import dialogue from input.", readout: true });
+                console.error("Failed to import dialogue from input: ", e);
+            }
+        });
+}
+
+document.getElementById("import-dialogue")?.addEventListener("click", importDialogue);
+
 // TODO "export corru script" button
 // consider wether the export should be modder focused or 'easymode' for slapping straight into game
 // or consider making two options
@@ -433,33 +499,27 @@ Object.defineProperty(window, "enterDirectPreview", {
 });
 
 try {
-    decodeShareString(window.location.hash.slice(1)).then((data) => {
-        if (data) {
-            let direct = window.location.pathname.endsWith("preview");
-            setEditorContent(data.dialogue); // if THIS one is missing you've made a big mistake.
-            setCustomActorsContent(data?.actors || "");
-            setDefinesContent(data?.defines || "");
-            setHowlsContent(data?.howls || "");
+    decodeShareString(window.location.hash.slice(1))
+        .then((data) => {
+            if (data) {
+                let direct = window.location.pathname.endsWith("preview");
+                loadShareObject(data);
 
-            updateActors();
-            updateDefines();
-            updateHowls();
-
-            generateEditorDialogue();
-            if (direct) {
-                enterDirectPreview();
+                if (direct) {
+                    enterDirectPreview();
+                } else {
+                    Object.defineProperty(window.env, "directFromUrl", {
+                        value: false,
+                        configurable: true,
+                        writable: true,
+                    });
+                    previewEntireDialogue("editorpreview");
+                }
             } else {
-                Object.defineProperty(window.env, "directFromUrl", {
-                    value: false,
-                    configurable: true,
-                    writable: true,
-                });
-                previewEntireDialogue("editorpreview");
+                playStartupDialogue();
             }
-        } else {
-            playStartupDialogue();
-        }
-    }).catch(playStartupDialogue);
+        })
+        .catch(playStartupDialogue);
 } catch (e) {
     playStartupDialogue();
 }

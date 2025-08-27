@@ -1,6 +1,6 @@
 import { base64url, flattenedVerify } from "jose";
 
-type ShareObject = { dialogue: string; actors: string; defines: string; howls: string };
+export type ShareObject = { dialogue: string; actors: string; defines: string; howls: string };
 
 const execCheck = document.querySelector("#enable-exec") as HTMLInputElement;
 
@@ -27,7 +27,12 @@ export async function decodeShareString(shareString: string): Promise<ShareObjec
         if (shareString.length === 10) {
             shareObj = `https://crxb.cc/corruskivi-bin/raw/${shareString}`;
         } else {
-            shareObj = window.LZString.decompressFromBase64(shareString);
+            try {
+                JSON.parse(shareString);
+                shareObj = shareString;
+            } catch (e) {
+                shareObj = window.LZString.decompressFromBase64(shareString);
+            }
         }
 
         if (!shareObj) return null;
