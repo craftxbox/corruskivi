@@ -3,6 +3,7 @@ import DOMPurify from "dompurify";
 
 const purifyopts = {
     ADD_TAGS: ["+"],
+    ADD_ATTR: ["definition"],
 };
 
 export function processChains(dialogue: string): AnnotationResult {
