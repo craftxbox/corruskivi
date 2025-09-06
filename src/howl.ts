@@ -8,6 +8,11 @@ const howlsEditor = monaco.editor.create(editorContainer, {
     theme: "vs-dark",
 });
 
+const model = howlsEditor.getModel();
+if (model) {
+    model.setEOL(monaco.editor.EndOfLineSequence.LF);
+}
+
 let howls: { [key: string]: Howl } = {};
 
 export function preprocessHowls(dialogue: string) {
@@ -160,7 +165,10 @@ export function getHowlsContent(): string {
 }
 
 export function setHowlsContent(content: string): void {
+    // WE HATE CRLF
+    content = content.replaceAll("\r\n", "\n").replaceAll("\r", "\n");
     howlsEditor.setValue(content);
+    model?.setEOL(monaco.editor.EndOfLineSequence.LF);
 }
 
 export function updateHowls() {

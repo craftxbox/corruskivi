@@ -11,12 +11,19 @@ const actorsEditor = monaco.editor.create(editorContainer, {
     theme: "vs-dark",
 });
 
+const model = actorsEditor.getModel();
+if (model) {
+    model.setEOL(monaco.editor.EndOfLineSequence.LF);
+}
+
 export function getCustomActorsContent(): string {
     return actorsEditor.getValue();
 }
 
 export function setCustomActorsContent(content: string): void {
+    content.replaceAll("\r\n", "\n").replaceAll("\r", "\n");
     actorsEditor.setValue(content);
+    model?.setEOL(monaco.editor.EndOfLineSequence.LF);
 }
 
 setCustomActorsContent(localStorage.getItem("actors") || "");
@@ -32,6 +39,10 @@ for (let key of Object.keys(window.env.dialogueActors)) {
 let originalActors = clone(window.env.dialogueActors);
 
 function parseActors(actors: string) {
+    if (actors.includes("env.dialogueActors")) {
+        
+    }
+
     let actorJSON = actors.replaceAll(/\( *\) *=> *play *\( *['"`](.*)['"`] *, *(\d+\.?\d*) *\)/g, (_, sound, rate) => {
             return `["${sound}", ${rate}]`;
     });

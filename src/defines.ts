@@ -17,12 +17,20 @@ const definesEditor = monaco.editor.create(editorContainer, {
     theme: "vs-dark",
 });
 
+const model = definesEditor.getModel();
+if (model) {
+    model.setEOL(monaco.editor.EndOfLineSequence.LF);
+}
+
 export function getDefinesContent(): string {
     return definesEditor.getValue();
 }
 
 export function setDefinesContent(content: string): void {
+    // WE HATE CRLF
+    content = content.replaceAll("\r\n", "\n").replaceAll("\r", "\n");
     definesEditor.setValue(content);
+    model?.setEOL(monaco.editor.EndOfLineSequence.LF);
 }
 
 let originalDefines = clone(window.env.definitions);

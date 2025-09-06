@@ -541,12 +541,21 @@ const corruEditor = monaco.editor.create(editorContainer, {
     theme: "vs-dark",
 });
 
+const model = corruEditor.getModel();
+
+if (model) {
+    model.setEOL(monaco.editor.EndOfLineSequence.LF);
+}
+
 export function getEditorContent(): string {
     return corruEditor.getValue();
 }
 
 export function setEditorContent(content: string): void {
+    // WE HATE CRLF.
+    content = content.replaceAll("\r\n", "\n").replaceAll("\r", "\n");
     corruEditor.setValue(content);
+    model?.setEOL(monaco.editor.EndOfLineSequence.LF);
 }
 
 let dialogue = window.localStorage.getItem("dialogue");
