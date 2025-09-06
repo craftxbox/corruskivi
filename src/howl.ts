@@ -168,6 +168,10 @@ export function updateHowls() {
 
     let howlMatches = howlsContent.matchAll(/(\w+) = new Howl\(({[^]*?})\);/g);
 
+    howls = {}; // reset howls
+
+    let howlCount = 0;
+
     for (let howl of howlMatches) {
         let [_, name, options] = howl;
         if (!name || !options) continue; // malformed howl definition
@@ -193,17 +197,19 @@ export function updateHowls() {
             };
 
             howls[name] = new window.Howl(newOptions);
+
+            howlCount++;
         } catch (e) {
             console.error(`Failed to parse howl "${name}":`, e);
             window.chatter({
                 actor: "actual_site_error",
-                text: "An error occurred while parsing howls. Most likely a syntax issue, but could be a real bug. Please reach out in the discord for assistance.",
+                text: `An error occurred while parsing howl "${name}". Most likely a syntax issue, but could be a real bug. Please reach out in the discord for assistance.`,
                 readout: true,
             });
             window.chatter({ actor: "actual_site_error", text: "Error details: " + e, readout: true });
         }
     }
-    return;
+    return howlCount;
 }
 
 setHowlsContent(localStorage.getItem("howls") || "");
@@ -213,7 +219,7 @@ updateHowls();
 document.querySelector("#save-howls")?.addEventListener("click", () => {
     let howls = getHowlsContent().trim();
     localStorage.setItem("howls", howls);
-    updateHowls();
-    window.chatter({ actor: "funfriend", text: "Custom howls saved successfully.", readout: true });
+    let count = updateHowls();
+    window.chatter({ actor: "funfriend", text: `${count} Custom howls saved successfully.`, readout: true });
     window.play("talk", 2);
 });

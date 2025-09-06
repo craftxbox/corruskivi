@@ -325,9 +325,8 @@ document.querySelector("#share-editor-dialogue")?.addEventListener("click", () =
 
 document.querySelector("#share-dialogue")?.addEventListener("click", () => {
     let dialogue = getEditorContent();
-    dialogue = preProcessDialogue(dialogue);
 
-    if (/EXEC::|THEN::|UNREADCHECK::|[ _]END::|SKIP::/.test(dialogue)) {
+    if (/EXEC::|THEN::|UNREADCHECK::|[ _]END::|SKIP::/.test(preProcessDialogue(dialogue))) {
         window.chatter({
             actor: "funfriend",
             text: "You cannot share a memory that uses EXEC commands!",
