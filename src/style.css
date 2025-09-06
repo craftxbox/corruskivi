@@ -81,3 +81,7 @@ body.codezone .moth-trigger {
     width:80vw !important;
   }
 }
+
+::selection {
+  background-color: var(--obesk-color) !important;
+}
