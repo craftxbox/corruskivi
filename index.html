@@ -43,7 +43,9 @@
             xhr.open("GET", "https://corru.observer/js/corru.js", false);
             xhr.send(null);
             if (xhr.status > 200 || xhr.status <= 300) {
-                eval(xhr.responseText.replaceAll("window.location.href", "window.nothingimportant"));
+                let code = xhr.responseText.replaceAll("window.location.href", "window.nothingimportant");
+                code = code.replaceAll("document.addEventListener('contextmenu'","document.addEventListener('notreal'")
+                eval(code);
                 console.log("corru.js loaded successfully");
             } else {
                 console.log(xhr);
