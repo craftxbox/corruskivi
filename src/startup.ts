@@ -103,14 +103,14 @@ start
             SHOWIF::[["ENV!!directFromUrl", false], ["ENV!!vaporwave", true]]
             HIDEREAD::
         credits<+>credits
-        wiki<+>EXEC::window.open("https://github.com/craftxbox/corruskivi/wiki", "_blank")
-        back<+>EXEC::window.enterDirectPreview()
+        wiki<+>EXEC::window.open("https://github.com/craftxbox/corruskivi/wiki", "_blank");
+        back<+>EXEC::window.enterDirectPreview();
             SHOWIF::[["ENV!!directFromUrl", true]]
             FAKEEND::(back)
 
 options
     RESPONSES::self
-        get me out of here<+>EXEC::window.unpreview()
+        get me out of here<+>EXEC::window.unpreview();
             SHOWIF::[["ENV!!directFromUrl", true]]
         help<+>helpin
         music<+>vaporintro
@@ -122,8 +122,8 @@ options
             SHOWIF::[["ENV!!directFromUrl", false], ["ENV!!vaporwave", true]]
             HIDEREAD::
         credits<+>credits
-        wiki<+>EXEC::window.open("https://github.com/craftxbox/corruskivi/wiki", "_blank")
-        back<+>EXEC::window.enterDirectPreview()
+        wiki<+>EXEC::window.open("https://github.com/craftxbox/corruskivi/wiki", "_blank");
+        back<+>EXEC::window.enterDirectPreview();
             SHOWIF::[["ENV!!directFromUrl", true]]
             FAKEEND::(back)
 
