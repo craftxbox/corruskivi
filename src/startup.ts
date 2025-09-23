@@ -43,9 +43,13 @@ fetch("https://api.github.com/repos/craftxbox/corruskivi/contributors").then((re
 
 
 export function playStartupDialogue() {
+
+    const mothtype = env.dialogueActors.moth.type;
+
     Object.defineProperty(window, "undoallchanges", {
         value: () => {
             env.dialogueActors.moth.noProcess = true;
+            env.dialogueActors.moth.type = mothtype;
 
             delete env.definitions[`indentation`];
             delete env.definitions[`actor`];
@@ -65,11 +69,12 @@ export function playStartupDialogue() {
     clearTestPath();
 
     env.dialogueActors.moth.noProcess = false;
+    env.dialogueActors.moth.type += " selectable";
 
     env.dialogueActors.craftxbox = {
         name: "craftxbox",
         image: "https://crxb.cc/snep.png",
-        type: "external moth",
+        type: "external moth selectable",
     };
 
     env.definitions[`indentation`] = `a number of spaces before any text, always in multiples of 4.`;

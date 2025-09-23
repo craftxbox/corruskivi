@@ -82,6 +82,6 @@ body.codezone .moth-trigger {
   }
 }
 
-::selection {
+.selectable ::selection {
   background-color: var(--obesk-color) !important;
 }
