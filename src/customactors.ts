@@ -39,7 +39,7 @@ for (let key of Object.keys(window.env.dialogueActors)) {
 let originalActors = clone(window.env.dialogueActors);
 
 function parseActors(actors: string) {
-    let actorJSON = actors.replaceAll(/\( *\) *=> *(?:window\.)play *\( *['"`](.*)['"`] *, *(\d+\.?\d*) *\)/g, (_, sound, rate) => {
+    let actorJSON = actors.replaceAll(/\( *\) *=> *(?:window\.)?play *\( *['"`](.*)['"`] *, *(\d+\.?\d*) *\)/g, (_, sound, rate) => {
         return `["${sound}", ${rate}]`;
     });
 
@@ -113,6 +113,7 @@ document.querySelector("#save-custom-actors")?.addEventListener("click", () => {
         parseActors(actors);
     } catch (e) {
         window.chatter({ actor: "funfriend", text: "Invalid JSON format for actors. Please check your input.", readout: true });
+        console.log("Failed to parse actors content:", e);
         return;
     }
     localStorage.setItem("actors", actors);
