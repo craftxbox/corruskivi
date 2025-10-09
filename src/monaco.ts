@@ -544,7 +544,7 @@ const corruEditor = monaco.editor.create(editorContainer, {
 
 const model = corruEditor.getModel();
 
-let validateTimeout: NodeJS.Timeout;
+let validateTimeout: ReturnType<typeof setTimeout>;
 
 if (model) {
     model.setEOL(monaco.editor.EndOfLineSequence.LF);
