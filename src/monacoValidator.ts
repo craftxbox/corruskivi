@@ -72,6 +72,8 @@ export function validate(model: monaco.editor.ITextModel) {
 
         checkCommandsAttachedToDialogue();
 
+        checkBadCaseCommands();
+
         checkUnprocessedExec();
 
         checkNameAnnotation();
@@ -122,6 +124,41 @@ function checkCommandsAttachedToDialogue() {
         }
     }
 }
+
+function checkBadCaseCommands() {
+    let match = line.match(/(?:    ){3}(\w*)::/)
+    if(match) {
+        let command = match[1];
+        if (command !== command.toUpperCase()) {
+            markers.push({
+                severity: monaco.MarkerSeverity.Error,
+                message: `Command "${command}" must be uppercase.`,
+                startLineNumber: lineNumber,
+                startColumn: 13,
+                endLineNumber: lineNumber,
+                endColumn: line.length + 1,
+            });
+        }
+        return;
+    }
+
+    match = line.match(/(?:    ){1}(RESPONSES|RESPOBJ)::/i)
+    if (match) {
+        let command = match[1];
+        if (command !== command.toUpperCase()) {
+            markers.push({
+                severity: monaco.MarkerSeverity.Error,
+                message: `${command.toUpperCase()}:: must be uppercase.`,
+                startLineNumber: lineNumber,
+                startColumn: 5,
+                endLineNumber: lineNumber,
+                endColumn: line.length + 1,
+            });
+        }
+    }
+}
+
+        
 
 function checkUnprocessedExec() {
     let execCheck = document.getElementById("enable-exec") as HTMLInputElement;
@@ -293,7 +330,7 @@ function checkActorExists() {
     if (!line.match(/^    [^ ]/)) return; // skip anything that's not indent level 1
 
     let actor;
-    if (line.startsWith("    RESPONSES::")) actor = line.split("RESPONSES::")[1].trim();
+    if (/^    RESPONSES::/i.test(line)) actor = line.split(/^    RESPONSES::/i)[1].trim();
     else if (line.startsWith("    RESPOBJ::") == false) {
         actor = line.substring(4).trim();
     }
