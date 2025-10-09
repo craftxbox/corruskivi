@@ -1,4 +1,4 @@
-export function preprocessNavigation(dialogue: string) {
+export function preprocessNavigation(dialogue: string, silent = false) {
     let execs = dialogue.match(/EXEC::(.+)$/gm);
 
     if (!execs) return dialogue; // no exec matches so we have nothing to do
@@ -19,7 +19,7 @@ export function preprocessNavigation(dialogue: string) {
             };
 
             if (!navObject.command) {
-                window.chatter({ actor: "funfriend", text: `Dialogue navigation command is malformed! This will be ignored.`, readout: true });
+                if (!silent) window.chatter({ actor: "funfriend", text: `Dialogue navigation command is malformed! This will be ignored.`, readout: true });
                 continue;
             }
 

@@ -15,7 +15,7 @@ if (model) {
 
 let howls: { [key: string]: Howl } = {};
 
-export function preprocessHowls(dialogue: string) {
+export function preprocessHowls(dialogue: string, silent = false) {
     let execs = dialogue.match(/EXEC::(.+)$/gm);
 
     if (!execs) return dialogue; // no exec matches so we have nothing to do
@@ -42,7 +42,7 @@ export function preprocessHowls(dialogue: string) {
 
             let howl = howls[howlName];
             if (!howl) {
-                window.chatter({ actor: "funfriend", text: `Dialogue referenced a howl that does not exist! This will be ignored.`, readout: true });
+                if (!silent) window.chatter({ actor: "funfriend", text: `Dialogue referenced a howl that does not exist! This will be ignored.`, readout: true });
                 continue;
             } else {
                 howlObjects.push(howlObject);

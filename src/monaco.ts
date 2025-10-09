@@ -1,6 +1,7 @@
-import "./userWorker"
+import "./userWorker";
 import * as monaco from "monaco-editor";
 import { type IRange } from "monaco-editor";
+import { validate } from "./monacoValidator";
 
 const editorContainer = document.getElementById("editor-text") as HTMLElement;
 
@@ -543,8 +544,17 @@ const corruEditor = monaco.editor.create(editorContainer, {
 
 const model = corruEditor.getModel();
 
+let validateTimeout: NodeJS.Timeout;
+
 if (model) {
     model.setEOL(monaco.editor.EndOfLineSequence.LF);
+    model.onDidChangeContent(() => {
+        if (validateTimeout) clearTimeout(validateTimeout);
+        validateTimeout = setTimeout(() => {
+            validate(model);
+        }, 500);
+    });
+    validate(model);
 }
 
 export function getEditorContent(): string {
