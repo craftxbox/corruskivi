@@ -26,7 +26,7 @@ export function preprocessHowls(dialogue: string) {
         let howlObjects: { name: string; command: string; args: string }[] = [];
         let newExec = exec;
 
-        let howlCommands = exec.matchAll(/([\w-]+)\.(play|pause|stop|mute|volume|fade|rate|seek|loop|load|unload)\((.*?)\)/g);
+        let howlCommands = exec.matchAll(/([\w.-]+)\.(play|pause|stop|mute|volume|fade|rate|seek|loop|load|unload)\((.*?)\)/g);
 
         for (let howlCommand of howlCommands) {
             let [_, howlName, command, args] = howlCommand;
@@ -174,7 +174,7 @@ export function setHowlsContent(content: string): void {
 export function updateHowls() {
     let howlsContent = getHowlsContent().trim();
 
-    let howlMatches = howlsContent.matchAll(/(\w+) = new Howl\(({[^]*?})\);/g);
+    let howlMatches = howlsContent.matchAll(/([\w-.]+) = new Howl\(({[^]*?})\);/g);
 
     howls = {}; // reset howls
 
