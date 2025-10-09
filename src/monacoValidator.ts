@@ -335,7 +335,15 @@ function checkActorExists() {
         actor = line.substring(4).trim();
     }
 
-    if (actor && window.env.dialogueActors[actor] === undefined) {
+    if (!actor) return;
+
+    let expression;
+    if (actor.includes("::")) {
+        expression = actor.split("::")[1].trim();
+        actor = actor.split("::")[0].trim();
+    }
+
+    if (window.env.dialogueActors[actor] === undefined) {
         markers.push({
             severity: monaco.MarkerSeverity.Error,
             message: `No such actor "${actor}" was found. Did you remember to save your custom actors?`,
@@ -344,6 +352,35 @@ function checkActorExists() {
             endLineNumber: lineNumber,
             endColumn: line.length + 1,
         });
+        return;
+    }
+
+    if (!expression) return;
+
+    let actorObj = window.env.dialogueActors[actor] as any;
+
+    if (actorObj.expressions === undefined) {
+        markers.push({
+            severity: monaco.MarkerSeverity.Error,
+            message: `Actor "${actor}" does not have any expressions defined.`,
+            startLineNumber: lineNumber,
+            startColumn: 5,
+            endLineNumber: lineNumber,
+            endColumn: line.length + 1,
+        });
+        return;
+    }
+
+    if (actorObj.expressions[expression] === undefined) {
+        markers.push({
+            severity: monaco.MarkerSeverity.Error,
+            message: `Actor "${actor}" does not have an expression "${expression}" defined.`,
+            startLineNumber: lineNumber,
+            startColumn: 5,
+            endLineNumber: lineNumber,
+            endColumn: line.length + 1,
+        });
+        return;
     }
 }
 
