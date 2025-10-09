@@ -45,7 +45,7 @@
             if (xhr.status > 200 || xhr.status <= 300) {
                 let code = xhr.responseText.replaceAll("window.location.href", "window.nothingimportant");
                 code = code.replaceAll("document.addEventListener('contextmenu'","document.addEventListener('notreal'")
-                code = code.replaceAll("storeMenuElement('","Function.prototype('")
+                code = code.replace(/env\.menuStorage\.elements\[id\] = element\s*element\.remove\(\)/,"")
                 eval(code);
                 console.log("corru.js loaded successfully");
             } else {

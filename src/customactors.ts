@@ -39,18 +39,26 @@ for (let key of Object.keys(window.env.dialogueActors)) {
 let originalActors = clone(window.env.dialogueActors);
 
 function parseActors(actors: string) {
-    if (actors.includes("env.dialogueActors")) {
-        
-    }
 
-    let actorJSON = actors.replaceAll(/\( *\) *=> *play *\( *['"`](.*)['"`] *, *(\d+\.?\d*) *\)/g, (_, sound, rate) => {
-            return `["${sound}", ${rate}]`;
+    let actorJSON = actors.replaceAll(/\( *\) *=> *(?:window\.)play *\( *['"`](.*)['"`] *, *(\d+\.?\d*) *\)/g, (_, sound, rate) => {
+        return `["${sound}", ${rate}]`;
     });
 
-    console.log(actorJSON.match(/\(\) => {(\w+).rate\((\d+\.?\d*)\);\w+.play\((".+")?\)}/g))
+    if (actors.includes("env.dialogueActors")) {
+        actorJSON = "{\n" + actorJSON + "\n}";
+        // best-effort attempt to turn a js object into a JSON object
+        actorJSON = actorJSON.replaceAll(/env.dialogueActors\[['"`](.*?)['"`]\] *= */g, ',"$1": ');
+        actorJSON = actorJSON.replaceAll("'", '"');
+        actorJSON = actorJSON.replaceAll(/[ ,]+(\w+)\s*:/g, '"$1":');
+        actorJSON = actorJSON.replaceAll(/{\s*,/g, "{");
+        actorJSON = actorJSON.replaceAll(/,\s*}/g, "}");
+        actorJSON = actorJSON.replaceAll(/;*$/gm, "");
+    }
 
-    actorJSON = actorJSON.replaceAll(/\(\) => {(\w+).rate\((\d+\.?\d*)\);\w+.play\((".+")?\)}/g, (_,name, rate, sound) => {
-            return `["${name}", "${sound || "__default"}", ${rate || "1"}]`;
+    console.log(actorJSON.match(/\(\) => {([\w\.]+).rate\((\d+\.?\d*)\);[\w\.]+.play\((".+")?\)}/g));
+
+    actorJSON = actorJSON.replaceAll(/\(\) => {([\w\.]+).rate\((\d+\.?\d*)\);[\w\.]+.play\((".+")?\)}/g, (_, name, rate, sound) => {
+        return `["${name}", "${sound || "__default"}", ${rate || "1"}]`;
     });
 
     return JSON.parse(actorJSON);
@@ -60,7 +68,7 @@ export function updateActors() {
     let actorJSON = getCustomActorsContent().trim();
 
     // best effort attempt to turn js objects into json parseable strings
-    actorJSON = actorJSON.replaceAll(/[ ,]+(\w+):/g, '"$1":'); 
+    actorJSON = actorJSON.replaceAll(/[ ,]+(\w+):/g, '"$1":');
 
     let actors = actorJSON ? parseActors(actorJSON) : {};
 
@@ -77,7 +85,7 @@ export function updateActors() {
                     window.env.dialogueActors[actorName].voice = () => {
                         window.play(voice[0], voice[1]);
                     };
-                } else if(voice?.length == 3) {
+                } else if (voice?.length == 3) {
                     window.env.dialogueActors[actorName].voice = () => {
                         let howl = fetchHowl(voice[0]);
                         if (!howl) {
@@ -96,7 +104,7 @@ export function updateActors() {
 document.querySelector("#save-custom-actors")?.addEventListener("click", () => {
     let actors = getCustomActorsContent().trim();
     try {
-        parseActors(actors)
+        parseActors(actors);
     } catch (e) {
         window.chatter({ actor: "funfriend", text: "Invalid JSON format for actors. Please check your input.", readout: true });
         return;
