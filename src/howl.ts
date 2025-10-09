@@ -174,6 +174,18 @@ export function setHowlsContent(content: string): void {
 export function updateHowls() {
     let howlsContent = getHowlsContent().trim();
 
+    let execCheck = document.querySelector("#enable-exec") as HTMLInputElement;
+
+    if (execCheck.checked) {
+        try {
+            new Function(howlsContent);
+        } catch (e) {
+            console.error("Failed to evaluate howls content:", e);
+            window.chatter({ actor: "actual_site_error", text: "An error occurred while evaluating your howls. Please check the console for details.", readout: true });
+            return 0;
+        }
+    }
+
     let howlMatches = howlsContent.matchAll(/([\w-.]+) = new Howl\(({[^]*?})\);/g);
 
     howls = {}; // reset howls
