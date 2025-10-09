@@ -39,7 +39,6 @@ for (let key of Object.keys(window.env.dialogueActors)) {
 let originalActors = clone(window.env.dialogueActors);
 
 function parseActors(actors: string) {
-
     let actorJSON = actors.replaceAll(/\( *\) *=> *(?:window\.)play *\( *['"`](.*)['"`] *, *(\d+\.?\d*) *\)/g, (_, sound, rate) => {
         return `["${sound}", ${rate}]`;
     });
@@ -70,7 +69,14 @@ export function updateActors() {
     // best effort attempt to turn js objects into json parseable strings
     actorJSON = actorJSON.replaceAll(/[ ,]+(\w+):/g, '"$1":');
 
-    let actors = actorJSON ? parseActors(actorJSON) : {};
+    let actors: { [actor: string]: object } = {};
+    try {
+        actors = parseActors(actorJSON);
+    } catch (e) {
+        console.error("Failed to parse actors content:", e);
+        window.chatter({ actor: "funfriend", text: "An error occurred while parsing your actors. Please check the console for details.", readout: true });
+        return;
+    }
 
     window.env.dialogueActors = clone(originalActors);
     insertExtraActors();
