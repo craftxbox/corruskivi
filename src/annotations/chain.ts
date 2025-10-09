@@ -6,12 +6,19 @@ const purifyopts = {
     ADD_ATTR: ["definition"],
 };
 
+DOMPurify.addHook("uponSanitizeAttribute", function (node, data) {
+    if (data.attrName === "definition") {
+        data.forceKeepAttr = true;
+        node.setAttribute("definition", DOMPurify.sanitize(data.attrValue));
+    }
+});
+
 export function processChains(dialogue: string): AnnotationResult {
     if (/^@(?:name|respobj) /gm.test(dialogue)) {
         dialogue = dialogue.replaceAll(/^@(name|respobj)/gm, "__@$1");
         let segments = dialogue.split(/^__@/gm);
         if (segments.length < 2) {
-            let text = "Invalid dialogue format! Please ensure you have at least one dialogue segment."
+            let text = "Invalid dialogue format! Please ensure you have at least one dialogue segment.";
             window.chatter({ actor: "funfriend", text, readout: true });
             throw new Error(text);
         }
@@ -57,12 +64,13 @@ export function processChains(dialogue: string): AnnotationResult {
             dialogue: dialogue,
             chains: { editorpreview: firstSegment, ...respobjs, ...chains },
             chainOrder: [...respOrder, ...chainOrder, "editorpreview"],
-        }
-    } else return {
-        dialogue: dialogue,
-        chains: {editorpreview: processSegment(dialogue)},
-        chainOrder: ["editorpreview"],
-    }
+        };
+    } else
+        return {
+            dialogue: dialogue,
+            chains: { editorpreview: processSegment(dialogue) },
+            chainOrder: ["editorpreview"],
+        };
 }
 
 function processSegment(segment: string) {
