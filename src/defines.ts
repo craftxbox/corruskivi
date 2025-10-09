@@ -40,6 +40,28 @@ export function updateDefines() {
     window.env.definitions = clone(originalDefines);
     delete window.page.formedDefinitionStrings;
     for (let line of defines.split("\n")) {
+        if (line.startsWith("env.definitions")) {
+            try {
+                let json = line.match(/^env\.definitions\[['"`](.*?)['"`]\] = (.*)/);
+                if (json && json[2]) {
+                    let value = json[2].trim().replace(/;*$/, ""); // remove trailing semicolons
+                    
+                    // best-effort attempt to turn a js object into a JSON object
+                    value = value.replaceAll("'", '"');
+                    value = value.replaceAll(/[ ,]*(\w+)\s*:/g, ',"$1":');
+                    value = value.replaceAll("{,", "{");
+                    value = JSON.parse(value);
+                    
+                    window.env.definitions[json[1]] = value;
+                    continue;
+                }
+            } catch (e) {
+                console.error("Failed to evaluate defines content:", e);
+                window.chatter({ actor: "actual_site_error", text: "An error occurred while evaluating your definitions. Please check the console for details.", readout: true });
+                continue;
+            }
+        }
+
         let split = line.indexOf(":");
         if (split === -1) continue;
         let key = line.slice(0, split).trim();
