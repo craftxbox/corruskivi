@@ -199,14 +199,14 @@ function checkRespObjAnnotation() {
         let foundResponses = false;
         for (let j = i + 1; j < lines.length; j++) {
             let nextLine = lines[j];
-            if (nextLine.startsWith("    RESPONSES::")) {
+            if (nextLine.startsWith("RESPOBJ::")) {
                 foundResponses = true;
                 break;
             }
             if (nextLine.match(/^[^@]/)) {
                 markers.push({
                     severity: monaco.MarkerSeverity.Error,
-                    message: `Response object must start with RESPONSES::`,
+                    message: `Response object must start with RESPOBJ::`,
                     startLineNumber: j + 1,
                     startColumn: 1,
                     endLineNumber: j + 1,
@@ -274,7 +274,7 @@ function checkDuplicateAnnotations() {
 
 function checkDuplicateBranches() {
     if (!line.match(/^[^ ]/)) return; // skip anything that's not indent level 0
-    if (line.startsWith("@name") || line.startsWith("@respobj")) return;
+    if (line.startsWith("@name") || line.startsWith("@respobj") || line.startsWith("RESPOBJ::")) return;
 
     if (branches[currentChain][`____REUSE____${line}`] === true) {
         markers.push({
