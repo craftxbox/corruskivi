@@ -316,7 +316,7 @@ export function insertExtraActors() {
             },
             god: {
                 image: "/img/sprites/council/godportrait.gif",
-            }
+            },
         },
     };
 
@@ -542,7 +542,7 @@ export function insertExtraActors() {
                 image: "/img/sprites/obesk/geli/bsteli/portrait_blueeyes.gif",
             },
         },
-        voice: ()=> window.play('talkgel', 0.9),
+        voice: () => window.play("talkgel", 0.9),
         expression: "default",
         image: "/img/sprites/obesk/geli/bsteli/portrait.gif",
     };
@@ -577,21 +577,20 @@ export function insertExtraActors() {
         voice: () => window.play("scarydoia", 0.7),
         image: "/img/sprites/combat/foes/archivistportrait.gif",
     };
-    
+
     window.env.dialogueActors["telyu"] = {
         image: "/img/sprites/obesk/telyu/portrait.gif",
         type: "obesk qou portrait-contain",
-        voice: ()=> window.play("talkmind", 1.5), 
+        voice: () => window.play("talkmind", 1.5),
         expressions: {
             default: {
-                image: "/img/sprites/obesk/telyu/portrait.gif"
+                image: "/img/sprites/obesk/telyu/portrait.gif",
             },
             dark: {
-                image: "/img/sprites/obesk/telyu/portrait_dark.gif"
+                image: "/img/sprites/obesk/telyu/portrait_dark.gif",
             },
-        }
+        },
     };
-
 
     window.env.dialogueActors["idril"] = {
         image: "/img/sprites/obesk/idril/portrait.gif",
@@ -602,4 +601,82 @@ export function insertExtraActors() {
     //emulates the abyss so drowning kazki doesn't error out
     function drowningFear() {}
     if (!window.env.abyss) window.env.abyss = { drowningFear };
+
+    // EP4ADD1
+    window.env.dialogueActors["beast"] = {
+        image: "/img/local/uncosm/pit/beastportrait.gif",
+        type: "thoughtform incoherent portrait-blocker portrait-cover",
+        voice: () => window.play("talkmind", 4),
+    };
+
+    window.env.dialogueActors["wakizet"] = {
+        name: "akizet",
+        expressions: {
+            default: {
+                type: "obesk qou tozik portrait-contain portrait-blocker",
+                voice: () => window.play("talkether", false, 0.8),
+                image: "/img/sprites/akizet/wakizet/wakizetportrait.gif",
+            },
+
+            loud: {
+                type: "obesk qou tozik portrait-contain portrait-bright mutter",
+                voice: () => window.play("talkoppress", false, 0.8),
+                image: "/img/sprites/akizet/portrait.gif",
+            },
+        },
+    };
+
+    window.env.dialogueActors["wakeless"] = {
+        name: "sourceless",
+        type: "drowning_sourceless uppercase",
+        voice: () => window.play("talkoppress", 0.75),
+    };
+
+    window.env.dialogueActors["wakeless quiet"] = {
+        name: "sourceless",
+        type: "drowning_sourceless uppercase",
+        voice: false,
+    };
+
+    window.env.dialogueActors["cass"] = {
+        name: "director",
+        expressions: {
+            default: {
+                type: "portrait-contain portrait-bright",
+                voice: () => window.play("talkcase", 1.25),
+                image: "/img/sprites/director/collector_head_handle_portrait.gif",
+            },
+
+            open: {
+                type: "portrait-contain portrait-dark incoherent cass",
+                voice: () => window.play("talkcase", 0.5),
+                image: "/img/sprites/director/collector_eye_collection_portrait.gif",
+            },
+
+            whisper: {
+                type: "portrait-contain portrait-blocker incoherent cass",
+                voice: () => window.play("talkcase", 0.75),
+                image: "/img/sprites/director/collector_head_handle_portrait.gif",
+            },
+        },
+    };
+
+    window.env.dialogueActors["oliver"] = window.env.dialogueActors["cloaked streetwalker"] = {
+        image: "/img/local/city/realeye.gif",
+        type: "recollection portrait-bright portrait-cover",
+        element: ".busy",
+        voice: () => window.play("talk", 0.9),
+    };
+
+    window.env.dialogueActors["proxy"] = {
+        image: "/img/sprites/vekoa/vekoaproxyportrait.gif",
+        type: "thoughtform qou recollection portrait-blocker portrait-cover",
+        voice: () => window.play("talkhigh", 0.75),
+    };
+
+    window.env.dialogueActors["malvi"] = {
+        image: "/img/local/embassy/parpy/malviportrait.gif",
+        type: "recollection thoughtform qou obesk portrait-static portrait-cover",
+        voice: () => window.play("talkhigh", 0.5),
+    };
 }

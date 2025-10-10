@@ -40,7 +40,7 @@ declare global {
             formedDefinitionStrings?: { [key: string]: Object | string };
         };
         check(key: string, state: string): boolean;
-        play: (sfx: string, pitch?: number) => void;
+        play: (sfx: string, rate?: number | boolean, volume?: number) => void;
         LZString: typeof LZString;
         Howl: typeof Howl;
         originalActors: { [key: string]: Actor };
