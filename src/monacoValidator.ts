@@ -283,7 +283,7 @@ function checkDuplicateAnnotations() {
     }
 
     if (line.startsWith("@foreground")) {
-        if (branches[currentChain]["____FOREGROUND____"] === false) {
+        if (branches[currentChain]["____FOREGROUND____"] === true) {
             markers.push({
                 severity: monaco.MarkerSeverity.Warning,
                 message: `Duplicate @foreground annotation in chain "${currentChain}". Only the last annotation in a chain will be used.`,
