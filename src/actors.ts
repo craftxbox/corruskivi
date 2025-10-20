@@ -679,4 +679,17 @@ export function insertExtraActors() {
         type: "recollection thoughtform qou obesk portrait-static portrait-cover",
         voice: () => window.play("talkhigh", 0.5),
     };
+
+    window.env.dialogueActors["wiser"] = {
+        type: "obesk uppercase obesk-color",
+        image: "/img/textures/disruptionM.gif",
+        voice: () => window.play("talkcore", 1.75),
+        player: true,
+    };
+
+    window.env.dialogueActors["frenetic"] = {
+        type: "obesk uppercase friend-color",
+        image: "/img/textures/disruptionC.gif",
+        voice: () => window.play("talkcore", 2.25),
+    };
 }
