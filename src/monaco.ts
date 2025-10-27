@@ -27,6 +27,7 @@ monaco.languages.setMonarchTokensProvider("corru-dialogue", {
             [/^(\x40testpath )([\d, ]+)/, ["keyword", "string"]],
             [/^(\x40background )(.+)/, ["keyword", "string"]],
             [/^(\x40foreground )(.+)/, ["keyword", "string"]],
+            [/^(\x40css )([^{}\s]+)(.+)/, ["keyword", "identifier", "string"]],
             [
                 /^\w.*/,
                 {
@@ -217,6 +218,13 @@ function createAnnotationProposals(range: IRange) {
             insertText: "@foreground ",
             range: range,
         },
+        {
+            label: "@css",
+            kind: monaco.languages.CompletionItemKind.Property,
+            documentation: "Add custom CSS styles for the dialogue",
+            insertText: "@css ",
+            range: range,
+        }
     ];
 }
 
