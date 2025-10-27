@@ -40,7 +40,7 @@ let originalActors = clone(window.env.dialogueActors);
 
 function parseActors(actors: string) {
     if (!actors || actors.trim() === "") return {};
-    
+
     let actorJSON = actors.replaceAll(/\( *\) *=> *(?:window\.)?play *\( *['"`](.*)['"`] *, *(\d+\.?\d*) *\)/g, (_, sound, rate) => {
         return `["${sound}", ${rate}]`;
     });
@@ -85,28 +85,41 @@ export function updateActors() {
 
     for (let actorName of Object.keys(actors)) {
         if (actors.hasOwnProperty(actorName)) {
-            let actor = actors[actorName];
-            window.env.dialogueActors[actorName] = actor;
-            if (window.env.dialogueActors[actorName].voice) {
-                let voice = window.env.dialogueActors[actorName].voice as any;
-                if (voice?.length == 2) {
-                    window.env.dialogueActors[actorName].voice = () => {
-                        window.play(voice[0], voice[1]);
-                    };
-                } else if (voice?.length == 3) {
-                    window.env.dialogueActors[actorName].voice = () => {
-                        let howl = fetchHowl(voice[0]);
-                        if (!howl) {
-                            console.error(`Howl "${voice[0]}" does not exist.`);
-                            return;
-                        }
-                        howl.rate(voice[2]);
-                        howl.play(voice[1].length > 0 ? voice[1] : undefined);
-                    };
+            let actor = actors[actorName] as Actor;
+            if (actor.voice && Array.isArray(actor.voice)) {
+                actor.voice = voiceify(actor.voice);
+            }
+            if (actor.expressions) {
+                for (let key in actor.expressions) {
+                    let expression = actor.expressions[key];
+
+                    if (expression.voice && Array.isArray(expression.voice)) {
+                        actor.expressions[key].voice = voiceify(expression.voice);
+                    }
                 }
             }
+
+            window.env.dialogueActors[actorName] = actor;
         }
     }
+}
+
+function voiceify(voice: any[]): () => void {
+    if (voice?.length == 2) {
+        return () => {
+            window.play(voice[0], voice[1]);
+        };
+    } else if (voice?.length == 3) {
+        return () => {
+            let howl = fetchHowl(voice[0]);
+            if (!howl) {
+                console.error(`Howl "${voice[0]}" does not exist.`);
+                return;
+            }
+            howl.rate(voice[2]);
+            howl.play(voice[1].length > 0 ? voice[1] : undefined);
+        };
+    } else return () => {};
 }
 
 document.querySelector("#save-custom-actors")?.addEventListener("click", () => {
