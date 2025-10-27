@@ -426,7 +426,8 @@ function checkResponseTargetExists() {
 function checkBranchInUse() {
     if (/^[^ ]/.test(line) == false) return; // skip anything that's not indent level 0
 
-    if (line.startsWith("@name") || line.startsWith("@respobj")) return;
+    // skip annotations and ____SHOWIF
+    if (line.startsWith("@name") || line.startsWith("@respobj") || "____") return;
 
     if (line === "start") return; // skip start branch
 
