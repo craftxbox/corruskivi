@@ -1,0 +1,32 @@
+{
+    "theme_color": "#fcfc00",
+    "background_color": "#00fcfc",
+    "orientation": "landscape",
+    "display": "standalone",
+    "dir": "auto",
+    "name": "corruskivi",
+    "short_name": "corruskivi",
+    "start_url": "https://crxb.cc/corruskivi/",
+    "scope": "https://crxb.cc/corruskivi/",
+    "description": "corruskivi -- dialogue editor",
+    "screenshots": [
+        {
+            "src": "https://transfur.science/ierph1r",
+            "sizes": "1050x700",
+            "type": "image/png",
+            "form_factor": "wide"
+        }
+    ],
+    "icons": [
+        {
+            "src": "https://transfur.science/0j5eokhx",
+            "sizes": "100x100",
+            "type": "image/gif"
+        },
+        {
+            "src": "https://transfur.science/uncekjcj",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ]
+}
