@@ -1,4 +1,5 @@
 import { processChains } from "./annotations/chain";
+import { processCss } from "./annotations/style";
 import { processTestPath } from "./annotations/testpath";
 
 export type AnnotationResult = {
@@ -9,6 +10,7 @@ export type AnnotationResult = {
 
 export function processAnnotations(dialogue: string, _noExec: boolean): AnnotationResult {
     dialogue = processTestPath(dialogue);
+    dialogue = processCss(dialogue);
     let result = processChains(dialogue);
     return result
 }
