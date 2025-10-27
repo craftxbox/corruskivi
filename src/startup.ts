@@ -411,6 +411,7 @@ annotations
     RESPONSES::self
         testpath<+>testpath
         background<+>background
+        css<+>css
         ok<+>advanced
             FAKEEND::(back)
 
@@ -418,6 +419,7 @@ annotationslist
     RESPONSES::self
         testpath<+>testpath
         background<+>background
+        css<+>css
         ok<+>advanced
             FAKEEND::(back)
 
@@ -473,6 +475,20 @@ howls
         what can i use<+>howlslist
         custom howls<+>customhowls
         ok<+>advanced
+            FAKEEND::(back)
+
+css
+    moth
+        i cant really explain how css and stylesheets work here
+        but you can use the <span class="code">@css</span> annotation to add custom css to your dialogue
+        just put <span class="code">@css</span> followed by the selector, and the styles you want to apply
+        like this:<br/><br/><code>@css .moth {<br/>&nbsp;&nbsp;&nbsp;&nbsp;background-color: red;<br/>}</code>
+        and that would make all elements with the <span class="code">moth</span> class have a red background
+        you can use any valid css here, so go nuts
+        but be careful not to make your mindspike menu invisible or anything
+
+    RESPONSES::self
+        ok<+>annotationslist
             FAKEEND::(back)
 
 howlslist
