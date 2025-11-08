@@ -232,6 +232,15 @@ export function updateHowls() {
     return howlCount;
 }
 
+export function stopAllHowls() {
+    for (let howlName in howls) {
+        if (howls.hasOwnProperty(howlName)) {
+            howls[howlName].stop();
+        }
+        window.sfxmap.stop();
+    }
+}
+
 setHowlsContent(localStorage.getItem("howls") || "");
 
 updateHowls();

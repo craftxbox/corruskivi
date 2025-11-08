@@ -11,7 +11,7 @@ import "./types.d";
 import "./saves";
 import { getCustomActorsContent, setCustomActorsContent, updateActors } from "./customactors";
 import { getDefinesContent, setDefinesContent, updateDefines } from "./defines";
-import { getHowlsContent, setHowlsContent, stopHowls, updateHowls } from "./howl";
+import { getHowlsContent, setHowlsContent, stopAllHowls, stopHowls, updateHowls } from "./howl";
 import { decodeShareString, makeShareString, uploadShareString, type ShareObject } from "./share";
 import { postProcessDialogue, processChains, preProcessDialogue, preProcessChain, postProcessChain } from "./processors";
 import { clearTestPath, getTestPath } from "./annotations/testpath";
@@ -45,9 +45,8 @@ declare global {
         LZString: typeof LZString;
         Howl: typeof Howl;
         originalActors: { [key: string]: Actor };
-        sfxmap: {
+        sfxmap: Howl & {
             _src: string;
-            load: () => void;
         };
         env: {
             abyss: {
@@ -368,6 +367,11 @@ document.querySelector("#end-dialogue")?.addEventListener("click", () => {
     }
 });
 
+document.querySelector("#stop-howls")?.addEventListener("click", () => {
+    stopAllHowls();
+    window.chatter({ actor: "funfriend", text: "All audio stopped.", readout: true, sfx: false });
+});
+
 function loadShareObject(data: ShareObject) {
     setEditorContent(data.dialogue); // if THIS one is missing you've made a big mistake
     setCustomActorsContent(data?.actors || "");
@@ -451,6 +455,7 @@ Object.defineProperty(window, "unpreview", {
         document.querySelector("#system-menu")?.classList.remove("hidden");
         window.history.pushState({}, "", window.location.href.replace("/preview", "/"));
         setTimeout(playStartupDialogue, 50);
+        stopAllHowls();
     },
 });
 
@@ -462,6 +467,8 @@ export function enterDirectPreview() {
     });
     document.body.classList.add("codezone");
     document.querySelector("#system-menu")?.classList.add("hidden");
+
+    stopAllHowls();
 
     window.env.dialogues["realpreview"] = window.generateDialogueObject(`start
     ${getInitialActor()}
