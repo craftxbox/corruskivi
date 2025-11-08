@@ -10,6 +10,8 @@ let i = 0;
 let currentChain = "";
 let branches: { [chain: string]: { [branch: string]: boolean } } = {};
 let testpath: boolean | null = null;
+let initialActorDefined: boolean | null = null;
+let initialTextDefined: boolean | null = null;
 
 export function validate(model: monaco.editor.ITextModel) {
     lines = model.getLinesContent();
@@ -20,6 +22,8 @@ export function validate(model: monaco.editor.ITextModel) {
     lineNumber = 0;
     i = 0;
     testpath = null;
+    initialActorDefined = null;
+    initialTextDefined = null;
 
     for (i = 0; i < lines.length; i++) {
         line = lines[i];
@@ -40,7 +44,7 @@ export function validate(model: monaco.editor.ITextModel) {
         if (line.startsWith("@background")) {
             if (branches[currentChain]["____BACKGROUND____"] === false) {
                 branches[currentChain]["____BACKGROUND____"] = true;
-            } else {
+            } else if (branches[currentChain]["____BACKGROUND____"] === undefined) {
                 branches[currentChain]["____BACKGROUND____"] = false;
             }
         }
@@ -48,16 +52,32 @@ export function validate(model: monaco.editor.ITextModel) {
         if (line.startsWith("@foreground")) {
             if (branches[currentChain]["____FOREGROUND____"] === false) {
                 branches[currentChain]["____FOREGROUND____"] = true;
-            } else {
+            } else if (branches[currentChain]["____FOREGROUND____"] === undefined) {
                 branches[currentChain]["____FOREGROUND____"] = false;
             }
         }
 
         if (line.startsWith("@testpath")) {
-            if(testpath === false) {
+            if (testpath === false) {
                 testpath = true;
-            } else {
+            } else if (testpath === null) {
                 testpath = false;
+            }
+        }
+
+        if (line.startsWith("@initial-actor")) {
+            if (initialActorDefined === false) {
+                initialActorDefined = true;
+            } else if (initialActorDefined === null) {
+                initialActorDefined = false;
+            }
+        }
+
+        if (line.startsWith("@initial-text")) {
+            if (initialTextDefined === false) {
+                initialTextDefined = true;
+            } else if (initialTextDefined === null) {
+                initialTextDefined = false;
             }
         }
     }
@@ -97,7 +117,7 @@ export function validate(model: monaco.editor.ITextModel) {
 
         if (line.trim() === "") continue;
 
-        if(line.startsWith("@name")) {
+        if (line.startsWith("@name")) {
             currentChain = line.substring(5).trim();
         }
 
@@ -126,8 +146,8 @@ function checkCommandsAttachedToDialogue() {
 }
 
 function checkBadCaseCommands() {
-    let match = line.match(/(?:    ){3}(\w*)::/)
-    if(match) {
+    let match = line.match(/(?:    ){3}(\w*)::/);
+    if (match) {
         let command = match[1];
         if (command !== command.toUpperCase()) {
             markers.push({
@@ -142,7 +162,7 @@ function checkBadCaseCommands() {
         return;
     }
 
-    match = line.match(/(?:    ){1}(RESPONSES|RESPOBJ)::/i)
+    match = line.match(/(?:    ){1}(RESPONSES|RESPOBJ)::/i);
     if (match) {
         let command = match[1];
         if (command !== command.toUpperCase()) {
@@ -157,8 +177,6 @@ function checkBadCaseCommands() {
         }
     }
 }
-
-        
 
 function checkUnprocessedExec() {
     let execCheck = document.getElementById("enable-exec") as HTMLInputElement;
@@ -300,6 +318,32 @@ function checkDuplicateAnnotations() {
             markers.push({
                 severity: monaco.MarkerSeverity.Error,
                 message: `Duplicate @testpath annotation. Only one @testpath annotation is allowed.`,
+                startLineNumber: lineNumber,
+                startColumn: 1,
+                endLineNumber: lineNumber,
+                endColumn: line.length + 1,
+            });
+        }
+    }
+
+    if (line.startsWith("@initial-actor")) {
+        if (initialActorDefined === true) {
+            markers.push({
+                severity: monaco.MarkerSeverity.Error,
+                message: `Duplicate @initial-actor annotation. Only one @initial-actor annotation is allowed.`,
+                startLineNumber: lineNumber,
+                startColumn: 1,
+                endLineNumber: lineNumber,
+                endColumn: line.length + 1,
+            });
+        }
+    }
+
+    if (line.startsWith("@initial-text")) {
+        if (initialTextDefined === true) {
+            markers.push({
+                severity: monaco.MarkerSeverity.Error,
+                message: `Duplicate @initial-text annotation. Only one @initial-text annotation is allowed.`,
                 startLineNumber: lineNumber,
                 startColumn: 1,
                 endLineNumber: lineNumber,

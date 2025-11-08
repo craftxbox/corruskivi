@@ -1,4 +1,5 @@
 import { processChains } from "./annotations/chain";
+import { processInitialOverrides } from "./annotations/initial";
 import { processCss } from "./annotations/style";
 import { processTestPath } from "./annotations/testpath";
 
@@ -9,6 +10,7 @@ export type AnnotationResult = {
 };
 
 export function processAnnotations(dialogue: string, _noExec: boolean): AnnotationResult {
+    dialogue = processInitialOverrides(dialogue);
     dialogue = processTestPath(dialogue);
     dialogue = processCss(dialogue);
     let result = processChains(dialogue);

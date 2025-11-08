@@ -15,6 +15,7 @@ import { getHowlsContent, setHowlsContent, stopHowls, updateHowls } from "./howl
 import { decodeShareString, makeShareString, uploadShareString, type ShareObject } from "./share";
 import { postProcessDialogue, processChains, preProcessDialogue, preProcessChain, postProcessChain } from "./processors";
 import { clearTestPath, getTestPath } from "./annotations/testpath";
+import { getInitialActor, getInitialText } from "./annotations/initial";
 
 declare global {
     interface Window {
@@ -453,11 +454,6 @@ Object.defineProperty(window, "unpreview", {
     },
 });
 
-window.env.dialogues["realpreview"] = window.generateDialogueObject(`start
-    sys
-        NOTICE::'memory stream located'
-            WAIT::10000`);
-
 export function enterDirectPreview() {
     Object.defineProperty(window.env, "directFromUrl", {
         value: true,
@@ -466,6 +462,12 @@ export function enterDirectPreview() {
     });
     document.body.classList.add("codezone");
     document.querySelector("#system-menu")?.classList.add("hidden");
+
+    window.env.dialogues["realpreview"] = window.generateDialogueObject(`start
+    ${getInitialActor()}
+        ${getInitialText()}
+            WAIT::10000`);
+
     startNewDialogue("realpreview");
     setTimeout(() => {
         if (window.env.dialogueWaitTimeout) {

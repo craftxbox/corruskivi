@@ -28,6 +28,8 @@ monaco.languages.setMonarchTokensProvider("corru-dialogue", {
             [/^(\x40background )(.+)/, ["keyword", "string"]],
             [/^(\x40foreground )(.+)/, ["keyword", "string"]],
             [/^(\x40css )([^{}\s]+)(.+)/, ["keyword", "identifier", "string"]],
+            [/^(\x40initial-actor )(.+)/, ["keyword", "string"]],
+            [/^(\x40initial-text )(.+)/, ["keyword", "string"]],
             [
                 /^\w.*/,
                 {
@@ -223,6 +225,20 @@ function createAnnotationProposals(range: IRange) {
             kind: monaco.languages.CompletionItemKind.Property,
             documentation: "Add custom CSS styles for the dialogue",
             insertText: "@css ",
+            range: range,
+        },
+        {
+            label: "@initial-actor",
+            kind: monaco.languages.CompletionItemKind.Property,
+            documentation: "Set the initial dialogue actor shown when previewing",
+            insertText: "@initial-actor ",
+            range: range,
+        },
+        {
+            label: "@initial-text",
+            kind: monaco.languages.CompletionItemKind.Property,
+            documentation: "Set the initial dialogue text shown when previewing",
+            insertText: "@initial-text ",
             range: range,
         }
     ];
