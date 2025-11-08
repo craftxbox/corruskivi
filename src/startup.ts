@@ -105,7 +105,7 @@ start
             SHOWIF::[["ENV!!directFromUrl", false], ["ENV!!vaporwave", false], ["fbx__editorintropleasedontcollide-vaporwave", true]]
             HIDEREAD::
         no more music<+>novaporwave
-            SHOWIF::[["ENV!!directFromUrl", false], ["ENV!!vaporwave", true]]
+            SHOWIF::[["ENV!!vaporwave", true]]
             HIDEREAD::
         credits<+>credits
         wiki<+>EXEC::window.open('https://github.com/craftxbox/corruskivi/wiki', '_blank');
@@ -124,7 +124,7 @@ options
             SHOWIF::[["ENV!!directFromUrl", false], ["ENV!!vaporwave", false], ["fbx__editorintropleasedontcollide-vaporwave", true]]
             HIDEREAD::
         no more music<+>novaporwave
-            SHOWIF::[["ENV!!directFromUrl", false], ["ENV!!vaporwave", true]]
+            SHOWIF::[["ENV!!vaporwave", true]]
             HIDEREAD::
         credits<+>credits
         wiki<+>EXEC::window.open('https://github.com/craftxbox/corruskivi/wiki', '_blank');
@@ -607,10 +607,18 @@ vaporwave
             FAKEEND::(back)
 
 novaporwave
+____SHOWIF::[["ENV!!directFromUrl", false]]
     self
-        ACTUALLY, NEVERMIND ON THE MUSIC.
+        ACTUALLY, NEVERMIND ON THE MUSIC
     moth
         oh, ok
+____END
+____SHOWIF::[["ENV!!directFromUrl", true]]
+    self
+        THE MUSIC IS A BIT DISTRACTING
+    moth
+        shit, sorry
+____END
     sourceless
         THE CLICK OF THE CASSETTE PLAYER IS HEARD AGAIN, FOLLOWED BY SILENCE.
             EXEC::window.silly.vapor.stop()

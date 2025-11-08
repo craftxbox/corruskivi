@@ -470,6 +470,11 @@ export function enterDirectPreview() {
 
     stopAllHowls();
 
+    if (window.undoallchanges) {
+        window.undoallchanges();
+        delete window.undoallchanges;
+    }
+
     window.env.dialogues["realpreview"] = window.generateDialogueObject(`start
     ${getInitialActor()}
         ${getInitialText()}
