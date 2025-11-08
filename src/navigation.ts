@@ -148,7 +148,13 @@ function navigate(url: string, trusted: boolean = false, blank = false) {
     }
 
     if (blank) window.open(url, "_blank");
-    else window.location.assign(url);
+    else {
+        if (window.location.pathname === urlObj.pathname) {
+            window.location.hash = urlObj.hash;
+            window.location.reload();
+        }
+        window.location.assign(url);
+    }
 }
 
 Object.defineProperty(window, "navigate", {
