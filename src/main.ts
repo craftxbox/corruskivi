@@ -4,6 +4,7 @@ import { previewDialogue } from "./previewDialogue";
 
 import "./actors";
 import "./silly/vapor";
+import "./silly/mothDynamics";
 import { playStartupDialogue } from "./startup";
 import { getEditorContent, setEditorContent } from "./monaco";
 
@@ -40,7 +41,7 @@ declare global {
         page: {
             formedDefinitionStrings?: { [key: string]: Object | string };
         };
-        check(key: string, state: string): boolean;
+        check(key: string, state?: string): any;
         play: (sfx: string, rate?: number | boolean, volume?: number) => void;
         LZString: typeof LZString;
         Howl: typeof Howl;

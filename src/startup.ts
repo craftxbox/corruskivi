@@ -412,6 +412,7 @@ annotations
         testpath<+>testpath
         background<+>background
         css<+>css
+        initial-text/actor<+>initialtext
         ok<+>advanced
             FAKEEND::(back)
 
@@ -420,6 +421,7 @@ annotationslist
         testpath<+>testpath
         background<+>background
         css<+>css
+        initial-text/actor<+>initialtext
         ok<+>advanced
             FAKEEND::(back)
 
@@ -452,6 +454,33 @@ background
         but you can pick whatever you want
         go wild
         they apply to each chain individiually so you can have different backgrounds for different parts of your dialogue
+    RESPONSES::self
+        ok<+>annotationslist
+            FAKEEND::(back)
+
+initialtext
+____NESTIF::[["fbx__editorintropleasedontcollide-initialtext", false]]
+    self
+        when i go to write an annotation the editor suggest two annotations you didn't mention
+            EXEC::change("illegalEditor", "++");
+        @initial-text and @initial-actor
+        what are those?
+    moth
+        TEXEC::window.silly.getMothLine("illegalEditor", 1);
+        TEXEC::window.silly.getMothLine("illegalEditor", 2);
+        TEXEC::window.silly.getMothLine("illegalEditor", 3);
+        TEXEC::window.silly.getMothLine("illegalEditor", 4);
+    moth
+        anyways, let me find the docs
+        ...
+____END
+    moth
+        ok, so you know when you start a memory stream, your mindspike shows "memory stream located", right?
+        it's a safety that your mindspike puts in to make sure everything is synchronized before you go in
+        turns out, there's an exploit out there that lets you change that to whatever you want
+        so <span class="code">@initial-text</span> changes that text to whatever you put after it
+        and <span class="code">@initial-actor</span> changes the actor it shows up as
+    
     RESPONSES::self
         ok<+>annotationslist
             FAKEEND::(back)
