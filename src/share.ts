@@ -51,11 +51,14 @@ export async function decodeShareString(shareString: string): Promise<ShareObjec
                 console.error(`Failed to load shared dialogue from ${shareObj}: ${xhr.statusText}`);
                 throw new Error("");
             }
-            xhr.open("GET", originalShareObj + ".sig", false);
-            xhr.send();
-            if (xhr.status >= 200 && xhr.status < 300) {
-                signature = xhr.responseText;
-            }
+            
+            try {
+                xhr.open("GET", originalShareObj + ".sig", false);
+                xhr.send();
+                if (xhr.status >= 200 && xhr.status < 300) {
+                    signature = xhr.responseText;
+                }
+            } catch { }
         }
 
         if (signature) {
