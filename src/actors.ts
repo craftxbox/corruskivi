@@ -6,6 +6,159 @@
 // made by dem, inspired by noobogonis's :)
 ////////// DIALOGUE ACTORS //////////
 
+// these "global" actors are inserted by corru.js
+// but it often confuses people who are unable to find them
+// so i put them here for extra clarity
+    //     sourceless: {
+    //         type: "sourceless",
+    //     },
+
+    //     "sourceless quiet": {
+    //         name: "sourceless",
+    //         type: "sourceless",
+    //         voice: false
+    //     },
+
+    //     "sourceless noprocess": {
+    //         name: "sourceless",
+    //         type: "sourceless",
+    //         voice: false,
+    //         noProcess: true
+    //     },
+
+    //     "combat": {
+    //         name: "combat",
+    //         type: "combat-message",
+    //         noProcess: true,
+    //     },
+
+    //     "sourceless incoherent": {
+    //         name: "sourceless",
+    //         type: "sourceless incoherent",
+    //     },
+    
+    //     moth: {
+    //         image: '/img/sprites/moth/mothman.gif',
+    //         type: "external moth",
+    //         noProcess: true,
+    //     }, 
+    
+    //     unknown: {
+    //         image: '/img/sprites/velzie/smile2.png',
+    //         type: "velzie",
+    //         element: "#velzieface",
+    //         noProcess: true,
+    //         voice: ()=>{play('talksignal', 0.5)}
+    //     },
+    
+    //     self: {
+    //         image: '/img/portraits/interloper.gif',
+    //         type: "interloper",
+    //         noProcess: true,
+    //         player: true
+    //     },
+    
+    //     sys: {
+    //         image: '/img/mui/mindspikelogoactive.gif',
+    //         type: "mindspike",
+    //         player: true,
+    //         noProcess: true,
+    //         voice: ()=>{play('muiScanner', 2)}
+    //     },
+    
+    //     "sys quiet": {
+    //         name: "sys",
+    //         image: '/img/mui/mindspikelogoactive.gif',
+    //         type: "mindspike",
+    //         player: true,
+    //         noProcess: true,
+    //         voice: false
+    //     },
+
+    //     funfriend: {
+    //         element: "#funfriend",
+    //         image: '/img/sprites/funfriend/funfriend.gif',
+    //         type: "obesk funfriend",
+    //         voice: ()=>{play('talk', 2)}
+    //     },
+
+    //     proxyfriend: {
+    //         element: ".ffproxy",
+    //         image: '/img/sprites/funfriend/proxyfriend.gif',
+    //         type: "obesk funfriend",
+    //         voice: ()=>{play('talkhigh', 1)}
+    //     },
+
+    //     akizet: {
+    //         image: '/img/sprites/akizet/portrait.gif',
+    //         type: "obesk qou akizet",
+    //         element: ".truecreature .akizet",
+    //         player: true,
+    //         voice: ()=>play('talk', 2.5)
+    //     },
+
+    //     bstrd: {
+    //         image: '/img/sprites/bstrd/bstrd.gif',
+    //         type: "bstrd portrait-cover",
+    //         element: ".bstrd",
+    //         voice: ()=>play('talkgal', 0.4)
+    //     },
+    
+    //     actual_site_error: {
+    //         noProcess: true,
+    //         image: '/img/viendbot.png',
+    //         type: "metafiend portrait-dark portrait-contain",
+    //         voice: ()=>{play('muiClick', 2)}
+    //     },
+
+    //     bugviend: {
+    //         name: 'Â»ÃµGQÃ Âº3Â¾Ãµâ€cR%',
+    //         type: "incoherent thoughtform portrait-blocker hallucination",
+    //         image: "/img/sprites/combat/foes/hallucinations/portrait.gif",
+    //         voice: ()=>play('fear', 2)
+    //     },
+
+    //     effigy: {
+    //         image: '/img/local/uncosm/ozo/akieffigy_portrait.gif',
+    //         type: "thoughtform awakened portrait-haze portrait-cover",
+    //         element: "#realgrid .akieffigy",
+    //         voice: ()=>play('talkflower', 1.25)
+    //     },
+
+    //     bugout: {
+    //         image: "/img/sprites/daemons/knight/scan.gif",
+    //         type: "bstrd uppercase portrait-contain",
+    //         voice: ()=>play('talkcroak', 0.6)
+    //     },
+
+    //     fairy: {
+    //         element: ".ozofriend.eyefriend",
+    //         image: '/img/local/uncosm/ozo/sprite_portrait.gif', 
+    //         type: "thoughtform fairy awakened portrait-haze portrait-auto portrait-center",
+    //         voice: ()=>play('talkfairy')
+    //     },
+        
+    //     envoy: {
+    //         image: "/img/local/city/envoybutton.gif",
+    //         type: "recollection portrait-bright portrait-cover",
+    //         element: ".envoy",
+    //         voice: ()=>play('talk', 0.9)
+    //     },
+
+    //     "s w   al kk": {
+    //         image: "/img/local/city/pedestrian5.gif",
+    //         type: "recollection portrait-top portrait-cover incoherent",
+    //         voice: ()=>play('talkcroak', 0.85),
+    //         element: ".swalk",
+    //     },
+
+    //     rotwatcher: {
+    //         element: ".rotwatcher",
+    //         type: "actor-sourceless rotwatcher thoughtform portrait-auto portrait-center",
+    //         voice: ()=>play('talkrot')
+    //     },
+
+
 export function insertExtraActors() {
     /* /hello/ */
     window.env.dialogueActors["sentry"] = {
