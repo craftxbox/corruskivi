@@ -107,6 +107,8 @@ export function validate(model: monaco.editor.ITextModel) {
         checkActorExists();
 
         checkResponseTargetExists();
+
+        checkDialogueHasActor();
     }
 
     currentChain = "editorpreview";
@@ -495,6 +497,31 @@ function checkChainInUse() {
                 message: `Dialogue chain "${currentChain}" is never used.`,
                 startLineNumber: lineNumber,
                 startColumn: 1,
+                endLineNumber: lineNumber,
+                endColumn: line.length + 1,
+            });
+        }
+    }
+}
+
+function checkDialogueHasActor() {
+    if (line.startsWith("    ".repeat(2))) {
+        let lastLine = lines[i - 1];
+        let lastLineIndex = i - 1;
+        if (lastLine.startsWith("    ".repeat(2)) == true) {
+            return; // skip if previous line is also indent level 2
+        }
+        while (/^\s*$|^        \w/m.test(lastLine)) {
+            lastLineIndex--;
+            if (lastLineIndex < 0) return;
+            lastLine = lines[lastLineIndex];
+        }
+        if (/^    \w/m.test(lastLine) == false) {
+            markers.push({
+                severity: monaco.MarkerSeverity.Error,
+                message: "Dialogue lines must have an actor specified.",
+                startLineNumber: lineNumber,
+                startColumn: 9,
                 endLineNumber: lineNumber,
                 endColumn: line.length + 1,
             });
