@@ -189,7 +189,7 @@ function checkUnprocessedExec() {
             severity: execCheck.checked ? monaco.MarkerSeverity.Info : monaco.MarkerSeverity.Error,
             message: "This unsafe command requires the 'Enable EXEC commands' option to be enabled and cannot be shared as a memory.",
             startLineNumber: lineNumber,
-            startColumn: 13,
+            startColumn: (line.match(/^(\s+)/) || [" "])[0].length,
             endLineNumber: lineNumber,
             endColumn: line.length + 1,
         });
