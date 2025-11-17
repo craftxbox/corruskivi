@@ -51,23 +51,21 @@ export async function decodeShareString(shareString: string): Promise<ShareObjec
                 console.error(`Failed to load shared dialogue from ${shareObj}: ${xhr.statusText}`);
                 throw new Error("");
             }
-            
+
             try {
                 xhr.open("GET", originalShareObj + ".sig", false);
                 xhr.send();
                 if (xhr.status >= 200 && xhr.status < 300) {
                     signature = xhr.responseText;
                 }
-            } catch { }
+            } catch {}
         }
 
         if (signature) {
-            let jws = {
-                signature: signature,
-                payload: base64url.encode(shareObj),
-            };
-
             try {
+                let jws = JSON.parse(signature);
+                jws.payload = base64url.encode(shareObj);
+
                 let result = await flattenedVerify(jws, key);
                 if (!result || !result.payload) {
                     console.error("Failed to verify share string signature.");
