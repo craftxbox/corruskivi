@@ -511,7 +511,7 @@ function checkDialogueHasActor() {
         if (lastLine.startsWith("    ".repeat(2)) == true) {
             return; // skip if previous line is also indent level 2
         }
-        while (/^\s*$|^        \w/m.test(lastLine)) {
+        while (/^\s*\n?$|^(?:    ){2,3}\w/m.test(lastLine)) {
             lastLineIndex--;
             if (lastLineIndex < 0) return;
             lastLine = lines[lastLineIndex];
