@@ -17,6 +17,7 @@ import { decodeShareString, makeShareString, uploadShareString, type ShareObject
 import { postProcessDialogue, processChains, preProcessDialogue, preProcessChain, postProcessChain } from "./processors";
 import { clearTestPath, getTestPath } from "./annotations/testpath";
 import { getInitialActor, getInitialText } from "./annotations/initial";
+import { applyDialogueJsPatches } from "./patchDialogueJs";
 
 declare global {
     interface Window {
@@ -82,6 +83,8 @@ declare global {
 
 window.sfxmap._src = "https://corru.observer" + window.sfxmap._src;
 window.sfxmap.load();
+
+applyDialogueJsPatches();
 
 const dialogueBox = document.querySelector("#dialogue-box") as HTMLDivElement;
 
