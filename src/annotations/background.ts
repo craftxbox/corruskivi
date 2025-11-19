@@ -11,10 +11,32 @@ export function preProcessBackground(changes: Changes): Changes {
     let applyBackground = [];
     let dialogue = changes.dialogue;
 
+    let backgroundBehaviour = "preload";
+
+    let behaviourMatch = dialogue.match(/^@background-behaviour (preload|lazy)$/m);
+    if (behaviourMatch) {
+        backgroundBehaviour = behaviourMatch[1];
+        dialogue = dialogue.replace(behaviourMatch[0], "");
+    }
+
     for (const match of dialogue.matchAll(/^@(foreground|background) (https:\/\/.+|none)$/gm)) {
         if (!match) continue; //what?
 
         let url = match[2];
+
+        try {
+            let urlObj = new URL(url);
+            if (backgroundBehaviour === "preload" && urlObj.protocol === "https:") {
+                let linkElem = document.createElement("link");
+                linkElem.rel = "preload";
+                linkElem.as = "image";
+                linkElem.href = urlObj.href;
+                document.head.appendChild(linkElem);
+            }
+        } catch (e: any) {
+            console.warn(`unable to preload background image: ${url}`);
+            console.trace(e.message);
+        }
 
         dialogue = dialogue.replace(match[0], "");
         if (match[1] === "foreground") {

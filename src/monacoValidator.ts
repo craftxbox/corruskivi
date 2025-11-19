@@ -12,6 +12,7 @@ let branches: { [chain: string]: { [branch: string]: boolean } } = {};
 let testpath: boolean | null = null;
 let initialActorDefined: boolean | null = null;
 let initialTextDefined: boolean | null = null;
+let bgbehaviour: boolean | null = null;
 
 export function validate(model: monaco.editor.ITextModel) {
     lines = model.getLinesContent();
@@ -24,6 +25,7 @@ export function validate(model: monaco.editor.ITextModel) {
     testpath = null;
     initialActorDefined = null;
     initialTextDefined = null;
+    bgbehaviour = null;
 
     for (i = 0; i < lines.length; i++) {
         line = lines[i];
@@ -62,6 +64,14 @@ export function validate(model: monaco.editor.ITextModel) {
                 testpath = true;
             } else if (testpath === null) {
                 testpath = false;
+            }
+        }
+
+        if (line.startsWith("@background-behaviour")) {
+            if (bgbehaviour === false) {
+                bgbehaviour = true;
+            } else if (bgbehaviour === null) {
+                bgbehaviour = false;
             }
         }
 
@@ -346,6 +356,19 @@ function checkDuplicateAnnotations() {
             markers.push({
                 severity: monaco.MarkerSeverity.Error,
                 message: `Duplicate @initial-text annotation. Only one @initial-text annotation is allowed.`,
+                startLineNumber: lineNumber,
+                startColumn: 1,
+                endLineNumber: lineNumber,
+                endColumn: line.length + 1,
+            });
+        }
+    }
+
+    if (line.startsWith("@background-behaviour")) {
+        if (bgbehaviour === true) {
+            markers.push({
+                severity: monaco.MarkerSeverity.Error,
+                message: `Duplicate @background-behaviour annotation. Only one @background-behaviour annotation is allowed.`,
                 startLineNumber: lineNumber,
                 startColumn: 1,
                 endLineNumber: lineNumber,

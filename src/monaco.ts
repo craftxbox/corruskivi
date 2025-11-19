@@ -30,6 +30,7 @@ monaco.languages.setMonarchTokensProvider("corru-dialogue", {
             [/^(\x40css )([^{}\s]+)(.+)/, ["keyword", "identifier", "string"]],
             [/^(\x40initial-actor )(.+)/, ["keyword", "string"]],
             [/^(\x40initial-text )(.+)/, ["keyword", "string"]],
+            [/^(\x40background-behaviour )(preload|lazy)/, ["keyword", "keyword"]],
             [
                 /^\w.*/,
                 {
@@ -218,6 +219,13 @@ function createAnnotationProposals(range: IRange) {
             kind: monaco.languages.CompletionItemKind.Property,
             documentation: "Set the foreground image for the dialogue",
             insertText: "@foreground ",
+            range: range,
+        },
+        {
+            label: "@background-behaviour",
+            kind: monaco.languages.CompletionItemKind.Property,
+            documentation: "Set the background image loading behaviour (preload or lazy)",
+            insertText: "@background-behaviour ",
             range: range,
         },
         {

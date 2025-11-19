@@ -455,6 +455,19 @@ background
         go wild
         they apply to each chain individiually so you can have different backgrounds for different parts of your dialogue
     RESPONSES::self
+        background-behaviour<+>bgpreload
+        ok<+>annotationslist
+            FAKEEND::(back)
+
+bgpreload
+    moth
+        so in earlier versions of the editor, background/foreground images weren't loaded until your spike saw them for the first time
+        which would cause the background to load slowly from the top down
+        now, by default, theyre preloaded when the dialogue starts so they show up instantly
+        but if you want to go back to the old way, you can use <span class="code">@background-behaviour lazy</span>
+        and then the images will only load when theyre first seen
+        it affects the whole dialogue though, not just a single chain
+    RESPONSES::self
         ok<+>annotationslist
             FAKEEND::(back)
 
