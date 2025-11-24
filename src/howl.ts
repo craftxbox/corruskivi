@@ -106,7 +106,7 @@ export function postprocessHowls(dialogue: string) {
             if (howlObject.name === "__SFXMAP") {
                 try {
                     let args = JSON.parse(howlObject.args);
-                    newHowlCode += `play("${args[0]}", ${args[1] || 1}, ${args[2] || 1});`;
+                    newHowlCode += `play("${args[0]}", ${args[1] || true}, ${args[2] || 0.75});`;
                 } catch (e) {
                     console.error("Failed to parse play command arguments:", e);
                     window.chatter({ actor: "actual_site_error", text: `Dialogue contains an invalid play command! It will be ignored.`, readout: true });
