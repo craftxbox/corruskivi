@@ -57,8 +57,8 @@ export function preprocessHowls(dialogue: string, silent = false) {
 
                 let args = [
                     strArgs.split(",")[0].replaceAll("'", "").replaceAll('"', "").replaceAll("`", ""),
-                    parseFloat(strArgs.split(",")[1]) || 1,
-                    parseFloat(strArgs.split(",")[2]) || 1,
+                    parseFloat(strArgs.split(",")[1]) || true,
+                    parseFloat(strArgs.split(",")[2]) || 0.75,
                 ];
 
                 let howlObject = {
