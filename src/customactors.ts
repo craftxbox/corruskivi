@@ -41,8 +41,8 @@ let originalActors = clone(window.env.dialogueActors);
 function parseActors(actors: string) {
     if (!actors || actors.trim() === "") return {};
 
-    let actorJSON = actors.replaceAll(/\( *\) *=> *(?:window\.)?play *\( *['"`](.*)['"`] *, *(\d+\.?\d*) *\)/g, (_, sound, rate) => {
-        return `["${sound}", ${rate}]`;
+    let actorJSON = actors.replaceAll(/\( *\) *=> *(?:window\.)?play *\( *['"`](.*)['"`] *(?:, *(\d+\.?\d*|true))? *\)/g, (_, sound, rate) => {
+        return `["${sound}", ${rate || true}]`;
     });
 
     if (actors.includes("env.dialogueActors")) {
