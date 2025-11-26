@@ -572,6 +572,9 @@ const corruEditor = monaco.editor.create(editorContainer, {
     language: "corru-dialogue",
     automaticLayout: true,
     theme: "vs-dark",
+    renderWhitespace: "boundary",
+    tabSize: 4,
+    wordWrap: "on",
 });
 
 const model = corruEditor.getModel();
