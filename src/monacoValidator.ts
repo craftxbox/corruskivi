@@ -379,7 +379,7 @@ function checkDuplicateAnnotations() {
 }
 
 function checkDuplicateBranches() {
-    if (!line.match(/^[^ ]/)) return; // skip anything that's not indent level 0
+    if (!line.match(/^(?!    )/)) return; // skip anything that's not indent level 0
     if (line.startsWith("@name") || line.startsWith("@respobj") || line.startsWith("RESPOBJ::")) return;
 
     if (branches[currentChain][`____REUSE____${line}`] === true) {
@@ -396,7 +396,7 @@ function checkDuplicateBranches() {
 
 function checkActorExists() {
     if (line.includes("RESPOBJ::")) return; // skip checking RESPOBJ lines
-    if (!line.match(/^    [^ ]/)) return; // skip anything that's not indent level 1
+    if (!line.match(/^    (?!    )/)) return; // skip anything that's not indent level 1
 
     let actor;
     if (/^    RESPONSES::/i.test(line)) actor = line.split(/^    RESPONSES::/i)[1].trim();
@@ -454,7 +454,7 @@ function checkActorExists() {
 }
 
 function checkResponseTargetExists() {
-    if (/^        [^ ]/.test(line) == false) return; // skip anything that's not indent level 2
+    if (/^        (?!    )/.test(line) == false) return; // skip anything that's not indent level 2
     if (line.includes("<+>") == false) return; // skip lines without targets
 
     let target = line.split("<+>")[1]?.trim();
@@ -493,7 +493,7 @@ function checkResponseTargetExists() {
 }
 
 function checkBranchInUse() {
-    if (/^[^ ]/.test(line) == false) return; // skip anything that's not indent level 0
+    if (/^(?!    )/.test(line) == false) return; // skip anything that's not indent level 0
 
     // skip annotations and ____SHOWIF
     if (line.startsWith("@name") || line.startsWith("@respobj") || "____") return;
