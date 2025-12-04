@@ -126,6 +126,8 @@ export function startNewDialogue(dialogue: string, settings?: { originEntityId?:
 
 Object.defineProperty(window, "_startNewDialogue", {
     value: startNewDialogue,
+    configurable: true,
+    writable: true, // don't
 });
 
 export function previewEntireDialogue(dialogueID: string, settings?: { originEntityId?: string; specificChain?: string }) {
@@ -461,6 +463,8 @@ Object.defineProperty(window, "unpreview", {
         setTimeout(playStartupDialogue, 50);
         stopAllHowls();
     },
+    configurable: true,
+    writable: true, // don't
 });
 
 export function enterDirectPreview() {
@@ -513,6 +517,8 @@ export function enterDirectPreview() {
 
 Object.defineProperty(window, "enterDirectPreview", {
     value: enterDirectPreview,
+    configurable: true,
+    writable: true, // don't
 });
 
 try {
