@@ -299,18 +299,19 @@ commandslist
         <span class="code">AUTOADVANCE::</span> will make the dialogue automatically advance to the next line without waiting for the player to click
         <span class="code">CLASS::</span> will add an HTML class to the dialogue line, which can be used for styling if you're making a mod.
         <span class="code">SHOWONCE::</span> will make the dialogue line or response only show once. once the player has seen it, it won't show up again
-        <span class="code">CHANGE::</span> will change the chain to the one you specify after it. will cause an error if the chain doesn't exist
+        <span class="code">SILENT::</span> will make the line not make any noise (outside of EXEC'ed howls). important if you want to play sounds after an actor transition
 
         <span class="code">FAKEEND::</span> only works on responses, it makes the response button look like an end button. it takes a string of text after it, which is what shows underneath the primary text
         <span class="code">HIDEREAD::</span> also only works in responses, it will hide if the response has been used before. It'll show up with a yellow underline like 'dynamic' responses
 
+        you can find more information about <span class="code">SHOWIF::</span>, <span class="code">NESTIF::</span>, and <span class="code">RESPOBJ::</span> commands in the advanced section of the help menu
+
         the rest of these commands are normally blocked by your mindspike's safeties, but you can use them if you disable them in the advanced menu
-        <span class="code">EXEC::</span> runs whatever javascript code you put after it
+        <span class="code">EXEC::</span> runs whatever javascript code you put after it. also works as a response target.
         <span class="code">THEN::</span> is like EXEC:: but it runs after a WAIT:: instead of immediately
         <span class="code">END::</span> is like EXEC:: but it runs when the dialogue ends.
         <span class="code">SKIP::</span> shows a button to allow skipping some or all of the dialogue, and runs like EXEC:: when pressed.<br><span class="code">SKIPNOTICE::</span> changes the text of the skip button, so you can make it say something else.<br/> <span class="code">SKIPTIME::</span> changes how long the 'skipping dialogue' screen gets shown for, in milliseconds.
         <span class="code">UNREADCHECK::</span> runs javascript to see if a response shows as unread or not
-        you can find more information about <span class="code">SHOWIF::</span>, <span class="code">NESTIF::</span>, and <span class="code">RESPOBJ::</span> commands in the advanced section of the help menu
 
     RESPONSES::self
         ok<+>syntax
@@ -512,6 +513,8 @@ howls
         so like, 0.5 will be half speed and half pitch
         and 2 will be double speed and double pitch
         obviously 1 would be normal
+        note, theres a bug in the latest mindspike firmware that makes howls not play on an actor transition
+        if you want to play a howl right after changing actors, you need to add the <span class="code">SILENT::</span> command to the line
         
     RESPONSES::self
         what can i use<+>howlslist
@@ -555,6 +558,8 @@ customhowls
         i can show you an example though
         <code>example = new Howl({<br/>&nbsp;&nbsp;src: ["https://corru.observer/audio/ozoloop.ogg"],<br/>&nbsp;&nbsp;rate: 2,<br/>&nbsp;&nbsp;volume: 0.5,<br/>&nbsp;&nbsp;loop: true<br/>});</code>
         and then you'd use that in a dialogue like this:<br/><br/><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;EXEC::example.play()</code>
+        you don't need to use the <span class="code">SILENT::</span> command on actor transitions with custom howls, they work fine without it
+        but it might still play the actor voice sound unless you use SILENT::
     
     RESPONSES::self
         ok<+>advanced

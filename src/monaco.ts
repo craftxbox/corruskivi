@@ -337,6 +337,13 @@ function createCommandProposals(range: IRange) {
             insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
             range: range,
         },
+        {
+            label: "SILENT::",
+            kind: monaco.languages.CompletionItemKind.Keyword,
+            documentation: "Suppress actor voices for this dialogue line",
+            insertText: "SILENT::",
+            range: range,
+        }
     ];
 }
 
