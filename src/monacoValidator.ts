@@ -36,7 +36,7 @@ export function validate(model: monaco.editor.ITextModel) {
             continue;
         }
 
-        if (line.match(/^[^ @]/)) {
+        if (line.match(/^[^ @_]/)) {
             if (branches[currentChain][line] === false) {
                 branches[currentChain][`____REUSE____${line}`] = true;
             }
