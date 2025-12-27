@@ -85,3 +85,13 @@ body.codezone .moth-trigger {
 .selectable ::selection {
   background-color: var(--obesk-color) !important;
 }
+
+body #meta-menu .moth-trigger.newthoughts {
+  color: var(--bright-color);
+}
+
+body .moth-trigger.newthoughts .mothnotice {
+  color: var(--bright-color);
+  animation:none;
+  text-shadow: none;
+}
