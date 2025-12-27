@@ -81,7 +81,9 @@ declare global {
     }
 }
 
-window.sfxmap._src = "https://corru.observer" + window.sfxmap._src;
+if (!window.sfxmap._src.startsWith("https://")) {
+    window.sfxmap._src = "https://corru.observer" + window.sfxmap._src;
+}
 window.sfxmap.load();
 
 applyDialogueJsPatches();
