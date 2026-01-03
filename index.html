@@ -156,7 +156,6 @@
             <details class="sysblock" open>
                 <summary>Saves</summary>
                 <select id="save-editor-slot">
-                    <option value="___NEW_SLOT">CREATE NEW SLOT</option>
                 </select>
                 <input type="text" id="save-editor-name" hidden placeholder="NEW SLOT NAME" />
                 <br />
@@ -365,6 +364,24 @@
                 env.definitions[`fairy`] = { type: `NOTE`, text: `'partial translation';'implied closest cultural equivalent'` };
             </script>
             <script type="module" src="/src/main.ts"></script>
+        </div>
+
+        <div id="delete-warning" class="popup-warning" style="display: none">
+            <div class="sysblock">
+                <div class="sysbox">
+                    <h3>!!__WARNING__!!</h3>
+                    <p class="sysinfo">You are about to perform a destructive action.</p>
+                    <p class="sysinfo">Continuing will permanently and irrecoverably erase this save slot.</p>
+                    <p class="sysinfo">Failure to exercise caution
+                        could lead to stroke, chronos misalignment, or worse.</p>
+                    <p class="sysinfo">By confirming this request you waive all right to medical claims against MINDSCI.
+                        For more information, please refer to your license agreement.</p>
+                    <div class="buttons">
+                        <span id="delete-confirm" class="button editor-pink">delete the save</span>
+                        <span id="delete-cancel" class="button primary">cancel</span>
+                    </div>
+                </div>
+            </div>
         </div>
     </body>
 </html>

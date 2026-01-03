@@ -6,9 +6,11 @@ import { getEditorContent, setEditorContent } from "./monaco";
 
 const saveEditorSlot = document.querySelector("#save-editor-slot") as HTMLSelectElement;
 
-const existingSaves = Object.keys(localStorage).filter((key) => key.startsWith("save_"));
+function getExistingSaves(): string[] {
+    return Object.keys(localStorage).filter((key) => key.startsWith("save_") || key.startsWith("___autosave"));
+}
 
-if (existingSaves.length === 0) {
+if (getExistingSaves().length === 0) {
     const defaultSave = `start
     moth
         this is an example dialogue
@@ -39,24 +41,11 @@ who
             howls: ""
         })
     );
-    existingSaves.push("save_0");
     loadSlot("save_0", true);
     console.warn("No existing saves found. Created a default save slot.");
 }
 
-for (const save of existingSaves) {
-    const saveData = localStorage.getItem(save);
-    if (!saveData) {
-        console.warn(`Save slot ${save} is empty or does not exist.`);
-        continue;
-    }
-    const saveObj = JSON.parse(saveData);
-    const option = document.createElement("option");
-    option.value = save;
-    option.innerText = saveObj.name || `Save Slot ${save.replace("save_", "")}`;
-    saveEditorSlot.insertAdjacentElement("afterbegin", option);
-    saveEditorSlot.value = save; // Set the first option as the default selected slot
-}
+refreshSaveMenu();
 
 if (saveEditorSlot?.value === "___NEW_SLOT") {
     document.querySelector("#save-editor-name")!.removeAttribute("hidden");
@@ -113,7 +102,20 @@ document.querySelector("#delete-editor-save")?.addEventListener("click", () => {
         return;
     }
 
-    deleteSlot(slot);
+    let deleteHandler = () => {
+        deleteSlot(slot);
+        document.getElementById("delete-warning")?.style.setProperty("display", "none");
+    };
+
+    let cancelHandler = () => {
+        document.getElementById("delete-confirm")?.removeEventListener("click", deleteHandler);
+        document.getElementById("delete-warning")?.style.setProperty("display", "none");
+    };
+
+    document.getElementById("delete-warning")?.style.removeProperty("display");
+    document.getElementById("delete-confirm")?.addEventListener("click", deleteHandler, { once: true });
+
+    document.getElementById("delete-cancel")?.addEventListener("click", cancelHandler, { once: true });
 });
 
 export function saveSlot(slot: string, name: string) {
@@ -131,18 +133,20 @@ export function saveSlot(slot: string, name: string) {
     const saveString = JSON.stringify(saveData);
 
     if (slot === "___NEW_SLOT") {
-        const existingSaves = Object.keys(localStorage).filter((key) => key.startsWith("save_"));
-        let saveNumber = existingSaves.length;
-        while (existingSaves.includes(`save_${saveNumber}`)) {
+        let saveNumber = getExistingSaves().length;
+        while (getExistingSaves().includes(`save_${saveNumber}`)) {
             saveNumber++;
         }
-        saveKey = `save_${saveNumber}`;
+    } else {
+        let originalData = localStorage.getItem(slot);
+        
+        if (originalData) {
+            let autosave = fetchAutosaveSlot("Overwriting Save: " + name)
+            let originalObj = JSON.parse(originalData);
+            originalObj.name = autosave.name;
 
-        const option = document.createElement("option");
-        option.value = saveKey;
-        option.innerText = name;
-        saveEditorSlot.appendChild(option);
-        saveEditorSlot.value = saveKey;
+            localStorage.setItem(autosave.slot, JSON.stringify(originalObj));
+        }
     }
 
     localStorage.setItem(saveKey, saveString);
@@ -150,9 +154,15 @@ export function saveSlot(slot: string, name: string) {
     window.chatter({ actor: "funfriend", text: `Save "${name}" created successfully!`, readout: true });
     window.play("talk", 2);
     localStorage.setItem("lastSave", saveKey);
+    refreshSaveMenu();
 }
 
 export function loadSlot(slot: string, suppressPreview?: boolean) {
+    let autosave = fetchAutosaveSlot("Before Load")
+
+    saveSlot(autosave.slot, autosave.name);
+    refreshSaveMenu();
+
     const saveData = localStorage.getItem(slot);
     if (!saveData) {
         console.error("Attempted to load a non-existent slot:", slot);
@@ -192,4 +202,47 @@ export function deleteSlot(slot: string) {
 
     window.chatter({ actor: "funfriend", text: `Save "${friendlyName}" deleted successfully!`, readout: true });
     window.play("talk", 2);
+}
+
+function fetchAutosaveSlot(reason: string): { slot: string; name: string } {
+    const autosaveSlots = {
+        "___autosave-1": localStorage.getItem("___autosave-1"),
+        "___autosave-2": localStorage.getItem("___autosave-2"),
+        "___autosave-3": localStorage.getItem("___autosave-3")
+    }
+
+    let oldestSave = "___autosave-1";
+    let oldestDate = new Date(8640000000000000); // max date
+
+    for (const [slot, data] of Object.entries(autosaveSlots)) {
+        if (data) {
+            const parsedData = JSON.parse(data);
+            const saveDate = new Date(parsedData.date);
+            if (saveDate < oldestDate) {
+                oldestDate = saveDate;
+                oldestSave = slot;
+            }
+        } else {
+            return { slot: slot, name: `Ephemeral ${slot.slice(-1)}: ${reason}` };
+        }
+    }
+
+    return { slot: oldestSave, name: `Ephemeral ${oldestSave.slice(-1)}: ${reason}` };
+}
+
+function refreshSaveMenu() {
+    saveEditorSlot.innerHTML = `<option value="___NEW_SLOT">CREATE NEW SLOT</option>`;
+    for (const save of getExistingSaves()) {
+        const saveData = localStorage.getItem(save);
+        if (!saveData) {
+            console.warn(`Save slot ${save} is empty or does not exist.`);
+            continue;
+        }
+        const saveObj = JSON.parse(saveData);
+        const option = document.createElement("option");
+        option.value = save;
+        option.innerText = saveObj.name || `Save Slot ${save.replace("save_", "")}`;
+        saveEditorSlot.insertAdjacentElement("afterbegin", option);
+        saveEditorSlot.value = save; // Set the first option as the default selected slot
+    }
 }
