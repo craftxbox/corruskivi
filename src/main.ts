@@ -497,23 +497,22 @@ export function enterDirectPreview() {
             delete window.env.dialogueWaitTimeout;
         }
         dialogueBox.classList.add("dialogue-click-proceed");
-        dialogueBox.addEventListener(
-            "click",
-            () => {
+
+        let clickListener = () => {
+            window.changeDialogue("editorpreview");
+            document.removeEventListener("keydown", keyListener);
+        };
+
+        let keyListener = (e: KeyboardEvent) => {
+            let key = e.key || false;
+            if (key && key.toLowerCase() === "enter") {
                 window.changeDialogue("editorpreview");
-            },
-            { once: true }
-        );
-        document.addEventListener(
-            "keydown",
-            (e) => {
-                let key = e.key || false;
-                if (key && key.toLowerCase() === "enter") {
-                    window.changeDialogue("editorpreview");
-                }
-            },
-            { once: true }
-        );
+                dialogueBox.removeEventListener("click", clickListener);
+            }
+        };
+
+        dialogueBox.addEventListener("click", clickListener, { once: true });
+        document.addEventListener("keydown", keyListener, { once: true });
     }, 50);
 }
 
