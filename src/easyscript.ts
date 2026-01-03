@@ -1,3 +1,5 @@
+import { getEditorContent, setEditorContent } from "./monaco";
+
 const easyscriptRegex = /^(?!    |____|SKIP|END)(?!RESPOBJ):?(\w+(?:::\w+)?)(?!\\):(.*)/gm
 
 const speakerMap: {[key: string]: string} = {
@@ -52,4 +54,19 @@ export function preProcessEasyScript(dialogue: string): string {
         dialogue = `start\n${dialogue}`;
     }
     return dialogue;
+}
+
+
+document.getElementById("de-easyscript")?.addEventListener("click", deeasyscript);
+
+function deeasyscript() {
+    let dialogue = getEditorContent();
+    let processedDialogue = preProcessEasyScript(dialogue);
+    if (dialogue == processedDialogue) {
+        window.chatter({ actor: "funfriend", text: "This dialogue does not seem to be in easyscript format!", readout: true });
+        return;
+    }
+
+    setEditorContent(processedDialogue);
+    window.chatter({ actor: "funfriend", text: "Dialogue converted from easyscript format!", readout: true });
 }
