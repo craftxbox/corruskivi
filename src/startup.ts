@@ -262,7 +262,7 @@ whatresponses
         almost always you will want to use the <span class="code">self</span> actor, but you can use other actors too
         then, you define the replies like this:<br/><br/><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name&lt;+&gt;destination</code>
         <span class="code">name</span> is whats shown to the player, and <span class="code">destination</span> is the branch that they will end up in.
-        you can also add multiple responses, with a different actor, and they'll show up at the same time.
+        you can also add multiple responses, with a different actor, and they'll show up at the same time, like this:<br/><br/>&nbsp;&nbsp;&nbsp;&nbsp;RESPONSES::self<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;yes&lt;+&gt;example<br/>&nbsp;&nbsp;&nbsp;&nbsp;RESPONSES::moth<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;no&lt;+&gt;example
         the responses you're about to see look like this:<br/><br/><code>&nbsp;&nbsp;&nbsp;&nbsp;RESPONSES::self<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fakeend&lt;+&gt;fakeend<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&lt;+&gt;syntax<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;FAKEEND::(back)</code>
     
     RESPONSES::self
@@ -277,6 +277,7 @@ fakeend
         <span class="code">FAKEEND::</span> is a command that turns the response into the end buttons you see
         they take a string of text after them, and that's what shows underneath the primary text
         but they act like any old response
+        the "ok" button you're about to see is a fakeend button, for example
     
     RESPONSES::self
         ok<+>syntax
@@ -302,7 +303,7 @@ commandslist
         <span class="code">SILENT::</span> will make the line not make any noise (outside of EXEC'ed howls). important if you want to play sounds after an actor transition
 
         <span class="code">FAKEEND::</span> only works on responses, it makes the response button look like an end button. it takes a string of text after it, which is what shows underneath the primary text
-        <span class="code">HIDEREAD::</span> also only works in responses, it will hide if the response has been used before. It'll show up with a yellow underline like 'dynamic' responses
+        <span class="code">HIDEREAD::</span> also only works in responses, it'll make it show up rounded with a yellow underline like 'dynamic' responses
 
         you can find more information about <span class="code">SHOWIF::</span>, <span class="code">NESTIF::</span>, and <span class="code">RESPOBJ::</span> commands in the advanced section of the help menu
 
@@ -345,6 +346,7 @@ definitions
         any word, followed by a colon, followed by the definition
         like this:<br/><br/><code>definitions:the thing you're reading right now</code>
         and then whenever i say "<span definition="the thing you're reading right now">definitions</span>", you can now hover over it to see that text.
+        these go in the definitions section of the advanced tab, you may have to scroll your editor down to see it.
     
     RESPONSES::self
         ok<+>advanced
@@ -353,6 +355,7 @@ definitions
 customactors
     moth
         custom actors are a bit trickier
+        these go in the custom actors section of the advanced tab, you may have to scroll your editor down to see it.
         you need to provide a "<span definition="Javascript Object Notation">JSON</span>" object with all the actors you want to add or override
         i can't explain the ins and outs of json here, but i can show you an example
         <code>{<br/>&nbsp;&nbsp;&nbsp;&nbsp;"craftxbox":{<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"name":"craftxbox",<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"image":"https://crxb.cc/snep.png",<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"type":"external moth"<br/>&nbsp;&nbsp;&nbsp;&nbsp;}<br/>}</code>
@@ -428,11 +431,15 @@ annotationslist
 
 testpath
     moth
-        normally when you preview a chain only the first branch is shown
+        normally when you test a chain only the first branch is shown
         but you can use <span class="code">@testpath</span> to define a path that will be shown instead
         each pair of numbers after <span class="code">@testpath</span> tells the editor which response to click on
         so if you put <span class="code">@testpath 0,1</span>
-        it will click the first reply of the first response menu.
+        it will click the second reply of the first response menu.
+        the numbers start from zero so 0 is the first, 1 is the second, etc
+        if you only have one response actor, you will always want to use <span class="code">0</span> as the first number
+        but if you had for example:<br/><br/>&nbsp;&nbsp;&nbsp;&nbsp;RESPONSES::self<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;yes&lt;+&gt;example<br/>&nbsp;&nbsp;&nbsp;&nbsp;RESPONSES::moth<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;no&lt;+&gt;example
+        and you wanted to click "no", you would use <span class="code">@testpath 1,0</span>
         you can put as many pairs of numbers as you want, and it will click them in order
         like this: <span class="code">@testpath 0,1 1,0 0,2 2,2</span>
         but note you can only have one testpath, and it must be at the very top of your editor
@@ -602,7 +609,7 @@ credits
     
     craftxbox
         My name is craftxbox, I made this dialogue editor (and the tutorial dialogue you're reading right now).
-        I hope you find it useful, and if you have any questions, feel free to ask me on the corru.observer discord server.
+        I hope you find it useful, and if you have any questions, feel free to ask me on the <a class="code" target="_blank" href="https://discord.gg/qwKhJMan8H">discord</a>.
         You can find the full source code for it here:<br/><a class="code" target="_blank" href="https://github.com/craftxbox/corruskivi">https://github.com/craftxbox/corruskivi</a>
         I credit @ifritdiezel for their original dialogue editor, aswell as @noobogonis and @the_dem for the dialogue toolkit I used as a reference
         Obviously, @corruworks made the game itself, and all the visuals you see here. I'm only responsible for the editor itself.
