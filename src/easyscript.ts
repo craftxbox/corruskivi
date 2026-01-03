@@ -1,5 +1,25 @@
 const easyscriptRegex = /^(?!    |____|SKIP|END)(?!RESPOBJ):?(\w+(?:::\w+)?)(?!\\):(.*)/gm
 
+const speakerMap: {[key: string]: string} = {
+	"interloper":"self",
+	"velzie":"unknown",
+	"memory hole":"¥Óñ«J",
+	"vekoa":"groundsmind",
+	"proxy":"sys",
+	"mindspike":"sys",
+	"geliblueeyes": "geli::blueeyes",
+	"geliconcern": "geli::concern",
+	"gelihappy": "geli::happy",
+	"gelithink": "geli::think",
+	"geliuncanny": "geli::uncanny",
+	"bsteliblueeyes": "bsteli::blueeyes",
+	"bsteliconcern": "bsteli::concern",
+	"bstelihappy": "bsteli::happy",
+	"bstelithink": "bsteli::think",
+	"bsteliuncanny": "bsteli::uncanny",
+	"gordon":"envoy"
+}
+
 export function preProcessEasyScript(dialogue: string): string {
     if (new RegExp(easyscriptRegex).test(dialogue) == false) return dialogue;
 
@@ -14,6 +34,11 @@ export function preProcessEasyScript(dialogue: string): string {
 
     for (let match of dialogue.matchAll(new RegExp(easyscriptRegex))) {
         let [_, actor, text] = match;
+
+        if (speakerMap.hasOwnProperty(actor.toLowerCase())) {
+            actor = speakerMap[actor.toLowerCase()];
+        }
+
         if(actor === "endbutton") {
             dialogue = dialogue.replace(match[0], `    RESPONSES::self\n        ${text}<+>END`);
         } else {
