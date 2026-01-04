@@ -137,6 +137,8 @@ export function saveSlot(slot: string, name: string) {
         while (getExistingSaves().includes(`save_${saveNumber}`)) {
             saveNumber++;
         }
+
+        saveKey = `save_${saveNumber}`;
     } else {
         let originalData = localStorage.getItem(slot);
         
