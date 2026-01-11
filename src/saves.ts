@@ -233,6 +233,7 @@ function fetchAutosaveSlot(reason: string): { slot: string; name: string } {
 }
 
 function refreshSaveMenu() {
+    let selectedSlot = saveEditorSlot.value;
     saveEditorSlot.innerHTML = `<option value="___NEW_SLOT">CREATE NEW SLOT</option>`;
     for (const save of getExistingSaves()) {
         const saveData = localStorage.getItem(save);
@@ -247,4 +248,6 @@ function refreshSaveMenu() {
         saveEditorSlot.insertAdjacentElement("afterbegin", option);
         saveEditorSlot.value = save; // Set the first option as the default selected slot
     }
+    if(selectedSlot && getExistingSaves().includes(selectedSlot))
+        saveEditorSlot.value = selectedSlot;
 }
