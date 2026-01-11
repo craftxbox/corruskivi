@@ -50,7 +50,7 @@ export function preprocessHowls(dialogue: string, silent = false) {
             }
         }
 
-        let sfxmapCommands = exec.matchAll(/[^.](play|ratween)\((.*)\)/g);
+        let sfxmapCommands = exec.matchAll(/[^.](play|ratween)\((.*?)\)/g);
 
         if (sfxmapCommands) {
             for (let sfxmapCommand of sfxmapCommands) {
