@@ -207,10 +207,13 @@ export function deleteSlot(slot: string) {
 }
 
 function fetchAutosaveSlot(reason: string): { slot: string; name: string } {
-    const autosaveSlots = {
-        "___autosave-1": localStorage.getItem("___autosave-1"),
-        "___autosave-2": localStorage.getItem("___autosave-2"),
-        "___autosave-3": localStorage.getItem("___autosave-3")
+    const autosaveCount = 5;
+
+    const autosaveSlots: { [key: string]: string | null } = {};
+
+    for (let i = 1; i <= autosaveCount; i++) {
+        const slotKey = `___autosave-${i}`;
+        autosaveSlots[slotKey] = localStorage.getItem(slotKey);
     }
 
     let oldestSave = "___autosave-1";
