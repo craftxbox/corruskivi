@@ -323,30 +323,48 @@ document.querySelector("#start-dialogue")?.addEventListener("click", () => {
 });
 
 document.querySelector("#share-editor-dialogue")?.addEventListener("click", () => {
-    localStorage.setItem("dialogue", getEditorContent());
-    generateEditorDialogue();
-    previewEntireDialogue("editorpreview");
-    window.play("talk", 2);
+    try {
+        localStorage.setItem("dialogue", getEditorContent());
+        generateEditorDialogue();
+        previewEntireDialogue("editorpreview");
+        window.play("talk", 2);
+    } catch (e) {
+        window.chatter({
+            actor: "funfriend",
+            text: "Encountered errors trying to test the dialogue, it may be broken!",
+            readout: true,
+        });
+        console.error("Error generating dialogue for sharing:", e);
+    }
 
     share();
 });
 
 document.querySelector("#share-dialogue")?.addEventListener("click", () => {
-    let dialogue = getEditorContent();
+    try {
+        let dialogue = getEditorContent();
 
-    if (/EXEC::|THEN::|UNREADCHECK::|[ _]END::|SKIP::/.test(preProcessDialogue(dialogue))) {
+        if (/EXEC::|THEN::|UNREADCHECK::|[ _]END::|SKIP::/.test(preProcessDialogue(dialogue))) {
+            window.chatter({
+                actor: "funfriend",
+                text: "You cannot share a memory that uses EXEC commands!",
+                readout: true,
+            });
+            return;
+        }
+
+        localStorage.setItem("dialogue", dialogue);
+        generateEditorDialogue();
+        previewEntireDialogue("editorpreview");
+        window.play("talk", 2);
+    } catch (e) {
         window.chatter({
             actor: "funfriend",
-            text: "You cannot share a memory that uses EXEC commands!",
-            readout: true,
+            text: "Your dialogue is broken, you cannot share its memory!",
         });
+        console.error("Error generating dialogue for sharing:", e);
         return;
     }
-
-    localStorage.setItem("dialogue", dialogue);
-    generateEditorDialogue();
-    previewEntireDialogue("editorpreview");
-    window.play("talk", 2);
 
     share("preview");
 });
