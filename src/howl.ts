@@ -231,6 +231,8 @@ export function updateHowls() {
 
     let howlMatches = howlsContent.matchAll(/([\w-.]+) = new Howl\(({[^]*?})\);/g);
 
+    stopAllHowls();
+
     howls = {}; // reset howls
 
     let howlCount = 0;
