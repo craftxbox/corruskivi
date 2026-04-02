@@ -20,15 +20,17 @@ export function preProcessDialogue(dialogue: string, noExec = true): string {
         dialogue = preprocessChange(dialogue);
     }
 
+
+
     return dialogue;
 }
 
 export function postProcessDialogue(dialogue: string, noExec = true): string {
     if (noExec) {
-        dialogue = postprocessHowls(dialogue);
-        dialogue = postprocessNavigation(dialogue);
-        dialogue = postprocessBgm(dialogue);
         dialogue = postprocessChange(dialogue);
+        dialogue = postprocessBgm(dialogue);
+        dialogue = postprocessNavigation(dialogue);
+        dialogue = postprocessHowls(dialogue);
     }
 
     return dialogue;
