@@ -1,6 +1,7 @@
 import * as monaco from "monaco-editor";
 import { preprocessHowls } from "./processors/howl";
 import { preprocessNavigation } from "./processors/navigation";
+import { preprocessBgm } from "./processors/bgm";
 
 let line = "";
 let lineNumber = 0;
@@ -194,6 +195,7 @@ function checkUnprocessedExec() {
     let execCheck = document.getElementById("enable-exec") as HTMLInputElement;
     let processedLine = preprocessHowls(line, true);
     processedLine = preprocessNavigation(processedLine, true);
+    processedLine = preprocessBgm(processedLine);
     if (processedLine.includes("EXEC::") || /THEN::|UNREADCHECK::|[ _]END::|SKIP::/.test(line)) {
         markers.push({
             severity: execCheck.checked ? monaco.MarkerSeverity.Info : monaco.MarkerSeverity.Error,

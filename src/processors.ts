@@ -3,6 +3,7 @@ import { postProcessBackground, preProcessBackground } from "./annotations/backg
 import { preProcessEasyScript } from "./processors/easyscript";
 import { postprocessHowls, preprocessHowls } from "./processors/howl";
 import { postprocessNavigation, preprocessNavigation } from "./processors/navigation";
+import { postprocessBgm, preprocessBgm } from "./processors/bgm";
 
 export type Changes = {
     dialogue: string;
@@ -14,6 +15,7 @@ export function preProcessDialogue(dialogue: string, noExec = true): string {
     if (noExec) {
         dialogue = preprocessHowls(dialogue);
         dialogue = preprocessNavigation(dialogue);
+        dialogue = preprocessBgm(dialogue);
     }
 
     return dialogue;
@@ -23,6 +25,7 @@ export function postProcessDialogue(dialogue: string, noExec = true): string {
     if (noExec) {
         dialogue = postprocessHowls(dialogue);
         dialogue = postprocessNavigation(dialogue);
+        dialogue = postprocessBgm(dialogue);
     }
 
     return dialogue;

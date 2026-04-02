@@ -18,6 +18,7 @@ import { postProcessDialogue, processChains, preProcessDialogue, preProcessChain
 import { clearTestPath, getTestPath } from "./annotations/testpath";
 import { getInitialActor, getInitialText } from "./annotations/initial";
 import { applyDialogueJsPatches } from "./patchDialogueJs";
+import type { BgmOptions } from "./processors/bgm";
 
 declare global {
     interface Window {
@@ -28,7 +29,9 @@ declare global {
         changeBranch: (branch: string) => void;
         changeDialogue: (dialogue: string) => void;
         undoallchanges?: () => void;
-        changeBgm: (howl: Howl) => void;
+        changeBgm: (howl: Howl, options: BgmOptions) => void;
+        revertBgm: (length?: number) => void;
+        toggleBgm: (howl: Howl, preserve?: boolean) => void;
         chatter: (obj: {
             actor: string;
             text: string;
