@@ -198,7 +198,7 @@ function checkUnprocessedExec() {
     processedLine = preprocessNavigation(processedLine, true);
     processedLine = preprocessBgm(processedLine);
     processedLine = preprocessChange(processedLine);
-    if (processedLine.includes("EXEC::") || /THEN::|UNREADCHECK::|[ _]END::|SKIP::/.test(line)) {
+    if (/EXEC::|THEN::|UNREADCHECK::|[ _]END::|SKIP::/.test(processedLine)) {
         markers.push({
             severity: execCheck.checked ? monaco.MarkerSeverity.Info : monaco.MarkerSeverity.Error,
             message: "This unsafe command requires the 'Enable EXEC commands' option to be enabled and cannot be shared as a memory.",
