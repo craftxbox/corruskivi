@@ -2,7 +2,7 @@ import { clone } from "./clone";
 import * as monaco from "monaco-editor";
 import { generateEditorDialogue } from "./main";
 import { insertExtraActors } from "./actors";
-import { fetchHowl } from "./howl";
+import { fetchHowl } from "./processors/howl";
 
 const editorContainer = document.getElementById("customactors") as HTMLElement;
 const actorsEditor = monaco.editor.create(editorContainer, {

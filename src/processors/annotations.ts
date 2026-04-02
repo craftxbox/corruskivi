@@ -1,7 +1,7 @@
-import { processChains } from "./annotations/chain";
-import { processInitialOverrides } from "./annotations/initial";
-import { processCss } from "./annotations/style";
-import { processTestPath } from "./annotations/testpath";
+import { processChains } from "../annotations/chain";
+import { processInitialOverrides } from "../annotations/initial";
+import { processCss } from "../annotations/style";
+import { processTestPath } from "../annotations/testpath";
 
 export type AnnotationResult = {
     dialogue: string;

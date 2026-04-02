@@ -43,7 +43,7 @@ export function preprocessHowls(dialogue: string, silent = false) {
             let howl = howls[howlName];
             if (!howl) {
                 if (!silent)
-                    window.chatter({ actor: "funfriend", text: `Dialogue referenced a howl that does not exist! This will be ignored.`, readout: true });
+                    window.chatter({ actor: "funfriend", text: `Dialogue referenced a howl (${howlName}) that does not exist! This will be ignored.`, readout: true });
                 continue;
             } else {
                 howlObjects.push(howlObject);
@@ -73,7 +73,7 @@ export function preprocessHowls(dialogue: string, silent = false) {
                         if (!silent)
                             window.chatter({
                                 actor: "funfriend",
-                                text: `Dialogue referenced a howl that does not exist! This will be ignored.`,
+                                text: `Dialogue referenced a howl (${howlName}) that does not exist! This will be ignored.`,
                                 readout: true,
                             });
                         continue;
@@ -82,7 +82,8 @@ export function preprocessHowls(dialogue: string, silent = false) {
                         howlObjects.push(howlObject);
                     }
 
-                } else if (command === "play") {
+                }
+                else if (command === "play") {
                     let args = [
                         strArgs.split(",")[0].replaceAll("'", "").replaceAll('"', "").replaceAll("`", ""),
                         parseFloat(strArgs.split(",")[1]) || true,
@@ -105,7 +106,7 @@ export function preprocessHowls(dialogue: string, silent = false) {
         dialogue = dialogue.replace(exec, newExec + "\n" + howlCode);
     }
 
-    dialogue = dialogue.replace(/^ +EXEC::[ ;]*$\n/gm, ""); // clean up any empty exec lines
+    dialogue = dialogue.replaceAll(/^ +EXEC::[ ;]*$\n/gm, ""); // clean up any empty exec lines
 
     return dialogue;
 }
@@ -123,7 +124,7 @@ export function postprocessHowls(dialogue: string) {
         for (let howlObject of howlObjects) {
             let howl = howls[howlObject.name];
             if (howlObject.name !== "__SFXMAP" && !howl) {
-                window.chatter({ actor: "funfriend", text: `Dialogue referenced a howl that does not exist! This will be ignored.`, readout: true });
+                window.chatter({ actor: "funfriend", text: `Dialogue referenced a howl (${howlObject.name}) that does not exist! This will be ignored.`, readout: true });
                 continue;
             }
 
@@ -189,6 +190,18 @@ export function stopHowls() {
 }
 
 export function fetchHowl(name: string): Howl {
+    if (name === "env.bgm") {
+        if (!window.env.bgm)
+            throw new Error("No bgm is currently set.");
+        return window.env.bgm;
+    }
+
+    if (name === "env.oldBgm") {
+        if (!window.env.oldBgm)
+            throw new Error("No old bgm is currently set.");
+        return window.env.oldBgm;
+    }
+    
     if (!howls[name]) {
         throw new Error(`Howl "${name}" does not exist.`);
     }

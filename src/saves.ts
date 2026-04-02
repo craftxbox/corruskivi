@@ -1,6 +1,6 @@
 import { getCustomActorsContent, setCustomActorsContent, updateActors } from "./customactors";
 import { getDefinesContent, setDefinesContent, updateDefines } from "./defines";
-import { getHowlsContent, setHowlsContent, updateHowls } from "./howl";
+import { getHowlsContent, setHowlsContent, updateHowls } from "./processors/howl";
 import { generateEditorDialogue, previewEntireDialogue } from "./main";
 import { getEditorContent, setEditorContent } from "./monaco";
 

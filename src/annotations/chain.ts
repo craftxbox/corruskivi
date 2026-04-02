@@ -1,4 +1,4 @@
-import type { AnnotationResult } from "../annotations";
+import type { AnnotationResult } from "../processors/annotations";
 import DOMPurify from "dompurify";
 
 const purifyopts = {

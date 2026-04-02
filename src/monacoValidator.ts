@@ -1,6 +1,6 @@
 import * as monaco from "monaco-editor";
-import { preprocessHowls } from "./howl";
-import { preprocessNavigation } from "./navigation";
+import { preprocessHowls } from "./processors/howl";
+import { preprocessNavigation } from "./processors/navigation";
 
 let line = "";
 let lineNumber = 0;

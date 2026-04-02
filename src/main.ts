@@ -12,7 +12,7 @@ import "./types.d";
 import "./saves";
 import { getCustomActorsContent, setCustomActorsContent, updateActors } from "./customactors";
 import { getDefinesContent, setDefinesContent, updateDefines } from "./defines";
-import { getHowlsContent, setHowlsContent, stopAllHowls, stopHowls, updateHowls } from "./howl";
+import { getHowlsContent, setHowlsContent, stopAllHowls, stopHowls, updateHowls } from "./processors/howl";
 import { decodeShareString, makeShareString, uploadShareString, type ShareObject } from "./share";
 import { postProcessDialogue, processChains, preProcessDialogue, preProcessChain, postProcessChain } from "./processors";
 import { clearTestPath, getTestPath } from "./annotations/testpath";
@@ -77,6 +77,8 @@ declare global {
                 branch: DialogueBranch;
             };
             dialogueWaitTimeout?: number;
+            bgm?: Howl;
+            oldBgm?: Howl;
         };
     }
 }

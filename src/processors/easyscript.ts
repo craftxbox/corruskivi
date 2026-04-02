@@ -1,4 +1,4 @@
-import { getEditorContent, setEditorContent } from "./monaco";
+import { getEditorContent, setEditorContent } from "../monaco";
 
 const easyscriptRegex = /^(?!    |____|SKIP|END)(?!RESPOBJ):?(\w+(?:::\w+)?)(?!\\):(.*)/gm
 

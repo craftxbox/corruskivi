@@ -1,8 +1,8 @@
-import { processAnnotations, type AnnotationResult } from "./annotations";
+import { processAnnotations, type AnnotationResult } from "./processors/annotations";
 import { postProcessBackground, preProcessBackground } from "./annotations/background";
-import { preProcessEasyScript } from "./easyscript";
-import { postprocessHowls, preprocessHowls } from "./howl";
-import { postprocessNavigation, preprocessNavigation } from "./navigation";
+import { preProcessEasyScript } from "./processors/easyscript";
+import { postprocessHowls, preprocessHowls } from "./processors/howl";
+import { postprocessNavigation, preprocessNavigation } from "./processors/navigation";
 
 export type Changes = {
     dialogue: string;
