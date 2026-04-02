@@ -4,6 +4,7 @@ import { preProcessEasyScript } from "./processors/easyscript";
 import { postprocessHowls, preprocessHowls } from "./processors/howl";
 import { postprocessNavigation, preprocessNavigation } from "./processors/navigation";
 import { postprocessBgm, preprocessBgm } from "./processors/bgm";
+import { postprocessChange, preprocessChange } from "./processors/change";
 
 export type Changes = {
     dialogue: string;
@@ -16,6 +17,7 @@ export function preProcessDialogue(dialogue: string, noExec = true): string {
         dialogue = preprocessHowls(dialogue);
         dialogue = preprocessNavigation(dialogue);
         dialogue = preprocessBgm(dialogue);
+        dialogue = preprocessChange(dialogue);
     }
 
     return dialogue;
@@ -26,6 +28,7 @@ export function postProcessDialogue(dialogue: string, noExec = true): string {
         dialogue = postprocessHowls(dialogue);
         dialogue = postprocessNavigation(dialogue);
         dialogue = postprocessBgm(dialogue);
+        dialogue = postprocessChange(dialogue);
     }
 
     return dialogue;
