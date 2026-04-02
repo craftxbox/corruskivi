@@ -40,7 +40,7 @@ export function preprocessHowls(dialogue: string, silent = false) {
 
             newExec = newExec.replace(howlCommand[0], "");
 
-            let howl = howls[howlName];
+            let howl = fetchHowl(howlName);
             if (!howl) {
                 if (!silent)
                     window.chatter({ actor: "funfriend", text: `Dialogue referenced a howl (${howlName}) that does not exist! This will be ignored.`, readout: true });
@@ -68,7 +68,7 @@ export function preprocessHowls(dialogue: string, silent = false) {
                         args: JSON.stringify(args),
                     };
 
-                    let howl = howls[howlName];
+                    let howl = fetchHowl(howlName);
                     if (!howl) {
                         if (!silent)
                             window.chatter({
@@ -122,7 +122,7 @@ export function postprocessHowls(dialogue: string) {
         let newHowlCode = "";
 
         for (let howlObject of howlObjects) {
-            let howl = howls[howlObject.name];
+            let howl = fetchHowl(howlObject.name);
             if (howlObject.name !== "__SFXMAP" && !howl) {
                 window.chatter({ actor: "funfriend", text: `Dialogue referenced a howl (${howlObject.name}) that does not exist! This will be ignored.`, readout: true });
                 continue;
