@@ -301,7 +301,6 @@ document.querySelector("#test-dialogue")?.addEventListener("click", () => {
     generateEditorDialogue();
 
     previewEntireDialogue("editorpreview");
-    window.play("muiScanner", 2);
 });
 
 document.querySelector("#preview-dialogue")?.addEventListener("click", () => {
@@ -310,7 +309,6 @@ document.querySelector("#preview-dialogue")?.addEventListener("click", () => {
     generateEditorDialogue();
 
     startNewDialogue("editorpreview");
-    window.play("muiScanner", 2);
 });
 
 document.querySelector("#start-dialogue")?.addEventListener("click", () => {
@@ -319,7 +317,6 @@ document.querySelector("#start-dialogue")?.addEventListener("click", () => {
     generateEditorDialogue();
 
     enterDirectPreview();
-    window.play("muiScanner", 2);
 });
 
 document.querySelector("#share-editor-dialogue")?.addEventListener("click", () => {
