@@ -190,6 +190,8 @@ export function stopHowls() {
 }
 
 export function fetchHowl(name: string): Howl {
+    if (name === "__SFXMAP") return null as any;
+
     if (name === "env.bgm") {
         if (!window.env.bgm)
             throw new Error("No bgm is currently set.");
