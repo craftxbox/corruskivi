@@ -294,30 +294,33 @@ export function generateEditorDialogue() {
     }
 }
 
-document.querySelector("#test-dialogue")?.addEventListener("click", () => {
+document.querySelector("#test-dialogue")?.addEventListener("click", (e) => {
     localStorage.setItem("dialogue", getEditorContent());
     stopHowls();
 
     generateEditorDialogue();
 
     previewEntireDialogue("editorpreview");
-});
+    e.stopImmediatePropagation();
+}, { capture: true });
 
-document.querySelector("#preview-dialogue")?.addEventListener("click", () => {
+document.querySelector("#preview-dialogue")?.addEventListener("click", (e) => {
     localStorage.setItem("dialogue", getEditorContent());
     stopHowls();
     generateEditorDialogue();
 
     startNewDialogue("editorpreview");
-});
+    e.stopImmediatePropagation();
+}, { capture: true });
 
-document.querySelector("#start-dialogue")?.addEventListener("click", () => {
+document.querySelector("#start-dialogue")?.addEventListener("click", (e) => {
     localStorage.setItem("dialogue", getEditorContent());
     stopHowls();
     generateEditorDialogue();
 
     enterDirectPreview();
-});
+    e.stopImmediatePropagation();
+}, { capture: true });
 
 document.querySelector("#share-editor-dialogue")?.addEventListener("click", () => {
     try {
