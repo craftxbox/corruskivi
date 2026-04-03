@@ -14,7 +14,7 @@ export function preprocessBgm(dialogue: string): string {
     for (let exec of execs) {
         let newExec = exec;
 
-        let match = exec.match(/(changeBgm|revertBgm|toggleBgm)\(([\w.-]+) ?,? ?([^;]*])?\)/);
+        let match = exec.match(/(changeBgm|revertBgm|toggleBgm)\(([\w.-]+) ?,? ?([^;]*)?\)/);
         if (!match) continue; // not a bgm exec, skip
 
         let [_, command, name, options] = match;
