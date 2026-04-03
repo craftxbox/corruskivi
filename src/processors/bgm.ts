@@ -21,7 +21,7 @@ export function preprocessBgm(dialogue: string): string {
         let optionsObj: BgmOptions = {} as any;
         if (options) {
             try {
-                options = options.replaceAll(/[ ,]+(\w+):/g, '"$1":');
+                options = options.replaceAll(/[ ,]*(\w+):/g, '"$1":');
                 let obj = JSON.parse(options);
                 if (typeof obj === "boolean") optionsObj.preserve = obj;
                 else {
