@@ -347,7 +347,21 @@ definitions
         like this:<br/><br/><code>definitions:the thing you're reading right now</code>
         and then whenever i say "<span definition="the thing you're reading right now">definitions</span>", you can now hover over it to see that text.
         these go in the definitions section of the advanced tab, you may have to scroll your editor down to see it.
+        a couple actors don't do definitions, notably moth (me), self, sys, and unknown
+        you can get around this if you use a custom actor or inline definitions instead but we wont get into that here
     
+    RESPONSES::self
+        inline definitions<+>inlinedefs
+        ok<+>advanced
+            FAKEEND::(back)
+
+inlinedefs
+    moth
+        there is a special way you can make definitions directly in the dialogue without having to put them in the definitions box
+        if you only want to use a definition once or twice, or want to define the same word with different definitions in the same dialogue, this is the way to go
+        if youve ever used HTML, these are basically just <span> tags:<br/><br/><code>&lt;span definition="testing"&gt;example&lt;/span&gt;</code>
+        becomes: <span definition="testing">example</span>
+
     RESPONSES::self
         ok<+>advanced
             FAKEEND::(back)
