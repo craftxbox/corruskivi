@@ -193,14 +193,12 @@ export function fetchHowl(name: string): Howl {
     if (name === "__SFXMAP") return null as any;
 
     if (name === "env.bgm") {
-        if (!window.env.bgm)
-            throw new Error("No bgm is currently set.");
+        if (!window.env.bgm) return window.sfxmap;
         return window.env.bgm;
     }
 
     if (name === "env.oldBgm") {
-        if (!window.env.oldBgm)
-            throw new Error("No old bgm is currently set.");
+        if (!window.env.oldBgm) return window.sfxmap;
         return window.env.oldBgm;
     }
     
