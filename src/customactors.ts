@@ -6,7 +6,7 @@ import { fetchHowl } from "./processors/howl";
 
 const editorContainer = document.getElementById("customactors") as HTMLElement;
 const actorsEditor = monaco.editor.create(editorContainer, {
-    language: "json",
+    language: "javascript",
     automaticLayout: true,
     theme: "vs-dark",
 });
@@ -41,7 +41,7 @@ let originalActors = clone(window.env.dialogueActors);
 function parseActors(actors: string) {
     if (!actors || actors.trim() === "") return {};
 
-    let actorJSON = actors.replaceAll(/\( *\) *=> *(?:window\.)?play *\( *['"`](.*)['"`] *(?:, *(\d+\.?\d*|true))? *\)/g, (_, sound, rate) => {
+    let actorJSON = actors.replaceAll(/\( *\) *=> *{? *(?:window\.)?play *\( *['"`](.*)['"`] *(?:, *(\d+\.?\d*|true))? *\) *}? */g, (_, sound, rate) => {
         return `["${sound}", ${rate || true}]`;
     });
 
