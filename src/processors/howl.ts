@@ -187,6 +187,10 @@ export function stopHowls() {
             howls[howlName].stop();
         }
     }
+    if (window.env.bgm) window.env.bgm.stop();
+    if (window.env.oldBgm) window.env.oldBgm.stop();
+    window.env.bgm = undefined;
+    window.env.oldBgm = undefined;
 }
 
 export function fetchHowl(name: string): Howl {
