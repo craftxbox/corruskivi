@@ -253,7 +253,7 @@ function checkNameAnnotation() {
 
 function checkRespObjAnnotation() {
     if (line.startsWith("@respobj")) {
-        let name = line.substring(5).trim();
+        let name = line.substring(8).trim();
         if (name === "") {
             markers.push({
                 severity: monaco.MarkerSeverity.Error,
@@ -265,7 +265,7 @@ function checkRespObjAnnotation() {
             });
         }
 
-        currentChain = name;
+        //currentChain = name;
 
         let foundResponses = false;
         for (let j = i + 1; j < lines.length; j++) {
