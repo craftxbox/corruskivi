@@ -28,116 +28,132 @@ export function validate(model: monaco.editor.ITextModel) {
     initialActorDefined = null;
     initialTextDefined = null;
     bgbehaviour = null;
+    try {
+        for (i = 0; i < lines.length; i++) {
+            line = lines[i];
 
-    for (i = 0; i < lines.length; i++) {
-        line = lines[i];
-
-        if (line.startsWith("@name")) {
-            currentChain = line.substring(5).trim();
-            branches[currentChain] = {};
-            continue;
-        }
-
-        if (line.match(/^[^ @_]/)) {
-            if (branches[currentChain][line] === false) {
-                branches[currentChain][`____REUSE____${line}`] = true;
+            if (line.startsWith("@name")) {
+                currentChain = line.substring(5).trim();
+                branches[currentChain] = {};
+                continue;
             }
-            branches[currentChain][line] = false; // mark branch as defined but not used
-        }
 
-        if (line.startsWith("@background")) {
-            if (branches[currentChain]["____BACKGROUND____"] === false) {
-                branches[currentChain]["____BACKGROUND____"] = true;
-            } else if (branches[currentChain]["____BACKGROUND____"] === undefined) {
-                branches[currentChain]["____BACKGROUND____"] = false;
+            if (line.match(/^[^ @_]/)) {
+                if (branches[currentChain][line] === false) {
+                    branches[currentChain][`____REUSE____${line}`] = true;
+                }
+                branches[currentChain][line] = false; // mark branch as defined but not used
+            }
+
+            if (line.startsWith("@background")) {
+                if (branches[currentChain]["____BACKGROUND____"] === false) {
+                    branches[currentChain]["____BACKGROUND____"] = true;
+                } else if (branches[currentChain]["____BACKGROUND____"] === undefined) {
+                    branches[currentChain]["____BACKGROUND____"] = false;
+                }
+            }
+
+            if (line.startsWith("@foreground")) {
+                if (branches[currentChain]["____FOREGROUND____"] === false) {
+                    branches[currentChain]["____FOREGROUND____"] = true;
+                } else if (branches[currentChain]["____FOREGROUND____"] === undefined) {
+                    branches[currentChain]["____FOREGROUND____"] = false;
+                }
+            }
+
+            if (line.startsWith("@testpath")) {
+                if (testpath === false) {
+                    testpath = true;
+                } else if (testpath === null) {
+                    testpath = false;
+                }
+            }
+
+            if (line.startsWith("@background-behaviour")) {
+                if (bgbehaviour === false) {
+                    bgbehaviour = true;
+                } else if (bgbehaviour === null) {
+                    bgbehaviour = false;
+                }
+            }
+
+            if (line.startsWith("@initial-actor")) {
+                if (initialActorDefined === false) {
+                    initialActorDefined = true;
+                } else if (initialActorDefined === null) {
+                    initialActorDefined = false;
+                }
+            }
+
+            if (line.startsWith("@initial-text")) {
+                if (initialTextDefined === false) {
+                    initialTextDefined = true;
+                } else if (initialTextDefined === null) {
+                    initialTextDefined = false;
+                }
             }
         }
 
-        if (line.startsWith("@foreground")) {
-            if (branches[currentChain]["____FOREGROUND____"] === false) {
-                branches[currentChain]["____FOREGROUND____"] = true;
-            } else if (branches[currentChain]["____FOREGROUND____"] === undefined) {
-                branches[currentChain]["____FOREGROUND____"] = false;
+        currentChain = "editorpreview";
+
+        for (i = 0; i < lines.length; i++) {
+            line = lines[i];
+            lineNumber = i + 1;
+
+            if (line.trim() === "") continue;
+
+            checkCommandsAttachedToDialogue();
+
+            checkBadCaseCommands();
+
+            checkUnprocessedExec();
+
+            checkNameAnnotation();
+
+            checkRespObjAnnotation();
+
+            checkDuplicateAnnotations();
+
+            checkDuplicateBranches();
+
+            checkActorExists();
+
+            checkResponseTargetExists();
+
+            checkDialogueHasActor();
+        }
+
+        currentChain = "editorpreview";
+
+        for (i = 0; i < lines.length; i++) {
+            line = lines[i];
+            lineNumber = i + 1;
+
+            if (line.trim() === "") continue;
+
+            if (line.startsWith("@name")) {
+                currentChain = line.substring(5).trim();
             }
+
+            checkBranchInUse();
+
+            checkChainInUse();
         }
+    } catch (e) {
+        markers = [];
+        markers.push({
+            severity: monaco.MarkerSeverity.Error,
+            message:
+                `The validator faulted out when trying to process your dialogue. 
+This is a severe error that you should report to the discord along with the dialogue that caused it.
 
-        if (line.startsWith("@testpath")) {
-            if (testpath === false) {
-                testpath = true;
-            } else if (testpath === null) {
-                testpath = false;
-            }
-        }
-
-        if (line.startsWith("@background-behaviour")) {
-            if (bgbehaviour === false) {
-                bgbehaviour = true;
-            } else if (bgbehaviour === null) {
-                bgbehaviour = false;
-            }
-        }
-
-        if (line.startsWith("@initial-actor")) {
-            if (initialActorDefined === false) {
-                initialActorDefined = true;
-            } else if (initialActorDefined === null) {
-                initialActorDefined = false;
-            }
-        }
-
-        if (line.startsWith("@initial-text")) {
-            if (initialTextDefined === false) {
-                initialTextDefined = true;
-            } else if (initialTextDefined === null) {
-                initialTextDefined = false;
-            }
-        }
-    }
-
-    currentChain = "editorpreview";
-
-    for (i = 0; i < lines.length; i++) {
-        line = lines[i];
-        lineNumber = i + 1;
-
-        if (line.trim() === "") continue;
-
-        checkCommandsAttachedToDialogue();
-
-        checkBadCaseCommands();
-
-        checkUnprocessedExec();
-
-        checkNameAnnotation();
-
-        checkRespObjAnnotation();
-
-        checkDuplicateAnnotations();
-
-        checkDuplicateBranches();
-
-        checkActorExists();
-
-        checkResponseTargetExists();
-
-        checkDialogueHasActor();
-    }
-
-    currentChain = "editorpreview";
-
-    for (i = 0; i < lines.length; i++) {
-        line = lines[i];
-        lineNumber = i + 1;
-
-        if (line.trim() === "") continue;
-
-        if (line.startsWith("@name")) {
-            currentChain = line.substring(5).trim();
-        }
-
-        checkBranchInUse();
-
-        checkChainInUse();
+At line ${lineNumber}
+${(e as Error).stack}`,
+            startLineNumber: 1,
+            startColumn: 1,
+            endLineNumber: lines.length,
+            endColumn: lines[lines.length - 1].length + 1,
+        })
     }
 
     monaco.editor.setModelMarkers(model, "owner", markers);
