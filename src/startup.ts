@@ -573,16 +573,141 @@ howlslist
 
 customhowls
     moth
-        custom howls are pretty complicated
-        so complicated i cant really explain them here
-        youre better off asking <span class="code">@craftxbox</span> on the <a class="code" target="_blank" href="https://discord.gg/qwKhJMan8H">discord</a> about them
-        i can show you an example though
+        alright, so, custom howls
+        they're pretty complicated, but i think i can simplify them enough
+    self
+        what if i don't want simple
+    moth
+        well, you're going to have to live with that feeling
+        i don't actually know how these work under the hood lol
+        anyway, custom howls
+        let's take a look at this example real quick:
         <code>example = new Howl({<br/>&nbsp;&nbsp;src: ["https://corru.observer/audio/ozoloop.ogg"],<br/>&nbsp;&nbsp;rate: 2,<br/>&nbsp;&nbsp;volume: 0.5,<br/>&nbsp;&nbsp;loop: true<br/>});</code>
-        and then you'd use that in a dialogue like this:<br/><br/><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;EXEC::example.play()</code>
+        "example" is the name, the audio source (src) is straight from corru.observer...
+        "rate" refers to the rate at which its played, which means both the pitch and the speed
+        volume is pretty straightforward, referring to the volume
+        and loop just says if it loops or not
+        you use <br/><br/><code>EXEC::example.play()</code> to play it, and <br/><br/><code>EXEC::example.stop()</code> to stop it
+        you can also have multiple howls playing at once
+        so, if you put in, say, <br/><br/><code>EXEC::example.play();example500.play()</code><br/><br/> you'll play both "example" and our made-up howl "example 500"
+        trying to run them seperately just sort of doesn't work
+        you might have noticed that the custom howl command is way simpler than the normal howl command
+        that's in part because the regular howls are doing a lot of the heavy lifting for you
+        if you want to change the rate, or volume, you'd normally just change them in your play()
+        but for a custom howl, you'll need to do each action manually, like <br/><br/><code>EXEC::example.rate(0.5); example.play();</code>
+        though on the upside you get way more options than just rate and volume
+        you can use play, pause, stop, mute, volume, fade, rate, seek, loop, load, unload, and a special action called ratween
+        we definitely don't have the time to explain all those here though
         you don't need to use the <span class="code">SILENT::</span> command on actor transitions with custom howls, they work fine without it
         but it might still play the actor voice sound unless you use SILENT::
-    
+        if anything here seems too confusing, or your entire corruskivi breaks, go ask <span class="code">@craftxbox</span> or any other user on the <a class="code" target="_blank" href="https://discord.gg/qwKhJMan8H">discord</a> for help
+        we don't bite lol
+        got all that?
+    self
+        no
+    moth
+        great, because we're not done yet
+        there's also "sprite"
+        not to mention all the actions
     RESPONSES::self
+        sprite<+>sprite
+        actions<+>howlactions
+        enough<+>advanced
+            FAKEEND::(back)
+
+howlactions
+    moth
+        alright, actions. there's a lot of those, so bare with me lol
+        so when you have your example.play(), the action here is the "play" part. between the ()'s is the "arguments"
+        play is pretty simple. it plays your custom howl
+        you can optionally give it an argument for a specific sprite but we wont get into that here
+        but you also have <span class=code>pause</span> and <span class=code>stop</span>
+        <code>EXEC::example.pause()</code> will pause your howl right where it is. just play() it again and it'll start where it left off
+        <code>EXEC::example.stop()</code> will obviously stop it entirely. play will start from the beginning when you next use it.
+        <span class=code>rate</span> and <span class=code>volume</span> are here in the same way as you'd be familiar with regular howls
+        <code>EXEC::example.rate(0.5)</code> makes your howl play at half speed
+        <code>EXEC::example.volume(0.5)</code> makes it play at half volume
+        <span class=code>fade</span> gets funky with it.<br/><code>EXEC::example.fade(1,0.5,1000)</code> will fade the volume from 100%, to 50%, over 1000 milliseconds, aka one second
+        <code>EXEC::example.seek(1000)</code> will jump straight to the 1 second mark of the howl, immediately if its already playing, or whenever you next play()
+        <code>EXEC::example.mute(true)</code> is pretty self explanatory. it mutes your howl, but keeps playing in the background. change its value from true to false to unmute.
+        <span class=code>load</span> and <span class=code>unload</span> also exist but they're not really useful to use in a dialogue so i wont bother explaining them
+        you also get a special action called <span class=code>ratween</span> that's invoked a little different than the others
+        <code>EXEC::ratween(example, 0.5, 1000)</code><br/><br/>is kinda like fade, but between one howl and itself. it'll slowly change your howl's rate to 0.5 over the span of 1000 milliseconds
+        special to note here that you do have to put "example" in as an argument here, instead of up front like the rest of the actions.
+        uh, not with the airquotes, though. unlike some other actions, ratween doesn't want those anywhere.
+        so, while <code>example.play("sprite")</code><br/><br/> is fine, <code>ratween("example")</code><br/><br/>wouldn't be 
+        
+    RESPONSES::self
+        sprite<+>sprite
+        changebgm<+>changebgm
+        thanks<+>advanced
+            FAKEEND::(back)
+
+changebgm
+____NESTIF::[["fbx__editorintropleasedontcollide-changebgm", false]]
+    self
+        my editor shows me a couple of special actions you didnt mention
+            EXEC::change("illegalEditor", "++");
+        changeBgm and revertBgm
+        what are those?
+    moth
+        TEXEC::window.silly.getMothLine("illegalEditor", 1);
+        TEXEC::window.silly.getMothLine("illegalEditor", 2);
+        TEXEC::window.silly.getMothLine("illegalEditor", 3);
+        TEXEC::window.silly.getMothLine("illegalEditor", 4);
+    moth
+        anyways, let me find the docs
+        ...
+        yep, okay
+____END
+        changeBgm is like ratween, it takes your howl as an argument, instead of as a prefix
+        but its like. EXTRA crazy for configuration
+        instead of taking rate/etc as extra arguments, it instead wants a JavaScript Object
+        dont be too intimidated, or do be, up to you. either way, its kinda similar to how you write custom actors
+        <code>EXEC::changeBgm(example, {length: 1000, preserve: true, rate: false, seek: false, pause: false})</code><br/><br/> is how you invoke it. 
+        it sets your howl into the mindspike's background music, which as im sure you're aware isn't something a thoughtstream is supposed to be able to do
+        you could omit the entire {} section and the comma if you JUST want to set background music but the options are pretty powerful too
+        changeBgm does a crossfade between whatever bgm was playing before, into your new bgm. ie: the old music fades out, and the new one fades in at the same time.
+        length controls how long that crossfade takes. by default it'll be 1000ms, aka 1 second
+        preserve determines if you want to save the old bgm track or not. this is useful for revertBgm which we'll get into later
+        rate is as you'd expect, give it a decimal number and it will change the rate.
+        seek is also like normal. give it an integer number and it'll "seek" there, in milliseconds
+        pause only affects the old bgm, if you set it to true instead of false, it will pause the old bgm instead of stopping it outright. so revertBgm will resume instead of restart
+        now here's the crazier bit: if you dont want to set any specific value, say rate, or seek, you want to remove them entirely from the {} block
+        so example, you want a three second crossfade and the new music at 2x speed:<br/><br/>EXEC::changeBgm(example, {length: 3000, rate: 2})<br/><br/>thats all you need. you don't include the preserve, seek, or pause bits at all.
+        thankfully, revertBgm is way easier. it switches back to the old music you had playing (so long as you preserve:true'd it)
+        it takes a single argument, the crossfade length. so:<br/><br/>EXEC::revertBgm(1000)</br></br> will fade back to the music you played before over one second.
+        note that if you haven't done changeBgm more than once, you probably wont be able to revert to anything!
+        mainly since there might be nothing to revert back to lol
+        just remember to preserve your howls when you want them
+        it also says here you can address <span class=code>env.bgm</span> and <span class=code>env.oldBgm</span> as if they were howl names (like <span class=code>example</span> from earlier), so you can run actions on the music without necessarily knowing which howl's actually in play
+        all in all this stuff is super complicated and im not entirely sure im explaining it right either so as usual ask the <a class="code" target="_blank" href="https://discord.gg/qwKhJMan8H">discord</a> peeps about it if you're confused
+    RESPONSES::self
+        sprite<+>sprite
+        i'll figure it out<+>advanced
+            FAKEEND::(back)
+
+sprite
+    moth
+        glad you asked
+        "sprite" is the property that's used to indicate when and where a howl starts and stops
+        for example, you would use <br/><br/>sprite: {<br/>__default: [50, 100, true]<br/>}<br/><br/> to indicate that the howl you're playing starts 50 miliseconds in to the audio, then keeps going for another 100 miliseconds
+        the "true" just means it loops btw. change it to false and it'll one-shot instead.
+        <span class="code">__default</span> is what will play when you example.play()
+        but you can add more than just __default:<br/><br/>sprite: {<br/>dingus: [2000, 1000, false]<br/>}<br/><br/>and then you can use example.play("dingus") to play just that small segment instead of the whole thing. 
+        sprite is probably the scariest part of making a custom howl, even if it should really be the easiest
+        it's pretty much just counting how many seconds are in your audio, then converting it to miliseconds
+        obviously though it's not required for your howl to work, it's just useful
+        keep in mind, sprite ignores if your audio is slowed down, sped up, whatever, so you only need to count the seconds for the original audio source
+        pretty convenient, right?
+    self
+        sure
+        how do i make my custom actor use different talk sounds each time
+    moth
+        if ever you figure out how to reverse engineer that whole thing, let me know
+        <span definition="this is as of yet unsupported by corruskivi and there is no way to do custom sounds with randomization">i have no idea lol</span>
+    RESPONSES::self
+        actions<+>howlactions
         ok<+>advanced
             FAKEEND::(back)
 
@@ -591,7 +716,7 @@ showifnestif
         <span class="code">SHOWIF::</span> is a standard command that lets you show a dialogue line or response only if a certain condition is met
         usually this would be if the player has seen an entity or dialogue or whatever before.
         as an example:<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="code">SHOWIF::[["whatever"], ["example", "testing"]]</span>
-        this will only show if the 'whatever' flag  is anything but false, and the 'example' flag is specifically only "testing"
+        this will only show if the 'whatever' flag is anything but false, and the 'example' flag is specifically only "testing"
         typically you would use these for seeing if a branch has been seen before
         the way you do that is by using <span class="code">fbx__chainname-branchname</span> as the key.
         the default chain is <span class="code">editorpreview</span>, so if you wanted to see if the player has seen the 'start' branch of that chain, you would use <span class="code">fbx__editorpreview-start</span>
