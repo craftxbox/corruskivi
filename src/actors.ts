@@ -75,6 +75,20 @@
 //         voice: false
 //     },
 
+//     plainsys: {
+//         type: "plainsys noname",
+//         player: true,
+//         noProcess: true,
+//         voice: ()=>{play('muiScanner', 2)}
+//     },
+    
+//     definitionget: {
+//         type: "noname asis",
+//         player: true,
+//         noProcess: true,
+//         voice: ()=>{play('muiScanner', 2)}
+//     },
+
 //     funfriend: {
 //         element: "#funfriend",
 //         image: '/img/sprites/funfriend/funfriend.gif',
@@ -126,8 +140,9 @@
 //     },
 
 //     bugout: {
-//         image: "/img/sprites/daemons/knight/scan.gif",
-//         type: "bstrd uppercase portrait-contain",
+//         image: "/img/sprites/daemons/bugout/scan.gif",
+//         element: ".bugoutcreature",
+//         type: "bastard-font portrait-contain",
 //         voice: ()=>play('talkcroak', 0.6)
 //     },
 
@@ -500,35 +515,98 @@ export function insertExtraActors() {
     };
 
     window.env.dialogueActors["tozik"] = {
-        image: "/img/sprites/obesk/tozik/portrait.gif",
-        type: "obesk qou tozik portrait-contain portrait-blocker",
-        element: ".truecreature .tozik",
-        voice: () => window.play("talk", 1),
+        name: "tozik",
+        expressions: {
+            default: {
+                type: "obesk qou tozik portrait-contain portrait-blocker",
+                element: ".truecreature .tozik",
+                voice: ()=>window.play('talk', 1),
+                image: "/img/sprites/obesk/tozik/portrait.gif",
+            },
+            mutter: {
+                type: "obesk qou tozik portrait-contain portrait-bright mutter",
+                element: ".truecreature .tozik",
+                voice: ()=>window.play('talk', 0.8),
+                image: "/img/sprites/obesk/tozik/portrait_pain.gif",
+            },
+            empty: {
+                element: ".hermimicked",
+                type: "portrait-contain portrait-hermit",
+                voice: false, // originally `()=>{/* empty */},`
+                image: "/img/sprites/obesk/tozik/portrait_empty.gif",
+            },
+        },
     };
 
     window.env.dialogueActors["gakvu"] = {
-        image: "/img/sprites/obesk/gakvu/portrait.gif",
-        element: ".truecreature .gakvu",
-        type: "obesk qou gakvu portrait-contain",
-        voice: () => window.play("talklaugh", 1),
+        name: "gakvu",
+        expressions: {
+            default: {
+                type: "obesk qou gakvu portrait-contain",
+                element: ".truecreature .gakvu",
+                voice: ()=>window.play('talklaugh', 1),
+                image: "/img/sprites/obesk/gakvu/portrait.gif",
+            },
+            empty: {
+                element: ".hermimicked",
+                type: "portrait-contain portrait-hermit",
+                voice: false, // originally `()=>{/* empty */},`
+                image: "/img/sprites/obesk/gakvu/portrait_empty.gif",
+            },
+        },
     };
 
     window.env.dialogueActors["kazki"] = {
-        image: "/img/sprites/obesk/kazki/portrait.gif",
-        type: "obesk qou kazki portrait-contain",
-        voice: () => window.play("talklaugh", 1.2),
+        name: "kazki",
+        expressions: {
+            default: {
+                type: "obesk qou kazki portrait-contain",
+                voice: ()=>window.play('talklaugh', 1.2),
+                image: "/img/sprites/obesk/kazki/portrait.gif",
+            },
+            empty: {
+                element: ".hermimicked",
+                type: "portrait-contain portrait-hermit",
+                voice: false, // originally `()=>{/* empty */},`
+                image: "/img/sprites/obesk/kazki/portrait_empty.gif",
+            },
+        },
     };
 
     window.env.dialogueActors["bozko"] = {
-        image: "/img/sprites/obesk/bozko/portrait.gif",
-        type: "obesk qou bozko portrait-contain",
-        voice: () => window.play("talk", 0.8),
+        name: "bozko",
+        expressions: {
+            default: {
+                type: "obesk qou bozko portrait-contain",
+                element: ".truecreature .bozko",
+                voice: ()=>window.play('talk', 0.8),
+                image: "/img/sprites/obesk/bozko/portrait.gif",
+            },
+            empty: {
+                element: ".hermimicked",
+                type: "portrait-contain portrait-hermit",
+                voice: false, // originally `()=>{/* empty */},`
+                image: "/img/sprites/obesk/bozko/portrait_empty.gif",
+            },
+        },
     };
 
     window.env.dialogueActors["cavik"] = {
-        image: "/img/sprites/obesk/cavik/portrait.gif",
-        type: "obesk qou cavik portrait-contain",
-        voice: () => window.play("talk", 1.3),
+        name: "cavik",
+        expressions: {
+            default: {
+                type: "obesk qou cavik portrait-contain",
+                element: ".truecreature .cavik",
+                voice: ()=>window.play('talk', 1.3),
+                image: "/img/sprites/obesk/cavik/portrait.gif",
+            },
+            empty: {
+                element: ".hermimicked",
+                type: "portrait-contain portrait-hermit",
+                voice: false, // originally `()=>{/* empty */},`
+                image: "/img/sprites/obesk/cavik/portrait_empty.gif",
+            },
+        },
     };
 
     window.env.dialogueActors["groundsmind"] = {
@@ -702,6 +780,7 @@ export function insertExtraActors() {
     window.env.dialogueActors["stowaway"] = {
         image: "/img/sprites/loper.gif",
         type: "thoughtform portrait-top portrait-cover portrait-blocker",
+        voice: ()=>window.play('talkcroak'),
     };
 
     window.env.dialogueActors["fungus"] = {
@@ -849,5 +928,26 @@ export function insertExtraActors() {
         type: "obesk uppercase friend-color",
         image: "/img/textures/disruptionC.gif",
         voice: () => window.play("talkcore", 2.25),
+    };
+
+    window.env.dialogueActors["sleepybel"] = {
+        name: "isabel",
+        image: '/img/local/city/aqua/sleepybel4_portrait.gif',
+        type: "thoughtform flowerfriend recollection portrait-bright portrait-cover",
+        voice: ()=>window.play('talkfloweralt', 1),
+    };
+
+    // EP4ADD1-ING
+    window.env.dialogueActors["bre"] = {
+        image: '/img/local/embassy/resources/bre.gif',
+        type: "recollection portrait-bright portrait-dull portrait-cover",
+        voice: ()=>window.play('talk', 2)
+    };
+
+    window.env.dialogueActors["suitvu"] = {
+        name: "gakvu?",
+        image: "/img/sprites/obesk/gakvu/stage/suitvu_eye.gif",
+        type: "portrait-contain portrait-bright incoherent",
+        voice: ()=>window.play('talklaugh', 0.1)
     };
 }
