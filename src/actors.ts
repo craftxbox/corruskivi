@@ -941,13 +941,13 @@ export function insertExtraActors() {
     window.env.dialogueActors["bre"] = {
         image: '/img/local/embassy/resources/bre.gif',
         type: "recollection portrait-bright portrait-dull portrait-cover",
-        voice: ()=>window.play('talk', 2)
+        voice: ()=>window.play('talk', 2),
     };
 
     window.env.dialogueActors["suitvu"] = {
         name: "gakvu?",
         image: "/img/sprites/obesk/gakvu/stage/suitvu_eye.gif",
         type: "portrait-contain portrait-bright incoherent",
-        voice: ()=>window.play('talklaugh', 0.1)
+        voice: ()=>window.play('talklaugh', 0.1),
     };
 }
